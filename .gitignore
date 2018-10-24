@@ -24,4 +24,4 @@ fastlane/report.xml
 fastlane/screenshots
 fastlane/README.md
 fastlane/pro_fastlane.out
-Pods/Local\ Podspecs/
+Pods
