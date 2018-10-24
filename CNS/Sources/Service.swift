@@ -103,6 +103,24 @@ public class Service {
         }
     }
     
+//    public func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<[Response]> {
+//        return Observable.create { [self] observer in
+//            do {
+//                let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
+//                let task = self.session.dataTask(with: request) {
+//                    observer.on(self.dataTaskEvent(data: $0, response: $1, error: $2))
+//                    observer.onCompleted()
+//                }
+//
+//                task.resume()
+//                return Disposables.create(with: task.cancel)
+//            } catch {
+//                observer.onError(error)
+//                return Disposables.create()
+//            }
+//        }
+//    }
+    
     public func post<Value, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Value]) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
