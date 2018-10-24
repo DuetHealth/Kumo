@@ -11,16 +11,30 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-public protocol Encoding {
+public protocol RequestEncoding {
+    var contentType: String { get }
     func encode<T: Encodable>(_ value: T) throws -> Data
 }
 
-public protocol Decoding {
+public protocol RequestDecoding {
+    var acceptType: String { get }
     func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T
 }
 
-extension JSONEncoder: Encoding { }
-extension JSONDecoder: Decoding { }
+extension JSONEncoder: RequestEncoding {
+    
+    public var contentType: String {
+        return "application/json; charset=utf-8"
+    }
+    
+}
+extension JSONDecoder: RequestDecoding {
+    
+    public var acceptType: String {
+        return "application/json; charset=utf-8"
+    }
+    
+}
 
 public struct ServiceKey: Hashable {
     
@@ -36,8 +50,8 @@ public class Service {
     public let baseURL: URL
     private let delegate = URLSessionInvalidationDelegate()
     
-    public var requestEncoder: Encoding = JSONEncoder()
-    public var requestDecoder: Decoding = JSONDecoder()
+    public var requestEncoder: RequestEncoding = JSONEncoder()
+    public var requestDecoder: RequestDecoding = JSONDecoder()
     public var dynamicRequestEncodingStrategy: (Any) throws -> Data
     public var dynamicRequestDecodingStrategy: (Data) throws -> Any
     private var session: URLSession
@@ -144,6 +158,8 @@ public class Service {
         }
         components.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
         var request = URLRequest(url: baseURL.appendingPathComponent(endpoint))
+        request.httpHeaders = [.contentType: requestEncoder.contentType,
+                               .acceptType: requestDecoder.acceptType]
         request.httpMethod = method.rawValue
         request.httpBody = body
         return request
@@ -151,7 +167,7 @@ public class Service {
     
     private func dataTaskEvent<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Event<Response> {
         if let error = error { return .error(error) }
-        Chronicle.main.network.debug(<#T##response: URLResponse##URLResponse#>, responseObject: <#T##NSDictionary#>, method: <#T##String#>)
+        if let response = response { Chronicle.main.network.debug(response, data: data) }
         return data.map {
             do { return try .next(self.requestDecoder.decode(Response.self, from: $0)) }
             catch { return .error(error) }
