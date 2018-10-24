@@ -1,0 +1,27 @@
+# Xcode
+build/*
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xcworkspace/xcuserdata
+!default.xcworkspace
+xcuserdata
+*.moved-aside
+DerivedData
+*.DS_Store
+*.psd
+*.ipa
+*.dSYM.zip
+*.swp
+report.xml
+fastlane/test_output
+fastlane/report.xml
+fastlane/screenshots
+fastlane/README.md
+fastlane/pro_fastlane.out
+Pods/Local\ Podspecs/
