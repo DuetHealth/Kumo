@@ -12,7 +12,7 @@ public struct HTTPHeader: Hashable {
     
     public static let authorization = HTTPHeader(rawValue: "Authorization")
     public static let contentType = HTTPHeader(rawValue: "Content-Type")
-    public static let acceptType = HTTPHeader(rawValue: "Accept-Type")
+    public static let accept = HTTPHeader(rawValue: "Accept")
     
     public static func custom(_ value: String) -> HTTPHeader {
         return HTTPHeader(rawValue: value)
@@ -40,7 +40,7 @@ public extension URLSessionConfiguration {
         set {
             httpAdditionalHeaders = newValue.map {
                 Dictionary(uniqueKeysWithValues: $0.map { pair in
-                    return (AnyHashable(pair.key), pair.value)
+                    return (AnyHashable(pair.key.rawValue), pair.value)
                 })
             }
         }

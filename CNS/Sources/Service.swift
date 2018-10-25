@@ -36,6 +36,26 @@ extension JSONDecoder: RequestDecoding {
     
 }
 
+struct JSONWrapper<Inner: Decodable>: Decodable {
+
+    let matchedKey: String
+    let value: Inner
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: DynamicCodingKeys.self)
+        for key in container.allKeys {
+            if let value = try? container.decode(Inner.self, forKey: key) {
+                self.value = value
+                matchedKey = key.stringValue
+                return
+            }
+        }
+        let context = DecodingError.Context(codingPath: container.codingPath, debugDescription: "A nested value of type \(Inner.self) was not found.")
+        throw DecodingError.valueNotFound(Inner.self, context)
+    }
+    
+}
+
 public struct ServiceKey: Hashable {
     
     let stringValue: String
@@ -54,6 +74,7 @@ public class Service {
     public var requestDecoder: RequestDecoding = JSONDecoder()
     public var dynamicRequestEncodingStrategy: (Any) throws -> Data
     public var dynamicRequestDecodingStrategy: (Data) throws -> Any
+    public var operationScheduler: SchedulerType = MainScheduler.instance
     private var session: URLSession
     
     public var commonHTTPHeaders: [HTTPHeader: Any]? {
@@ -93,7 +114,6 @@ public class Service {
                     observer.on(self.dataTaskEvent(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
-                
                 task.resume()
                 return Disposables.create(with: task.cancel)
             } catch {
@@ -101,6 +121,35 @@ public class Service {
                 return Disposables.create()
             }
         }
+            .observeOn(operationScheduler)
+    }
+    
+    public func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], keyedUnder key: String) -> Observable<Response> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
+                let task = self.session.dataTask(with: request) {
+                    let event: Event<JSONWrapper<Response>> = self.dataTaskEvent(data: $0, response: $1, error: $2)
+                    switch event {
+                    case .error(let error): return observer.onError(error)
+                    case .completed: return observer.onCompleted()
+                    case .next(let wrapper):
+                        if wrapper.matchedKey == key { observer.onNext(wrapper.value) }
+                        else {
+                            let context = DecodingError.Context(codingPath: [], debugDescription: "Tried to find data nested under \(key) but found it under \(wrapper.matchedKey)")
+                            observer.onError(DecodingError.keyNotFound(DynamicCodingKeys(stringValue: key)!, context))
+                        }
+                        observer.onCompleted()
+                    }
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
     }
     
 //    public func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<[Response]> {
@@ -136,6 +185,7 @@ public class Service {
                 return Disposables.create()
             }
         }
+            .observeOn(operationScheduler)
     }
     
     public func post<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
@@ -154,6 +204,7 @@ public class Service {
                 return Disposables.create()
             }
         }
+            .observeOn(operationScheduler)
     }
     
     private func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
@@ -177,7 +228,7 @@ public class Service {
         components.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
         var request = URLRequest(url: baseURL.appendingPathComponent(endpoint))
         request.httpHeaders = [.contentType: requestEncoder.contentType,
-                               .acceptType: requestDecoder.acceptType]
+                               .accept: requestDecoder.acceptType]
         request.httpMethod = method.rawValue
         request.httpBody = body
         return request
@@ -200,6 +251,7 @@ class URLSessionInvalidationDelegate: NSObject, URLSessionDelegate {
     
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         invalidations[session]?(session, error)
+        invalidations[session] = nil
     }
     
 }
@@ -211,6 +263,7 @@ extension URLSession {
     func finishTasksAndInvalidate(onInvalidation: @escaping (URLSession, Error?) -> ()) {
         guard let delegate = self.delegate as? URLSessionInvalidationDelegate else { return }
         delegate.invalidations[self] = onInvalidation
+        finishTasksAndInvalidate()
     }
     
 }
