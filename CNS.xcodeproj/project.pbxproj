@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9454216D2187879300932CAF /* RequestEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9454216C2187879300932CAF /* RequestEncoding.swift */; };
+		9454216F218787BB00932CAF /* RequestDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9454216E218787BB00932CAF /* RequestDecoding.swift */; };
+		94542171218787F600932CAF /* JSONWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94542170218787F600932CAF /* JSONWrapper.swift */; };
+		945421742187883B00932CAF /* URLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945421732187883B00932CAF /* URLSession.swift */; };
+		945421762187889200932CAF /* Copying.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945421752187889200932CAF /* Copying.swift */; };
 		945D40E1217A4A95008ACFD0 /* KeyedDecodingContainer+DynamicDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D40DB217A4A95008ACFD0 /* KeyedDecodingContainer+DynamicDecoding.swift */; };
 		945D40E2217A4A95008ACFD0 /* UnkeyedDecodingContainer+DynamicDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D40DC217A4A95008ACFD0 /* UnkeyedDecodingContainer+DynamicDecoding.swift */; };
 		945D40E3217A4A95008ACFD0 /* DynamicCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D40DD217A4A95008ACFD0 /* DynamicCodingKeys.swift */; };
@@ -17,6 +22,7 @@
 		945D40EC217A60BD008ACFD0 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D40EB217A60BD008ACFD0 /* HTTPMethod.swift */; };
 		945D4114217F6222008ACFD0 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D4113217F6222008ACFD0 /* Service.swift */; };
 		945D4116217F6ADB008ACFD0 /* HTTPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D4115217F6ADB008ACFD0 /* HTTPHeader.swift */; };
+		949AD287218A937300808C79 /* HTTPResponseStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD286218A937300808C79 /* HTTPResponseStatus.swift */; };
 		94B6BD0C21762D17005454C6 /* CNS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B6BD0221762D16005454C6 /* CNS.framework */; };
 		94B6BD1121762D17005454C6 /* CNSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B6BD1021762D17005454C6 /* CNSTests.swift */; };
 		94B6BD1321762D17005454C6 /* CNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 94B6BD0521762D17005454C6 /* CNS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -41,6 +47,11 @@
 		5A75446085268BC22A89D61B /* Pods-CNS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CNS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CNS/Pods-CNS.debug.xcconfig"; sourceTree = "<group>"; };
 		5B74EB331F37502301CBFCF4 /* Pods-CNS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CNS.release.xcconfig"; path = "Pods/Target Support Files/Pods-CNS/Pods-CNS.release.xcconfig"; sourceTree = "<group>"; };
 		94309864E6D98617391C90ED /* Pods_CNS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CNS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9454216C2187879300932CAF /* RequestEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestEncoding.swift; sourceTree = "<group>"; };
+		9454216E218787BB00932CAF /* RequestDecoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoding.swift; sourceTree = "<group>"; };
+		94542170218787F600932CAF /* JSONWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONWrapper.swift; sourceTree = "<group>"; };
+		945421732187883B00932CAF /* URLSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSession.swift; sourceTree = "<group>"; };
+		945421752187889200932CAF /* Copying.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Copying.swift; sourceTree = "<group>"; };
 		945D40DB217A4A95008ACFD0 /* KeyedDecodingContainer+DynamicDecoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+DynamicDecoding.swift"; sourceTree = "<group>"; };
 		945D40DC217A4A95008ACFD0 /* UnkeyedDecodingContainer+DynamicDecoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UnkeyedDecodingContainer+DynamicDecoding.swift"; sourceTree = "<group>"; };
 		945D40DD217A4A95008ACFD0 /* DynamicCodingKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicCodingKeys.swift; sourceTree = "<group>"; };
@@ -51,6 +62,7 @@
 		945D40EB217A60BD008ACFD0 /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		945D4113217F6222008ACFD0 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		945D4115217F6ADB008ACFD0 /* HTTPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeader.swift; sourceTree = "<group>"; };
+		949AD286218A937300808C79 /* HTTPResponseStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResponseStatus.swift; sourceTree = "<group>"; };
 		94B6BD0221762D16005454C6 /* CNS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CNS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		94B6BD0521762D17005454C6 /* CNS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CNS.h; sourceTree = "<group>"; };
 		94B6BD0621762D17005454C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -82,13 +94,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		945421722187882E00932CAF /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				945421752187889200932CAF /* Copying.swift */,
+				945421732187883B00932CAF /* URLSession.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		945D40DA217A4713008ACFD0 /* Coding */ = {
 			isa = PBXGroup;
 			children = (
 				945D40DD217A4A95008ACFD0 /* DynamicCodingKeys.swift */,
 				945D40DE217A4A95008ACFD0 /* ErasedEncodable.swift */,
+				94542170218787F600932CAF /* JSONWrapper.swift */,
 				945D40DB217A4A95008ACFD0 /* KeyedDecodingContainer+DynamicDecoding.swift */,
 				945D40DF217A4A95008ACFD0 /* KeyedEncodingContainer+DynamicEncoding.swift */,
+				9454216C2187879300932CAF /* RequestEncoding.swift */,
+				9454216E218787BB00932CAF /* RequestDecoding.swift */,
 				945D40DC217A4A95008ACFD0 /* UnkeyedDecodingContainer+DynamicDecoding.swift */,
 				945D40E0217A4A95008ACFD0 /* UnkeyedEncodingContainer+DynamicEncoding.swift */,
 			);
@@ -108,6 +132,7 @@
 			children = (
 				945D4115217F6ADB008ACFD0 /* HTTPHeader.swift */,
 				945D40EB217A60BD008ACFD0 /* HTTPMethod.swift */,
+				949AD286218A937300808C79 /* HTTPResponseStatus.swift */,
 			);
 			path = HTTP;
 			sourceTree = "<group>";
@@ -153,9 +178,10 @@
 		94B6BD1C21762E18005454C6 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				945D40EA217A6081008ACFD0 /* HTTP */,
 				945D40DA217A4713008ACFD0 /* Coding */,
 				945D40E7217A4AA7008ACFD0 /* Errors */,
+				945421722187882E00932CAF /* Extensions */,
+				945D40EA217A6081008ACFD0 /* HTTP */,
 				94B6BD0521762D17005454C6 /* CNS.h */,
 				94B6BD2021762E71005454C6 /* ApplicationLayer.swift */,
 				945D4113217F6222008ACFD0 /* Service.swift */,
@@ -357,13 +383,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				945D40E5217A4A95008ACFD0 /* KeyedEncodingContainer+DynamicEncoding.swift in Sources */,
+				949AD287218A937300808C79 /* HTTPResponseStatus.swift in Sources */,
+				945421762187889200932CAF /* Copying.swift in Sources */,
 				94B6BD2121762E71005454C6 /* ApplicationLayer.swift in Sources */,
+				945421742187883B00932CAF /* URLSession.swift in Sources */,
 				945D40E3217A4A95008ACFD0 /* DynamicCodingKeys.swift in Sources */,
 				945D40E1217A4A95008ACFD0 /* KeyedDecodingContainer+DynamicDecoding.swift in Sources */,
 				945D40E2217A4A95008ACFD0 /* UnkeyedDecodingContainer+DynamicDecoding.swift in Sources */,
 				945D40E4217A4A95008ACFD0 /* ErasedEncodable.swift in Sources */,
 				945D40E6217A4A95008ACFD0 /* UnkeyedEncodingContainer+DynamicEncoding.swift in Sources */,
+				94542171218787F600932CAF /* JSONWrapper.swift in Sources */,
+				9454216F218787BB00932CAF /* RequestDecoding.swift in Sources */,
 				945D4114217F6222008ACFD0 /* Service.swift in Sources */,
+				9454216D2187879300932CAF /* RequestEncoding.swift in Sources */,
 				945D4116217F6ADB008ACFD0 /* HTTPHeader.swift in Sources */,
 				945D40EC217A60BD008ACFD0 /* HTTPMethod.swift in Sources */,
 				945D40E9217A4AB6008ACFD0 /* APIError.swift in Sources */,

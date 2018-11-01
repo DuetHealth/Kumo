@@ -6,55 +6,9 @@
 //  Copyright © 2018 Duet Health. All rights reserved.
 //
 
-import Chronicle
 import Foundation
 import RxCocoa
 import RxSwift
-
-public protocol RequestEncoding {
-    var contentType: String { get }
-    func encode<T: Encodable>(_ value: T) throws -> Data
-}
-
-public protocol RequestDecoding {
-    var acceptType: String { get }
-    func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T
-}
-
-extension JSONEncoder: RequestEncoding {
-    
-    public var contentType: String {
-        return "application/json; charset=utf-8"
-    }
-    
-}
-extension JSONDecoder: RequestDecoding {
-    
-    public var acceptType: String {
-        return "application/json; charset=utf-8"
-    }
-    
-}
-
-struct JSONWrapper<Inner: Decodable>: Decodable {
-
-    let matchedKey: String
-    let value: Inner
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: DynamicCodingKeys.self)
-        for key in container.allKeys {
-            if let value = try? container.decode(Inner.self, forKey: key) {
-                self.value = value
-                matchedKey = key.stringValue
-                return
-            }
-        }
-        let context = DecodingError.Context(codingPath: container.codingPath, debugDescription: "A nested value of type \(Inner.self) was not found.")
-        throw DecodingError.valueNotFound(Inner.self, context)
-    }
-    
-}
 
 public struct ServiceKey: Hashable {
     
@@ -63,20 +17,70 @@ public struct ServiceKey: Hashable {
     public init(_ name: String) {
         self.stringValue = name
     }
+    
+}
+
+public struct ResponseError {
+    
+    let type: (Error & Decodable).Type
+    private let implementation: (Data, RequestDecoding) throws -> Error
+    
+    public init<T: Error & Decodable>(_ type: T.Type) {
+        self.type = type
+        implementation = { data, decoding in
+            try decoding.decode(T.self, from: data)
+        }
+    }
+    
+    func decode(data: Data, with decoding: RequestDecoding) throws -> Error {
+        return try implementation(data, decoding)
+    }
+    
 }
 
 public class Service {
     
+    /// The base URL for all requests. The URLs for requests performed by the service are made
+    /// by appending path components to this URL.
     public let baseURL: URL
+    
     private let delegate = URLSessionInvalidationDelegate()
     
+    /// The type of error returned by the server. When a response returns an error status code,
+    /// the service will attempt to decode the body of the response as this type.
+    ///
+    /// The default value of this is `nil`. If no type is set, the service will not attempt to
+    /// decode an error body.
+    public var errorType = ResponseError?.none
+    
+    /// THe object which encodes request bodies which conform to the `Encodable` protocol.
+    ///
+    /// The default instance is a `JSONEncoder`.
     public var requestEncoder: RequestEncoding = JSONEncoder()
+    
+    /// THe object which decodes response bodies which conform to the `Decodable` protocol.
+    ///
+    /// The default instance is a `JSONDecoder`.
     public var requestDecoder: RequestDecoding = JSONDecoder()
+    
+    /// The behavior to use for encoding dynamically-typed request bodies.
+    ///
+    /// The default implementation uses Foundation's `JSONSerialization`.
     public var dynamicRequestEncodingStrategy: (Any) throws -> Data
+    
+    /// The behavior to use for decoding dynamically-typed response bodies.
+    ///
+    /// The default implementation uses Foundation's `JSONSerialization`.
     public var dynamicRequestDecodingStrategy: (Data) throws -> Any
+    
+    /// The scheduler on which to observe tasks.
+    ///
+    /// By default, tasks are observed on the main thread.
     public var operationScheduler: SchedulerType = MainScheduler.instance
+    
     private var session: URLSession
     
+    /// Returns the headers applied to all requests.
     public var commonHTTPHeaders: [HTTPHeader: Any]? {
         return session.configuration.httpHeaders
     }
@@ -111,7 +115,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskEvent(data: $0, response: $1, error: $2))
+                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -129,7 +133,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
                 let task = self.session.dataTask(with: request) {
-                    let event: Event<JSONWrapper<Response>> = self.dataTaskEvent(data: $0, response: $1, error: $2)
+                    let event: Event<JSONWrapper<Response>> = self.dataTaskToElement(data: $0, response: $1, error: $2)
                     switch event {
                     case .error(let error): return observer.onError(error)
                     case .completed: return observer.onCompleted()
@@ -152,30 +156,12 @@ public class Service {
             .observeOn(operationScheduler)
     }
     
-//    public func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<[Response]> {
-//        return Observable.create { [self] observer in
-//            do {
-//                let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
-//                let task = self.session.dataTask(with: request) {
-//                    observer.on(self.dataTaskEvent(data: $0, response: $1, error: $2))
-//                    observer.onCompleted()
-//                }
-//
-//                task.resume()
-//                return Disposables.create(with: task.cancel)
-//            } catch {
-//                observer.onError(error)
-//                return Disposables.create()
-//            }
-//        }
-//    }
-    
-    public func post<Value, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Value]) -> Observable<Response> {
+    public func post<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskEvent(data: $0, response: $1, error: $2))
+                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -188,17 +174,88 @@ public class Service {
             .observeOn(operationScheduler)
     }
     
-    public func post<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
+    public func post<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskEvent(data: $0, response: $1, error: $2))
+                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
-                Chronicle.main.network.debug(request)
                 task.resume()
                 return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+    public func post<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Response> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+    public func post(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Void> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+    public func put<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+    public func put<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Void> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create()
             } catch {
                 observer.onError(error)
                 return Disposables.create()
@@ -234,56 +291,43 @@ public class Service {
         return request
     }
     
-    private func dataTaskEvent<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Event<Response> {
+    /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
+    /// perform side effects.
+    private func dataTaskToEvent(data: Data?, response: URLResponse?, error: Error?) -> Event<Void> {
         if let error = error { return .error(error) }
-        if let response = response { Chronicle.main.network.debug(response, data: data) }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+        }
+        if httpResponse.status.isError {
+            return errorType.flatMap { type in
+                data.map {
+                    do { return try .error(type.decode(data: $0, with: requestDecoder)) }
+                    catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
+                    } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+                } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+        }
+        return .next(())
+    }
+    
+    /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
+    /// act on an element.
+    private func dataTaskToElement<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Event<Response> {
+        if let error = error { return .error(error) }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+        }
+        if httpResponse.status.isError {
+            return errorType.flatMap { type in
+                data.map {
+                    do { return try .error(type.decode(data: $0, with: requestDecoder)) }
+                    catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
+                } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+            } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+        }
         return data.map {
             do { return try .next(self.requestDecoder.decode(Response.self, from: $0)) }
             catch { return .error(error) }
         } ?? .completed
-    }
-    
-}
-
-class URLSessionInvalidationDelegate: NSObject, URLSessionDelegate {
-    
-    fileprivate var invalidations = [URLSession: (URLSession, Error?) -> ()]()
-    
-    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        invalidations[session]?(session, error)
-        invalidations[session] = nil
-    }
-    
-}
-
-fileprivate var temporaryDelegateKey = UInt8.max
-
-extension URLSession {
-    
-    func finishTasksAndInvalidate(onInvalidation: @escaping (URLSession, Error?) -> ()) {
-        guard let delegate = self.delegate as? URLSessionInvalidationDelegate else { return }
-        delegate.invalidations[self] = onInvalidation
-        finishTasksAndInvalidate()
-    }
-    
-}
-
-protocol ImmutableCopying {
-    func copy() -> Self
-}
-
-protocol MutableCopying: ImmutableCopying {
-    associatedtype MutableCopyType
-    
-    func mutableCopy() -> MutableCopyType
-}
-
-extension NSObject: ImmutableCopying { }
-
-extension ImmutableCopying where Self: NSObject {
-    
-    func copy() -> Self {
-        return (self as NSObject).copy() as! Self
     }
     
 }

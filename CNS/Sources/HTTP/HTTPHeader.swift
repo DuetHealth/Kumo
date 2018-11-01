@@ -10,9 +10,10 @@ import Foundation
 
 public struct HTTPHeader: Hashable {
     
+    public static let accept = HTTPHeader(rawValue: "Accept")
+    public static let acceptLanguage = HTTPHeader(rawValue: "Accept-Language")
     public static let authorization = HTTPHeader(rawValue: "Authorization")
     public static let contentType = HTTPHeader(rawValue: "Content-Type")
-    public static let accept = HTTPHeader(rawValue: "Accept")
     
     public static func custom(_ value: String) -> HTTPHeader {
         return HTTPHeader(rawValue: value)
@@ -28,19 +29,20 @@ public struct HTTPHeader: Hashable {
 
 public extension URLSessionConfiguration {
     
+    func set(value: Any, for header: HTTPHeader) {
+        if httpAdditionalHeaders != nil {
+            httpAdditionalHeaders![header.rawValue] = value
+        } else {
+            httpAdditionalHeaders = [header.rawValue: value]
+        }
+    }
+    
     public var httpHeaders: [HTTPHeader: Any]? {
         get {
             return httpAdditionalHeaders.map {
-                Dictionary(uniqueKeysWithValues: $0.flatMap { pair in
+                Dictionary(uniqueKeysWithValues: $0.compactMap { pair in
                     guard let string = pair.key.base as? String else { return nil }
                     return (HTTPHeader(rawValue: string), pair.value)
-                })
-            }
-        }
-        set {
-            httpAdditionalHeaders = newValue.map {
-                Dictionary(uniqueKeysWithValues: $0.map { pair in
-                    return (AnyHashable(pair.key.rawValue), pair.value)
                 })
             }
         }
