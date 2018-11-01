@@ -20,6 +20,38 @@ public struct ServiceKey: Hashable {
     
 }
 
+public struct MultipartForm {
+
+    public let encoding: String.Encoding
+    let boundary = String(format: "----comDuetCNS%08X%08X", arc4random(), arc4random())
+    
+    public var data: Data {
+        return currentFormData
+            + "--\(boundary)--".data(using: .utf8)!
+    }
+    
+    private var currentFormData = Data()
+    
+    init(encoding: String.Encoding) {
+        self.encoding = encoding
+    }
+    
+    init(name: String, fileData: Data, encoding: String.Encoding) throws {
+        self.encoding = encoding
+        try addFile(name: name, fileData: fileData)
+    }
+    
+    mutating func addFile(name: String, fileData: Data) throws {
+        guard let disposition = "Content-Disposition: form-data; name=\"\(name)\\r\n".data(using: encoding) else {
+            throw UploadError.cannotEncodeFormData(name: name, encoding: encoding)
+        }
+        currentFormData += "--\(boundary)\r\n".data(using: encoding)!
+            + disposition
+            + fileData
+    }
+    
+}
+
 public struct ResponseError {
     
     let type: (Error & Decodable).Type
@@ -264,6 +296,68 @@ public class Service {
             .observeOn(operationScheduler)
     }
     
+    public func delete<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Response> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .delete, endpoint: endpoint, queryParameters: parameters)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create()
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+    public func delete(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Void> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .delete, endpoint: endpoint, queryParameters: parameters)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create()
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+    public func upload<Response: Decodable>(_ endpoint: String, file: URL, name: String) -> Observable<Response> {
+        return Observable.create { [self] observer in
+            do {
+                var request = try self.createRequest(method: .post, endpoint: endpoint)
+                guard file.isFileURL else { throw UploadError.notAFileURL(file) }
+                let form = try MultipartForm(name: name, fileData: Data(contentsOf: file), encoding: .utf8)
+                request.set(contentType: .multipartFormData(boundary: form.boundary))
+                request.httpBody = form.data
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+//    public func upload<Response: Decodable>(_ endpoint: String, fileData: Data, fileType: FileType) -> Observable<Response> {
+//
+//    }
+    
     private func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
         let data: Data?
         do { data = try body.map(dynamicRequestEncodingStrategy) }
@@ -284,8 +378,8 @@ public class Service {
         }
         components.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
         var request = URLRequest(url: baseURL.appendingPathComponent(endpoint))
-        request.httpHeaders = [.contentType: requestEncoder.contentType,
-                               .accept: requestDecoder.acceptType]
+        request.httpHeaders = [.contentType: requestEncoder.contentType.rawValue,
+                               .accept: requestDecoder.acceptType.rawValue]
         request.httpMethod = method.rawValue
         request.httpBody = body
         return request

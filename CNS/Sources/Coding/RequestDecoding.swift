@@ -9,14 +9,14 @@
 import Foundation
 
 public protocol RequestDecoding {
-    var acceptType: String { get }
+    var acceptType: MIMEType { get }
     func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T
 }
 
 extension JSONDecoder: RequestDecoding {
     
-    public var acceptType: String {
-        return "application/json; charset=utf-8"
+    public var acceptType: MIMEType {
+        return .applicationJSON(charset: .utf8)
     }
     
 }

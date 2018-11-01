@@ -8,6 +8,38 @@
 
 import Foundation
 
+public extension String.Encoding {
+    
+    public var stringValue: String? {
+        return CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(rawValue)) as String?
+    }
+    
+}
+
+public struct MIMEType: RawRepresentable {
+    public typealias RawValue = String
+    
+    public static func applicationJSON(charset: String.Encoding = .utf8) -> MIMEType {
+        let charsetString = charset.stringValue.map { "; charset=\($0)" } ?? ""
+        return MIMEType("application/json\(charsetString)")
+    }
+    
+    public static func multipartFormData(boundary: String) -> MIMEType {
+        return MIMEType("multipart/form-data; boundary=\(boundary)")
+    }
+    
+    public let rawValue: String
+    
+    public init?(rawValue: String) {
+        fatalError("NOT YET IMPLEMENTED")
+    }
+    
+    private init(_ value: String) {
+        self.rawValue = value
+    }
+    
+}
+
 public struct HTTPHeader: Hashable {
     
     public static let accept = HTTPHeader(rawValue: "Accept")
@@ -67,6 +99,18 @@ public extension URLRequest {
                 })
             }
         }
+    }
+    
+    public mutating func set(accept: MIMEType) {
+        addValue(accept.rawValue, forHTTPHeaderField: HTTPHeader.accept.rawValue)
+    }
+    
+    public mutating func set(contentType: MIMEType) {
+        addValue(contentType.rawValue, forHTTPHeaderField: HTTPHeader.contentType.rawValue)
+    }
+    
+    public mutating func set(value: String, for header: HTTPHeader) {
+        addValue(value, forHTTPHeaderField: header.rawValue)
     }
     
 }

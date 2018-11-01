@@ -9,14 +9,14 @@
 import Foundation
 
 public protocol RequestEncoding {
-    var contentType: String { get }
+    var contentType: MIMEType { get }
     func encode<T: Encodable>(_ value: T) throws -> Data
 }
 
 extension JSONEncoder: RequestEncoding {
     
-    public var contentType: String {
-        return "application/json; charset=utf-8"
+    public var contentType: MIMEType {
+        return .applicationJSON(charset: .utf8)
     }
     
 }
