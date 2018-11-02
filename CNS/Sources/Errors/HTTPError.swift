@@ -36,21 +36,3 @@ public enum HTTPError: Error {
         }
     }
 }
-
-public enum UploadError: Error {
-    case notAFileURL(URL)
-    case unknownFileType(URL)
-    case cannotEncodeFormData(name: String, encoding: String.Encoding)
-    
-    public var localizedDescription: String {
-        switch self {
-        case .notAFileURL(let url):
-            return "Uploading expects a file URL, but was given \(url)."
-        case .unknownFileType(let url):
-            return "The type of the file located at path \(url) could not be determined."
-        case .cannotEncodeFormData(name: let name, encoding: let encoding):
-            return "The name \(name) cannot be represented with \(encoding)."
-        }
-    }
-    
-}

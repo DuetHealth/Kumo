@@ -20,56 +20,6 @@ public struct ServiceKey: Hashable {
     
 }
 
-public struct MultipartForm {
-
-    public let encoding: String.Encoding
-    let boundary = String(format: "----comDuetCNS%08X%08X", arc4random(), arc4random())
-    
-    public var data: Data {
-        return currentFormData
-            + "--\(boundary)--".data(using: .utf8)!
-    }
-    
-    private var currentFormData = Data()
-    
-    init(encoding: String.Encoding) {
-        self.encoding = encoding
-    }
-    
-    init(name: String, fileData: Data, encoding: String.Encoding) throws {
-        self.encoding = encoding
-        try addFile(name: name, fileData: fileData)
-    }
-    
-    mutating func addFile(name: String, fileData: Data) throws {
-        guard let disposition = "Content-Disposition: form-data; name=\"\(name)\\r\n".data(using: encoding) else {
-            throw UploadError.cannotEncodeFormData(name: name, encoding: encoding)
-        }
-        currentFormData += "--\(boundary)\r\n".data(using: encoding)!
-            + disposition
-            + fileData
-    }
-    
-}
-
-public struct ResponseError {
-    
-    let type: (Error & Decodable).Type
-    private let implementation: (Data, RequestDecoding) throws -> Error
-    
-    public init<T: Error & Decodable>(_ type: T.Type) {
-        self.type = type
-        implementation = { data, decoding in
-            try decoding.decode(T.self, from: data)
-        }
-    }
-    
-    func decode(data: Data, with decoding: RequestDecoding) throws -> Error {
-        return try implementation(data, decoding)
-    }
-    
-}
-
 public class Service {
     
     /// The base URL for all requests. The URLs for requests performed by the service are made
@@ -117,9 +67,9 @@ public class Service {
         return session.configuration.httpHeaders
     }
     
-    public init(baseURL: URL, configuration: ((URLSessionConfiguration) -> ())? = nil) {
+    public init(baseURL: URL, runsInBackground: Bool = false, configuration: ((URLSessionConfiguration) -> ())? = nil) {
         self.baseURL = baseURL
-        let sessionConfiguration = URLSessionConfiguration.default
+        let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL.absoluteString) : .default
         configuration?(sessionConfiguration)
         session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: nil)
         dynamicRequestEncodingStrategy = { object in
@@ -354,9 +304,64 @@ public class Service {
             .observeOn(operationScheduler)
     }
     
-//    public func upload<Response: Decodable>(_ endpoint: String, fileData: Data, fileType: FileType) -> Observable<Response> {
-//
-//    }
+    /// Uploads to an endpoint the provided file. The file is uploaded as form data
+    /// under the supplied name.
+    ///
+    /// - Parameters:
+    ///   - endpoint: the path extension corresponding to the endpoint
+    ///   - file: the URL of the file to upload
+    ///   - name: the name of form part under which to embed the file's data
+    /// - Returns: an `Observable` which emits a single empty element upon success.
+    public func upload(_ endpoint: String, file: URL, name: String) -> Observable<Void> {
+        return Observable.create { [self] observer in
+            do {
+                var request = try self.createRequest(method: .post, endpoint: endpoint)
+                guard file.isFileURL else { throw UploadError.notAFileURL(file) }
+                let form = try MultipartForm(name: name, fileData: Data(contentsOf: file), encoding: .utf8)
+                request.set(contentType: .multipartFormData(boundary: form.boundary))
+                request.httpBody = form.data
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+    /// Uploads to an endpoint the provided file data. The file is uploaded as form data
+    /// under the supplied name.
+    ///
+    /// - Parameters:
+    ///   - endpoint: the path extension corresponding to the endpoint
+    ///   - fileData: the raw data of the file.
+    ///   - name: the name of form part under which to embed the file's data
+    /// - Returns: an `Observable` which emits a single empty element upon success.
+    public func upload(_ endpoint: String, fileData: Data, name: String) -> Observable<Void> {
+        return Observable.create { [self] observer in
+            do {
+                var request = try self.createRequest(method: .post, endpoint: endpoint)
+                let form = try MultipartForm(name: name, fileData: fileData, encoding: .utf8)
+                request.set(contentType: .multipartFormData(boundary: form.boundary))
+                request.httpBody = form.data
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+            }
+            .observeOn(operationScheduler)
+    }
     
     private func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
         let data: Data?
