@@ -97,7 +97,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -115,7 +115,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
                 let task = self.session.dataTask(with: request) {
-                    let event: Event<JSONWrapper<Response>> = self.dataTaskToElement(data: $0, response: $1, error: $2)
+                    let event: Event<JSONWrapper<Response>> = self.resultToElement(data: $0, response: $1, error: $2)
                     switch event {
                     case .error(let error): return observer.onError(error)
                     case .completed: return observer.onCompleted()
@@ -143,7 +143,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -161,7 +161,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -179,7 +179,25 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+    public func post<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Any> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -197,7 +215,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -215,7 +233,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -233,7 +251,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -251,7 +269,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .delete, endpoint: endpoint, queryParameters: parameters)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -269,7 +287,7 @@ public class Service {
             do {
                 let request = try self.createRequest(method: .delete, endpoint: endpoint, queryParameters: parameters)
                 let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -282,16 +300,15 @@ public class Service {
             .observeOn(operationScheduler)
     }
     
-    public func upload<Response: Decodable>(_ endpoint: String, file: URL, name: String) -> Observable<Response> {
+    public func upload<Response: Decodable>(_ endpoint: String, file: URL, under key: String) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
                 var request = try self.createRequest(method: .post, endpoint: endpoint)
                 guard file.isFileURL else { throw UploadError.notAFileURL(file) }
-                let form = try MultipartForm(name: name, fileData: Data(contentsOf: file), encoding: .utf8)
+                let form = try MultipartForm(file: file, under: key, encoding: .utf8)
                 request.set(contentType: .multipartFormData(boundary: form.boundary))
-                request.httpBody = form.data
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToElement(data: $0, response: $1, error: $2))
+                let task = self.session.uploadTask(with: request, from: form.data) {
+                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -312,16 +329,15 @@ public class Service {
     ///   - file: the URL of the file to upload
     ///   - name: the name of form part under which to embed the file's data
     /// - Returns: an `Observable` which emits a single empty element upon success.
-    public func upload(_ endpoint: String, file: URL, name: String) -> Observable<Void> {
+    public func upload(_ endpoint: String, file: URL, under key: String) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 var request = try self.createRequest(method: .post, endpoint: endpoint)
                 guard file.isFileURL else { throw UploadError.notAFileURL(file) }
-                let form = try MultipartForm(name: name, fileData: Data(contentsOf: file), encoding: .utf8)
+                let form = try MultipartForm(file: file, under: key, encoding: .utf8)
                 request.set(contentType: .multipartFormData(boundary: form.boundary))
-                request.httpBody = form.data
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
+                let task = self.session.uploadTask(with: request, from: form.data) {
+                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -331,35 +347,6 @@ public class Service {
                 return Disposables.create()
             }
         }
-            .observeOn(operationScheduler)
-    }
-    
-    /// Uploads to an endpoint the provided file data. The file is uploaded as form data
-    /// under the supplied name.
-    ///
-    /// - Parameters:
-    ///   - endpoint: the path extension corresponding to the endpoint
-    ///   - fileData: the raw data of the file.
-    ///   - name: the name of form part under which to embed the file's data
-    /// - Returns: an `Observable` which emits a single empty element upon success.
-    public func upload(_ endpoint: String, fileData: Data, name: String) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                var request = try self.createRequest(method: .post, endpoint: endpoint)
-                let form = try MultipartForm(name: name, fileData: fileData, encoding: .utf8)
-                request.set(contentType: .multipartFormData(boundary: form.boundary))
-                request.httpBody = form.data
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.dataTaskToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-            }
             .observeOn(operationScheduler)
     }
     
@@ -392,7 +379,7 @@ public class Service {
     
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
     /// perform side effects.
-    private func dataTaskToEvent(data: Data?, response: URLResponse?, error: Error?) -> Event<Void> {
+    private func resultToEvent(data: Data?, response: URLResponse?, error: Error?) -> Event<Void> {
         if let error = error { return .error(error) }
         guard let httpResponse = response as? HTTPURLResponse else {
             return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
@@ -410,7 +397,7 @@ public class Service {
     
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
     /// act on an element.
-    private func dataTaskToElement<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Event<Response> {
+    private func resultToElement<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Event<Response> {
         if let error = error { return .error(error) }
         guard let httpResponse = response as? HTTPURLResponse else {
             return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
@@ -427,6 +414,27 @@ public class Service {
             do { return try .next(self.requestDecoder.decode(Response.self, from: $0)) }
             catch { return .error(error) }
         } ?? .completed
+    }
+    
+    /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
+    /// act on an element.
+    private func resultToElement(data: Data?, response: URLResponse?, error: Error?) -> Event<Any> {
+        if let error = error { return .error(error) }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+        }
+        if httpResponse.status.isError {
+            return errorType.flatMap { type in
+                data.map {
+                    do { return try .error(type.decode(data: $0, with: requestDecoder)) }
+                    catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
+                    } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+                } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+        }
+        return data.map {
+            do { return try .next(self.dynamicRequestDecodingStrategy($0)) }
+            catch { return .error(error) }
+            } ?? .completed
     }
     
 }
