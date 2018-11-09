@@ -14,6 +14,7 @@ public struct HTTPHeader: Hashable {
     public static let acceptLanguage = HTTPHeader(rawValue: "Accept-Language")
     public static let authorization = HTTPHeader(rawValue: "Authorization")
     public static let contentType = HTTPHeader(rawValue: "Content-Type")
+    public static let contentLength = HTTPHeader(rawValue: "Content-Length")
     
     public static func custom(_ value: String) -> HTTPHeader {
         return HTTPHeader(rawValue: value)
@@ -70,15 +71,19 @@ public extension URLRequest {
     }
     
     public mutating func set(accept: MIMEType) {
-        addValue(accept.rawValue, forHTTPHeaderField: HTTPHeader.accept.rawValue)
+        setValue(accept.rawValue, forHTTPHeaderField: HTTPHeader.accept.rawValue)
     }
     
     public mutating func set(contentType: MIMEType) {
-        addValue(contentType.rawValue, forHTTPHeaderField: HTTPHeader.contentType.rawValue)
+        setValue(contentType.rawValue, forHTTPHeaderField: HTTPHeader.contentType.rawValue)
+    }
+    
+    public mutating func set(contentLength: Int) {
+        setValue("\(contentLength)", forHTTPHeaderField: HTTPHeader.contentLength.rawValue)
     }
     
     public mutating func set(value: String, for header: HTTPHeader) {
-        addValue(value, forHTTPHeaderField: header.rawValue)
+        setValue(value, forHTTPHeaderField: header.rawValue)
     }
     
 }

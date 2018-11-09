@@ -8,6 +8,7 @@
 
 import Foundation
 import RxCocoa
+import RxOptional
 import RxSwift
 
 public struct ServiceKey: Hashable {
@@ -350,6 +351,34 @@ public class Service {
             .observeOn(operationScheduler)
     }
     
+    public func upload(_ endpoint: String, file: URL, under key: String) -> Observable<Double> {
+        return Observable.create { [self] observer in
+            do {
+                var request = try self.createRequest(method: .post, endpoint: endpoint)
+                guard file.isFileURL else { throw UploadError.notAFileURL(file) }
+                let form = try MultipartForm(file: file, under: key, encoding: .utf8)
+                request.set(contentType: .multipartFormData(boundary: form.boundary))
+                let task = self.session.uploadTask(with: request, from: form.data) {
+                    guard let error = self.resultToEvent(data: $0, response: $1, error: $2).error else {
+                        return observer.onCompleted()
+                    }
+                    observer.onError(error)
+                }
+                task.resume()
+                observer.onNext(task)
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+            .flatMap { (task: URLSessionUploadTask) in
+                task.progress.rx.fractionComplete
+                    .takeWhile { $0 < 1 }
+            }
+    }
+        
     private func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
         let data: Data?
         do { data = try body.map(dynamicRequestEncodingStrategy) }
@@ -428,13 +457,22 @@ public class Service {
                 data.map {
                     do { return try .error(type.decode(data: $0, with: requestDecoder)) }
                     catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
-                    } ?? .error(HTTPError.ambiguousError(httpResponse.status))
                 } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+            } ?? .error(HTTPError.ambiguousError(httpResponse.status))
         }
         return data.map {
             do { return try .next(self.dynamicRequestDecodingStrategy($0)) }
             catch { return .error(error) }
-            } ?? .completed
+        } ?? .completed
     }
     
+}
+
+extension Reactive where Base: Progress {
+    
+    var fractionComplete: Observable<Double> {
+        return observe(Double.self, #keyPath(Progress.fractionCompleted))
+            .filterNil()
+    }
+
 }

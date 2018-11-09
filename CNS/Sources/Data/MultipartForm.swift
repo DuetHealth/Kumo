@@ -12,18 +12,19 @@ fileprivate var crlf: String {
     return "\r\n"
 }
 
-fileprivate func crlf(_ encoding: String.Encoding) -> Data {
-    return crlf.data(using: encoding)!
+fileprivate func crlf(_ encoding: String.Encoding, count: Int = 1) -> Data {
+    return Data(Array(repeating: crlf.data(using: encoding)!, count: count).joined())
 }
 
 public struct MultipartForm {
     
     public let encoding: String.Encoding
-    let boundary = String(format: "----com.Duet.CNS%08X%08X", arc4random(), arc4random())
+    let boundary = String(format: "----com.Duet.CNS\(UUID().uuidString)")
     
     public var data: Data {
         return currentFormData
             + "--\(boundary)--".data(using: .utf8)!
+            + crlf(encoding)
     }
     
     private var currentFormData = Data()
@@ -47,9 +48,9 @@ public struct MultipartForm {
         currentFormData += "--\(boundary)\(crlf)".data(using: encoding)!
             + disposition
             + contentType
-            + crlf(encoding)
+            + crlf(encoding, count: 2)
             + fileData
-            + crlf(encoding)
+            + crlf(encoding, count: 2)
     }
     
     private func disposition(key: String, fileName: String) throws -> Data {
