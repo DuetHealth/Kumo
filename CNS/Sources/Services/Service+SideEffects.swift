@@ -25,13 +25,19 @@ public extension Service {
         }
         
         @discardableResult public func post(_ endpoint: String, body: [String: Any]) -> Disposable {
-            return base.post(endpoint, body: parameters)
+            return base.post(endpoint, body: body)
+                .subscribe()
+        }
+        
+        @discardableResult public func post<Body: Encodable>(_ endpoint: String, body: Body) -> Disposable {
+            return (base.post(endpoint, body: body) as Observable<Void>)
                 .subscribe()
         }
         
     }
     
-    /// Provides a convenient way for performing requests which are side-effects: ignored
+    /// Provides a convenient way for performing requests which are side effects; that is, requests for which
+    /// observing the response is unnecessary.
     public var unobserved: SideEffectScope {
         return SideEffectScope(self)
     }
