@@ -107,6 +107,24 @@ public class Service {
                 observer.onError(error)
                 return Disposables.create()
             }
+            }
+            .observeOn(operationScheduler)
+    }
+    
+    public func get(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Void> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
         }
             .observeOn(operationScheduler)
     }
@@ -466,13 +484,4 @@ public class Service {
         } ?? .completed
     }
     
-}
-
-extension Reactive where Base: Progress {
-    
-    var fractionComplete: Observable<Double> {
-        return observe(Double.self, #keyPath(Progress.fractionCompleted))
-            .filterNil()
-    }
-
 }

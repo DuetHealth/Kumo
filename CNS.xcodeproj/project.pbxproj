@@ -33,6 +33,8 @@
 		94B6BD1121762D17005454C6 /* CNSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B6BD1021762D17005454C6 /* CNSTests.swift */; };
 		94B6BD1321762D17005454C6 /* CNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 94B6BD0521762D17005454C6 /* CNS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94B6BD2121762E71005454C6 /* ApplicationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B6BD2021762E71005454C6 /* ApplicationLayer.swift */; };
+		94C3BD93219B0F5600B4A3E2 /* Service+SideEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C3BD92219B0F5600B4A3E2 /* Service+SideEffects.swift */; };
+		94C3BD95219B0F8100B4A3E2 /* Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C3BD94219B0F8100B4A3E2 /* Progress.swift */; };
 		ED4D42E502A34B9A7D6691AD /* Pods_CNSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2750D1A07D96D9B7CBE92C0B /* Pods_CNSTests.framework */; };
 		F6FC41AEF9CE26C00DA302F5 /* Pods_CNS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94309864E6D98617391C90ED /* Pods_CNS.framework */; };
 /* End PBXBuildFile section */
@@ -82,6 +84,8 @@
 		94B6BD1021762D17005454C6 /* CNSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CNSTests.swift; sourceTree = "<group>"; };
 		94B6BD1221762D17005454C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		94B6BD2021762E71005454C6 /* ApplicationLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationLayer.swift; sourceTree = "<group>"; };
+		94C3BD92219B0F5600B4A3E2 /* Service+SideEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Service+SideEffects.swift"; sourceTree = "<group>"; };
+		94C3BD94219B0F8100B4A3E2 /* Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress.swift; sourceTree = "<group>"; };
 		F8E3B19801DAE99F8E3CECA2 /* Pods-CNSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CNSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CNSTests/Pods-CNSTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -112,6 +116,7 @@
 				945421752187889200932CAF /* Copying.swift */,
 				949AD28C218BD6EC00808C79 /* StringEncoding.swift */,
 				945421732187883B00932CAF /* URLSession.swift */,
+				94C3BD94219B0F8100B4A3E2 /* Progress.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -205,14 +210,23 @@
 			children = (
 				94B6BD0521762D17005454C6 /* CNS.h */,
 				94B6BD2021762E71005454C6 /* ApplicationLayer.swift */,
-				945D4113217F6222008ACFD0 /* Service.swift */,
 				945D40DA217A4713008ACFD0 /* Coding */,
 				949AD28E218BD71400808C79 /* Data */,
 				945D40E7217A4AA7008ACFD0 /* Errors */,
 				945421722187882E00932CAF /* Extensions */,
 				945D40EA217A6081008ACFD0 /* HTTP */,
+				94C3BD91219B0CB100B4A3E2 /* Services */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		94C3BD91219B0CB100B4A3E2 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				945D4113217F6222008ACFD0 /* Service.swift */,
+				94C3BD92219B0F5600B4A3E2 /* Service+SideEffects.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		FA0A74F2F08FFEB561304DAD /* Pods */ = {
@@ -413,6 +427,8 @@
 				945421762187889200932CAF /* Copying.swift in Sources */,
 				94B6BD2121762E71005454C6 /* ApplicationLayer.swift in Sources */,
 				945421742187883B00932CAF /* URLSession.swift in Sources */,
+				94C3BD93219B0F5600B4A3E2 /* Service+SideEffects.swift in Sources */,
+				94C3BD95219B0F8100B4A3E2 /* Progress.swift in Sources */,
 				949AD294218BD7D500808C79 /* ResponseError.swift in Sources */,
 				949AD296218BD80E00808C79 /* MultipartForm.swift in Sources */,
 				949AD28D218BD6EC00808C79 /* StringEncoding.swift in Sources */,
