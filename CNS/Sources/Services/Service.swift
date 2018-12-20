@@ -107,7 +107,7 @@ public class Service {
                 observer.onError(error)
                 return Disposables.create()
             }
-            }
+        }
             .observeOn(operationScheduler)
     }
     
@@ -283,6 +283,24 @@ public class Service {
             .observeOn(operationScheduler)
     }
     
+    public func put(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Void> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create()
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
     public func delete<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
@@ -328,6 +346,25 @@ public class Service {
                 request.set(contentType: .multipartFormData(boundary: form.boundary))
                 let task = self.session.uploadTask(with: request, from: form.data) {
                     observer.on(self.resultToElement(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+    
+    public func download(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<URL> {
+        return Observable.create { [self] observer in
+            do {
+                var request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
+                request.remove(header: .accept)
+                let task = self.session.downloadTask(with: request) {
+                    observer.on(self.downloadResultToURL(url: $0, response: $1, error: $2))
                     observer.onCompleted()
                 }
                 task.resume()
@@ -463,6 +500,26 @@ public class Service {
         } ?? .completed
     }
     
+    private func downloadResultToURL(url: URL?, response: URLResponse?, error: Error?) -> Event<URL> {
+        if let error = error { return .error(error) }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+        }
+        if httpResponse.status.isError {
+            return .error(HTTPError.ambiguousError(httpResponse.status))
+        }
+        guard let url = url, let fileType = (response?.mimeType).flatMap(FileType.init(mimeType:)) else { return .completed }
+        let newURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: false)
+            .appendingPathExtension(fileType.fileExtension)
+        do {
+            try FileManager.default.moveItem(atPath: url.path, toPath: newURL.path)
+            return .next(newURL)
+        } catch {
+            return .error(error)
+        }
+    }
+    
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
     /// act on an element.
     private func resultToElement(data: Data?, response: URLResponse?, error: Error?) -> Event<Any> {
@@ -482,6 +539,14 @@ public class Service {
             do { return try .next(self.dynamicRequestDecodingStrategy($0)) }
             catch { return .error(error) }
         } ?? .completed
+    }
+    
+}
+
+extension FileManager {
+    
+    var documentsDirectory: URL {
+        return urls(for: .documentDirectory, in: .userDomainMask).first!
     }
     
 }

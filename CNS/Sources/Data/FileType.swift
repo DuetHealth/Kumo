@@ -10,17 +10,17 @@ import Chronicle
 import Foundation
 import MobileCoreServices
 
-struct FileType: Equatable, Codable {
+public struct FileType: Equatable, Codable {
     
-    static func ==(_ lhs: FileType, _ rhs: FileType) -> Bool {
+    public static func ==(_ lhs: FileType, _ rhs: FileType) -> Bool {
         return lhs.fileExtension == rhs.fileExtension
     }
     
-    let fileExtension: String
-    let mimeType: String
-    let uti: String
+    public let fileExtension: String
+    public let mimeType: String
+    public let uti: String
     
-    init?(uti: String) {
+    public init?(uti: String) {
         self.uti = uti
         guard let mimeType = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType) else {
             chron.stdout.warning("UTI \(uti) isn't associated with a MIME type.")
@@ -30,21 +30,35 @@ struct FileType: Equatable, Codable {
         self.fileExtension = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassFilenameExtension)?.takeRetainedValue() as String? ?? ""
     }
     
-    init?(fileExtension: String) {
+    public init?(fileExtension: String) {
         guard let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, fileExtension as CFString, nil) else {
-            chron.stdout.warning("File extension \(fileExtension) isn't associated with a native UTI.")
+            chron.stdout.warning("File extension '\(fileExtension)' isn't associated with a native UTI.")
             return nil
         }
-        self.fileExtension = fileExtension
         self.uti = uti.takeRetainedValue() as String
         guard let mimeType = UTTypeCopyPreferredTagWithClass(self.uti as CFString, kUTTagClassMIMEType) else {
-            chron.stdout.warning("File extension \(fileExtension) is associated with native UTI \(uti) but isn't associated with a MIME type.")
+            chron.stdout.warning("File extension '\(fileExtension)' is associated with native UTI '\(uti)' but isn't associated with a MIME type.")
             return nil
         }
         self.mimeType = mimeType.takeRetainedValue() as String
+        self.fileExtension = fileExtension
     }
     
-    init(from decoder: Decoder) throws {
+    public init?(mimeType: String) {
+        guard let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType as CFString, nil) else {
+            chron.stdout.warning("MIME type '\(mimeType)' isn't associated with a native UTI.")
+            return nil
+        }
+        self.uti = uti.takeRetainedValue() as String
+        self.mimeType = mimeType
+        guard let fileExtension = UTTypeCopyPreferredTagWithClass(self.uti as CFString, kUTTagClassFilenameExtension) else {
+            chron.stdout.warning("MIME type '\(mimeType)' is associated with native UTI '\(uti)' but isn't associated with a file extension.")
+            return nil
+        }
+        self.fileExtension = fileExtension.takeRetainedValue() as String
+    }
+    
+    public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let fileExtension = try container.decode(String.self)
         guard let fileType = FileType(fileExtension: fileExtension) else {
@@ -53,7 +67,7 @@ struct FileType: Equatable, Codable {
         self = fileType
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(fileExtension)
     }

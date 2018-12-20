@@ -38,6 +38,10 @@ public extension URLSessionConfiguration {
         }
     }
     
+    func removeValue(for header: HTTPHeader) {
+        httpAdditionalHeaders?[header.rawValue] = ""
+    }
+    
     public var httpHeaders: [HTTPHeader: Any]? {
         get {
             return httpAdditionalHeaders.map {
@@ -68,6 +72,10 @@ public extension URLRequest {
                 })
             }
         }
+    }
+    
+    public mutating func remove(header: HTTPHeader) {
+        setValue(nil, forHTTPHeaderField: header.rawValue)
     }
     
     public mutating func set(accept: MIMEType) {
