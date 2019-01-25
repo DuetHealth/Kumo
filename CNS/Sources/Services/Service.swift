@@ -139,11 +139,8 @@ public class Service {
                     case .error(let error): return observer.onError(error)
                     case .completed: return observer.onCompleted()
                     case .next(let wrapper):
-                        if wrapper.matchedKey == key { observer.onNext(wrapper.value) }
-                        else {
-                            let context = DecodingError.Context(codingPath: [], debugDescription: "Tried to find data nested under \(key) but found it under \(wrapper.matchedKey)")
-                            observer.onError(DecodingError.keyNotFound(DynamicCodingKeys(stringValue: key)!, context))
-                        }
+                        do { try observer.onNext(wrapper.value(forKey: key)) }
+                        catch { observer.onError(error) }
                         observer.onCompleted()
                     }
                 }
