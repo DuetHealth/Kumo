@@ -15,15 +15,15 @@ struct JSONWrapper<Inner: Decodable>: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: DynamicCodingKeys.self)
         matchContainer = MatchContainer<Inner>()
-        let shouldIterateAll = (matchContainer as? Matching)?.shouldIterateAll ?? false
+        let shouldContinueAfterMatch = (matchContainer as? AmbiguousMatching)?.shouldContinueAfterMatch ?? false
         
         for key in container.allKeys {
-            if let value = try? container.decode(Inner.self, forKey: key) {
-                matchContainer.insert(value, forKey: key.stringValue)
-            }
-            if shouldIterateAll { continue }
+            guard let value = try? container.decode(Inner.self, forKey: key) else { continue }
+            matchContainer.insert(value, forKey: key.stringValue)
+            if shouldContinueAfterMatch { continue }
             return
         }
+        
         guard matchContainer.isEmpty else { return }
         let context = DecodingError.Context(codingPath: container.codingPath, debugDescription: "A nested value of type \(Inner.self) was not found.")
         throw DecodingError.valueNotFound(Inner.self, context)
@@ -59,15 +59,15 @@ fileprivate struct MatchContainer<Contained> {
     
 }
 
-protocol Matching {
+protocol AmbiguousMatching {
     
-    var shouldIterateAll: Bool { get }
+    var shouldContinueAfterMatch: Bool { get }
     
 }
 
-extension MatchContainer: Matching where Contained: Collection {
+extension MatchContainer: AmbiguousMatching where Contained: Collection {
     
-    var shouldIterateAll: Bool {
+    var shouldContinueAfterMatch: Bool {
         return true
     }
     
