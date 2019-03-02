@@ -61,7 +61,7 @@ public class Service {
     /// By default, tasks are observed on the main thread.
     public var operationScheduler: SchedulerType = MainScheduler.instance
     
-    private var session: URLSession
+    private(set) var session: URLSession
     
     /// Returns the headers applied to all requests.
     public var commonHTTPHeaders: [HTTPHeader: Any]? {
@@ -93,247 +93,6 @@ public class Service {
         }
     }
     
-    public func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Response> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func get(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], keyedUnder key: String) -> Observable<Response> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
-                let task = self.session.dataTask(with: request) {
-                    let event: Event<JSONWrapper<Response>> = self.resultToElement(data: $0, response: $1, error: $2)
-                    switch event {
-                    case .error(let error): return observer.onError(error)
-                    case .completed: return observer.onCompleted()
-                    case .next(let wrapper):
-                        do { try observer.onNext(wrapper.value(forKey: key)) }
-                        catch { observer.onError(error) }
-                        observer.onCompleted()
-                    }
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func post<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func post<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func post<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Response> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func post<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Any> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func post(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .post, endpoint: endpoint, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func put<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func put<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create()
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func put(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create()
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func delete<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Response> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .delete, endpoint: endpoint, queryParameters: parameters)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create()
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func delete(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .delete, endpoint: endpoint, queryParameters: parameters)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create()
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
     public func upload<Response: Decodable>(_ endpoint: String, file: URL, under key: String) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
@@ -354,98 +113,22 @@ public class Service {
         }
             .observeOn(operationScheduler)
     }
-    
-    public func download(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<URL> {
-        return Observable.create { [self] observer in
-            do {
-                var request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
-                request.remove(header: .accept)
-                let task = self.session.downloadTask(with: request) {
-                    observer.on(self.downloadResultToURL(url: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    /// Uploads to an endpoint the provided file. The file is uploaded as form data
-    /// under the supplied name.
-    ///
-    /// - Parameters:
-    ///   - endpoint: the path extension corresponding to the endpoint
-    ///   - file: the URL of the file to upload
-    ///   - name: the name of form part under which to embed the file's data
-    /// - Returns: an `Observable` which emits a single empty element upon success.
-    public func upload(_ endpoint: String, file: URL, under key: String) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                var request = try self.createRequest(method: .post, endpoint: endpoint)
-                guard file.isFileURL else { throw UploadError.notAFileURL(file) }
-                let form = try MultipartForm(file: file, under: key, encoding: .utf8)
-                request.set(contentType: .multipartFormData(boundary: form.boundary))
-                let task = self.session.uploadTask(with: request, from: form.data) {
-                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-    }
-    
-    public func upload(_ endpoint: String, file: URL, under key: String) -> Observable<Double> {
-        return Observable.create { [self] observer in
-            do {
-                var request = try self.createRequest(method: .post, endpoint: endpoint)
-                guard file.isFileURL else { throw UploadError.notAFileURL(file) }
-                let form = try MultipartForm(file: file, under: key, encoding: .utf8)
-                request.set(contentType: .multipartFormData(boundary: form.boundary))
-                let task = self.session.uploadTask(with: request, from: form.data) {
-                    guard let error = self.resultToEvent(data: $0, response: $1, error: $2).error else {
-                        return observer.onCompleted()
-                    }
-                    observer.onError(error)
-                }
-                task.resume()
-                observer.onNext(task)
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
-            .flatMap { (task: URLSessionUploadTask) in
-                task.progress.rx.fractionComplete
-                    .takeWhile { $0 < 1 }
-            }
-    }
-        
-    private func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
+            
+    func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
         let data: Data?
         do { data = try body.map(dynamicRequestEncodingStrategy) }
         catch { throw HTTPError.unserializableRequestBody(object: body, originalError: error) }
         return try createRequest(method: method, endpoint: endpoint, queryParameters: queryParameters, body: data)
     }
     
-    private func createRequest<Body: Encodable>(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: Body? = nil) throws -> URLRequest {
+    func createRequest<Body: Encodable>(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: Body? = nil) throws -> URLRequest {
         let data: Data?
         do { data = try body.map(requestEncoder.encode) }
         catch { throw HTTPError.unserializableRequestBody(object: body, originalError: error) }
         return try createRequest(method: method, endpoint: endpoint, queryParameters: queryParameters, body: data)
     }
     
-    private func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any], body: Data?) throws -> URLRequest {
+    func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any], body: Data?) throws -> URLRequest {
         guard var components = URLComponents(url: baseURL.appendingPathComponent(endpoint), resolvingAgainstBaseURL: false) else {
             throw HTTPError.malformedURL(baseURL: baseURL, endpoint: endpoint)
         }
@@ -460,7 +143,7 @@ public class Service {
     
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
     /// perform side effects.
-    private func resultToEvent(data: Data?, response: URLResponse?, error: Error?) -> Event<Void> {
+    func resultToEvent(data: Data?, response: URLResponse?, error: Error?) -> Event<Void> {
         if let error = error { return .error(error) }
         guard let httpResponse = response as? HTTPURLResponse else {
             return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
@@ -478,7 +161,7 @@ public class Service {
     
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
     /// act on an element.
-    private func resultToElement<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Event<Response> {
+    func resultToElement<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Event<Response> {
         if let error = error { return .error(error) }
         guard let httpResponse = response as? HTTPURLResponse else {
             return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
@@ -497,7 +180,9 @@ public class Service {
         } ?? .completed
     }
     
-    private func downloadResultToURL(url: URL?, response: URLResponse?, error: Error?) -> Event<URL> {
+    /// Converts the results of a `URLSessionDownloadTask` into an Rx `Event` with which consumer
+    /// may act on an element.
+    func downloadResultToURL(url: URL?, response: URLResponse?, error: Error?) -> Event<URL> {
         if let error = error { return .error(error) }
         guard let httpResponse = response as? HTTPURLResponse else {
             return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
@@ -505,7 +190,7 @@ public class Service {
         if httpResponse.status.isError {
             return .error(HTTPError.ambiguousError(httpResponse.status))
         }
-        guard let url = url, let fileType = (response?.mimeType).flatMap(FileType.init(mimeType:)) else { return .completed }
+        guard let url = url, let fileType = (response?.mimeType).flatMap({ try? FileType(mimeType: $0) }) else { return .completed }
         let newURL = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: false)
             .appendingPathExtension(fileType.fileExtension)
@@ -519,7 +204,7 @@ public class Service {
     
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
     /// act on an element.
-    private func resultToElement(data: Data?, response: URLResponse?, error: Error?) -> Event<Any> {
+    func resultToElement(data: Data?, response: URLResponse?, error: Error?) -> Event<Any> {
         if let error = error { return .error(error) }
         guard let httpResponse = response as? HTTPURLResponse else {
             return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)

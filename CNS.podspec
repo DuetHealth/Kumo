@@ -11,12 +11,11 @@ Pod::Spec.new do |s|
   s.author          = "ライアン"
   s.source          = { git: "https://gitlab.duethealth.com/CNS.git", tag: "#{s.version}" }
   s.source_files    = 'CNS/Sources/**/*.{h,m,swift}'
-  s.swift_version   = '4.1'
+  s.swift_version   = '4.2'
   s.ios.deployment_target = '11.0'
 
   s.dependency 'RxCocoa'
   s.dependency 'RxOptional'
   s.dependency 'RxSwift'
 
-  s.dependency 'Chronicle'
 end

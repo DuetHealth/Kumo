@@ -39,7 +39,7 @@ public struct MultipartForm {
     }
     
     mutating func addFile(from url: URL, under key: String) throws {
-        guard let fileType = FileType(fileExtension: url.pathExtension) else {
+        guard let fileType = try? FileType(fileExtension: url.pathExtension) else {
             throw UploadError.unknownFileType(url)
         }
         let disposition = try self.disposition(key: key, fileName: url.lastPathComponent)
