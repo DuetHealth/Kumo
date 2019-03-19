@@ -130,10 +130,13 @@ public class Service {
     
     func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any], body: Data?) throws -> URLRequest {
         guard var components = URLComponents(url: baseURL.appendingPathComponent(endpoint), resolvingAgainstBaseURL: false) else {
-            throw HTTPError.malformedURL(baseURL: baseURL, endpoint: endpoint)
+            throw HTTPError.malformedURL(baseURL: baseURL, endpoint: endpoint, parameters: queryParameters)
         }
         components.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
-        var request = URLRequest(url: baseURL.appendingPathComponent(endpoint))
+        guard let url = components.url else {
+            throw HTTPError.malformedURL(baseURL: baseURL, endpoint: endpoint, parameters: queryParameters)
+        }
+        var request = URLRequest(url: url)
         request.httpHeaders = [.contentType: requestEncoder.contentType.rawValue,
                                .accept: requestDecoder.acceptType.rawValue]
         request.httpMethod = method.rawValue

@@ -18,10 +18,10 @@ public extension Service {
     ///   - file: the URL of the file to upload
     ///   - key: the name of form part under which to embed the file's data
     /// - Returns: an `Observable` which emits a single empty element upon success.
-    public func upload(_ endpoint: String, file: URL, under key: String) -> Observable<Void> {
+    public func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
-                var request = try self.createRequest(method: .post, endpoint: endpoint)
+                var request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters)
                 guard file.isFileURL else { throw UploadError.notAFileURL(file) }
                 let form = try MultipartForm(file: file, under: key, encoding: .utf8)
                 request.set(contentType: .multipartFormData(boundary: form.boundary))
@@ -47,10 +47,10 @@ public extension Service {
     ///   - file: the URL of the file to upload
     ///   - key: the name of form part under which to embed the file's data
     /// - Returns: an `Observable` which emits the progress of the upload.
-    public func upload(_ endpoint: String, file: URL, under key: String) -> Observable<Double> {
+    public func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> Observable<Double> {
         return Observable.create { [self] observer in
             do {
-                var request = try self.createRequest(method: .post, endpoint: endpoint)
+                var request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters)
                 guard file.isFileURL else { throw UploadError.notAFileURL(file) }
                 let form = try MultipartForm(file: file, under: key, encoding: .utf8)
                 request.set(contentType: .multipartFormData(boundary: form.boundary))
