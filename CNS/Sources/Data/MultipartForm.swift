@@ -46,7 +46,7 @@ public struct MultipartForm {
         let contentType = try self.contentType(mimeType: fileType.mimeType)
         let fileData = try Data(contentsOf: url)
         currentFormData += "--\(boundary)\(crlf)".data(using: encoding)!
-            + disposition
+        currentFormData += disposition
             + contentType
             + crlf(encoding, count: 2)
             + fileData
