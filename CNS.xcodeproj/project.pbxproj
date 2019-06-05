@@ -22,6 +22,14 @@
 		9422A354222C267A0038E451 /* TestStructure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A353222C267A0038E451 /* TestStructure.swift */; };
 		9422A356222C8CE50038E451 /* PostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A355222C8CE50038E451 /* PostTests.swift */; };
 		9422A358222CD7700038E451 /* DynamicBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A357222CD7700038E451 /* DynamicBody.swift */; };
+		9427B5A4229311C3003D9CF6 /* XMLEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */; };
+		9427B5A6229311CB003D9CF6 /* XMLDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A5229311CB003D9CF6 /* XMLDecoder.swift */; };
+		9427B5AB22932EC7003D9CF6 /* XMLProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5AA22932EC7003D9CF6 /* XMLProcessor.swift */; };
+		943ADDC322A6FBA20045A0B9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 943ADDC222A6FBA20045A0B9 /* RxRelay.framework */; };
+		9447837C22958ED200BE6960 /* XMLDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837B22958ED200BE6960 /* XMLDecodingTests.swift */; };
+		9447837E2296C8B300BE6960 /* SOAPEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837D2296C8B300BE6960 /* SOAPEncoder.swift */; };
+		944783812296C8CA00BE6960 /* SOAPDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944783802296C8CA00BE6960 /* SOAPDecoder.swift */; };
+		944783832296C9AF00BE6960 /* SOAPBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944783822296C9AF00BE6960 /* SOAPBody.swift */; };
 		9454216D2187879300932CAF /* RequestEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9454216C2187879300932CAF /* RequestEncoding.swift */; };
 		9454216F218787BB00932CAF /* RequestDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9454216E218787BB00932CAF /* RequestDecoding.swift */; };
 		94542171218787F600932CAF /* JSONWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94542170218787F600932CAF /* JSONWrapper.swift */; };
@@ -79,6 +87,14 @@
 		9422A353222C267A0038E451 /* TestStructure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestStructure.swift; sourceTree = "<group>"; };
 		9422A355222C8CE50038E451 /* PostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTests.swift; sourceTree = "<group>"; };
 		9422A357222CD7700038E451 /* DynamicBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicBody.swift; sourceTree = "<group>"; };
+		9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLEncoder.swift; sourceTree = "<group>"; };
+		9427B5A5229311CB003D9CF6 /* XMLDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecoder.swift; sourceTree = "<group>"; };
+		9427B5AA22932EC7003D9CF6 /* XMLProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLProcessor.swift; sourceTree = "<group>"; };
+		943ADDC222A6FBA20045A0B9 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
+		9447837B22958ED200BE6960 /* XMLDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecodingTests.swift; sourceTree = "<group>"; };
+		9447837D2296C8B300BE6960 /* SOAPEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPEncoder.swift; sourceTree = "<group>"; };
+		944783802296C8CA00BE6960 /* SOAPDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPDecoder.swift; sourceTree = "<group>"; };
+		944783822296C9AF00BE6960 /* SOAPBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPBody.swift; sourceTree = "<group>"; };
 		9454216C2187879300932CAF /* RequestEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestEncoding.swift; sourceTree = "<group>"; };
 		9454216E218787BB00932CAF /* RequestDecoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoding.swift; sourceTree = "<group>"; };
 		94542170218787F600932CAF /* JSONWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONWrapper.swift; sourceTree = "<group>"; };
@@ -125,6 +141,7 @@
 				9422A349222B2B7C0038E451 /* RxAtomic.framework in Frameworks */,
 				9422A33C222AEDF20038E451 /* RxCocoa.framework in Frameworks */,
 				9422A33D222AEDF20038E451 /* RxOptional.framework in Frameworks */,
+				943ADDC322A6FBA20045A0B9 /* RxRelay.framework in Frameworks */,
 				9422A33E222AEDF20038E451 /* RxSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -147,6 +164,7 @@
 		9422A338222AEDF20038E451 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				943ADDC222A6FBA20045A0B9 /* RxRelay.framework */,
 				9422A348222B2B7C0038E451 /* RxAtomic.framework */,
 				9422A339222AEDF20038E451 /* RxCocoa.framework */,
 				9422A33A222AEDF20038E451 /* RxOptional.framework */,
@@ -155,13 +173,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		9422A33F222AFB210038E451 /* ServiceTests */ = {
+		9422A33F222AFB210038E451 /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				9422A340222AFB570038E451 /* GetTests.swift */,
 				9422A355222C8CE50038E451 /* PostTests.swift */,
 			);
-			path = ServiceTests;
+			path = Services;
 			sourceTree = "<group>";
 		};
 		9422A344222B034B0038E451 /* Mocks */ = {
@@ -183,6 +201,35 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
+		9427B5A2229311B0003D9CF6 /* XML */ = {
+			isa = PBXGroup;
+			children = (
+				9447837F2296C8B500BE6960 /* SOAP */,
+				9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */,
+				9427B5A5229311CB003D9CF6 /* XMLDecoder.swift */,
+				9427B5AA22932EC7003D9CF6 /* XMLProcessor.swift */,
+			);
+			path = XML;
+			sourceTree = "<group>";
+		};
+		9447837A22958EB800BE6960 /* XML */ = {
+			isa = PBXGroup;
+			children = (
+				9447837B22958ED200BE6960 /* XMLDecodingTests.swift */,
+			);
+			path = XML;
+			sourceTree = "<group>";
+		};
+		9447837F2296C8B500BE6960 /* SOAP */ = {
+			isa = PBXGroup;
+			children = (
+				944783802296C8CA00BE6960 /* SOAPDecoder.swift */,
+				9447837D2296C8B300BE6960 /* SOAPEncoder.swift */,
+				944783822296C9AF00BE6960 /* SOAPBody.swift */,
+			);
+			path = SOAP;
+			sourceTree = "<group>";
+		};
 		945421722187882E00932CAF /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -197,6 +244,7 @@
 		945D40DA217A4713008ACFD0 /* Coding */ = {
 			isa = PBXGroup;
 			children = (
+				9427B5A2229311B0003D9CF6 /* XML */,
 				945D40DD217A4A95008ACFD0 /* DynamicCodingKeys.swift */,
 				945D40DE217A4A95008ACFD0 /* ErasedEncodable.swift */,
 				94542170218787F600932CAF /* JSONWrapper.swift */,
@@ -273,7 +321,8 @@
 			children = (
 				9422A350222B2F6E0038E451 /* Common */,
 				9422A344222B034B0038E451 /* Mocks */,
-				9422A33F222AFB210038E451 /* ServiceTests */,
+				9422A33F222AFB210038E451 /* Services */,
+				9447837A22958EB800BE6960 /* XML */,
 				94B6BD1221762D17005454C6 /* Info.plist */,
 			);
 			path = CNSTests;
@@ -435,6 +484,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/RxAtomic.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/RxOptional.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxRelay.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
 			);
 			outputFileListPaths = (
@@ -443,6 +493,7 @@
 				"$(BUILT_PRODUCTS_DIR)/RxAtomic.framework",
 				"$(BUILT_PRODUCTS_DIR)/RxCocoa.framework",
 				"$(BUILT_PRODUCTS_DIR)/RxOptional.framework",
+				"$(BUILT_PRODUCTS_DIR)/RxRelay.framework",
 				"$(BUILT_PRODUCTS_DIR)/RxSwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -456,15 +507,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9427B5A6229311CB003D9CF6 /* XMLDecoder.swift in Sources */,
 				945D40E5217A4A95008ACFD0 /* KeyedEncodingContainer+DynamicEncoding.swift in Sources */,
 				949AD287218A937300808C79 /* HTTPResponseStatus.swift in Sources */,
+				9427B5AB22932EC7003D9CF6 /* XMLProcessor.swift in Sources */,
 				945421762187889200932CAF /* Copying.swift in Sources */,
 				94B6BD2121762E71005454C6 /* ApplicationLayer.swift in Sources */,
 				945421742187883B00932CAF /* URLSession.swift in Sources */,
 				94C3BD95219B0F8100B4A3E2 /* Progress.swift in Sources */,
 				949AD294218BD7D500808C79 /* ResponseError.swift in Sources */,
+				944783812296C8CA00BE6960 /* SOAPDecoder.swift in Sources */,
 				94F2CDCD222A3602006D9C36 /* Service+Download.swift in Sources */,
 				949AD296218BD80E00808C79 /* MultipartForm.swift in Sources */,
+				944783832296C9AF00BE6960 /* SOAPBody.swift in Sources */,
 				94F2CDCF222A3602006D9C36 /* Service+SideEffects.swift in Sources */,
 				94F2CDD1222A3602006D9C36 /* Service+Delete.swift in Sources */,
 				949AD28D218BD6EC00808C79 /* StringEncoding.swift in Sources */,
@@ -487,6 +542,8 @@
 				945D4116217F6ADB008ACFD0 /* HTTPHeader.swift in Sources */,
 				945D40EC217A60BD008ACFD0 /* HTTPMethod.swift in Sources */,
 				945D40E9217A4AB6008ACFD0 /* HTTPError.swift in Sources */,
+				9427B5A4229311C3003D9CF6 /* XMLEncoder.swift in Sources */,
+				9447837E2296C8B300BE6960 /* SOAPEncoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,6 +553,7 @@
 			files = (
 				9422A358222CD7700038E451 /* DynamicBody.swift in Sources */,
 				9422A354222C267A0038E451 /* TestStructure.swift in Sources */,
+				9447837C22958ED200BE6960 /* XMLDecodingTests.swift in Sources */,
 				9422A341222AFB570038E451 /* GetTests.swift in Sources */,
 				9422A352222B2F7A0038E451 /* NetworkTest.swift in Sources */,
 				9422A34F222B2CA40038E451 /* MockResponse.swift in Sources */,

@@ -45,12 +45,14 @@ public struct MultipartForm {
         let disposition = try self.disposition(key: key, fileName: url.lastPathComponent)
         let contentType = try self.contentType(mimeType: fileType.mimeType)
         let fileData = try Data(contentsOf: url)
-        currentFormData += "--\(boundary)\(crlf)".data(using: encoding)!
-            + disposition
-            + contentType
-            + crlf(encoding, count: 2)
-            + fileData
-            + crlf(encoding, count: 2)
+        currentFormData = [
+            "--\(boundary)\(crlf)".data(using: encoding)!,
+            disposition,
+            contentType,
+            crlf(encoding, count: 2),
+            fileData,
+            crlf(encoding, count: 2)
+        ].reduce(Data(), +)
     }
     
     private func disposition(key: String, fileName: String) throws -> Data {

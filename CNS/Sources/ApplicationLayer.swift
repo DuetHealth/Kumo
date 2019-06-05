@@ -44,7 +44,6 @@ open class ApplicationLayer {
             }
         }
             .map { [unowned self] in self.observeReachability($0) }?
-            .debug()
             .bind(to: networkConnectivityRelay)
             .disposed(by: bag)
     }
