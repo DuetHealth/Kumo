@@ -34,3 +34,14 @@ public class SOAPDecoder {
 
 }
 
+extension SOAPDecoder: RequestDecoding {
+
+    public var acceptType: MIMEType {
+        return baseDecoder.acceptType
+    }
+
+    public func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
+        return (try self.decode(from: data) as SOAPBody<T>).contents
+    }
+
+}

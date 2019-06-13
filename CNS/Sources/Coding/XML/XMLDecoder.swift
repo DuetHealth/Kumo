@@ -27,7 +27,7 @@ public class XMLDecoder {
             case .convertFromPascalCase:
                 return raw == key.stringValue.prefix(1).capitalized + key.stringValue.dropFirst()
             case .convertFromSnakeCase:
-                return raw == type(of: self).snakeCaseRegex.stringByReplacingMatches(in: key.stringValue, options: [], range: NSRange(location: 0, length: raw.count), withTemplate: "$1_$2").lowercased()
+                return raw == type(of: self).snakeCaseRegex.stringByReplacingMatches(in: key.stringValue, options: [], range: NSRange(location: 0, length: key.stringValue.count), withTemplate: "$1_$2").lowercased()
             case .convertFromCasing(.lower):
                 return raw == key.stringValue.lowercased()
             case .convertFromCasing(.upper):
@@ -36,6 +36,7 @@ public class XMLDecoder {
         }
     }
 
+    var objectDecodingStrategy: KeyDecodingStrategy = .useDefaultKeys
     var keyDecodingStrategy: KeyDecodingStrategy = .useDefaultKeys
 
     public init() {
@@ -134,7 +135,6 @@ fileprivate class XMLProcessor: NSObject, Decoder, XMLParserDelegate {
     }
 
     func container<Key: CodingKey>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> {
-        // TODO: the thing on something that isn't just the root...
         return KeyedDecodingContainer(KeyedXMLNodeContainer<Key>(root, keyMatching: keyMatching))
     }
 
