@@ -43,9 +43,34 @@ public class XMLEncoder {
     public func encode<T: Encodable>(_ value: T) throws -> Data {
         let constructor = XMLConstructor(keyConverting: keyEncodingStrategy.convert(key:))
         try value.encode(to: constructor)
-        throw NSError()
+        try print(constructor.context.read())
+        fatalError()
     }
     
+}
+
+class XMLNodeWritingContext {
+
+    private var stack = StackDecorator([XMLNode.root])
+
+    func addNested(node: XMLNode) {
+        stack.push(node)
+    }
+
+    func addLeaf(node: XMLNode) throws {
+        try stack.update { top in
+            switch top.child {
+            case .text: throw NSError()
+            case .nodes(let nodes): top.child = .nodes(nodes + [node])
+            }
+        }
+    }
+
+    func read() throws -> XMLNode {
+        // TODO: build a tree. Right now this does nothing.
+        return stack.peek!
+    }
+
 }
 
 class XMLConstructor: Encoder {
@@ -53,16 +78,16 @@ class XMLConstructor: Encoder {
     var codingPath: [CodingKey] = []
     var userInfo: [CodingUserInfoKey : Any] = [:]
 
-    var root = XMLNode.root
+    let context = XMLNodeWritingContext()
 
     private let keyConverting: (CodingKey) -> String
 
-    init(keyConverting: @escaping (CodingKey) -> String) {
+    init(context: XMLNodeWritingContext = XMLNodeWritingContext(), keyConverting: @escaping (CodingKey) -> String) {
         self.keyConverting = keyConverting
     }
 
     func container<Key: CodingKey>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> {
-        return KeyedEncodingContainer(KeyedXMLEncodingContainer(node: &root, keyConverting: keyConverting))
+        return KeyedEncodingContainer(KeyedXMLEncodingContainer(context: context, keyConverting: keyConverting))
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
@@ -79,24 +104,20 @@ struct KeyedXMLEncodingContainer<Key: CodingKey>: KeyedEncodingContainerProtocol
 
     var codingPath: [CodingKey] = []
 
-    private var node: XMLNode
+    private let context: XMLNodeWritingContext
     private let keyConverting: (CodingKey) -> String
 
-    init(node: inout XMLNode, keyConverting: @escaping (CodingKey) -> String) {
-        self.node = node
+    init(context: XMLNodeWritingContext, keyConverting: @escaping (CodingKey) -> String) {
+        self.context = context
         self.keyConverting = keyConverting
     }
 
     mutating func encodeNil(forKey key: Key) throws {
-        
+        // TODO: apparently nil is encoded as xsi:nil="true"
     }
 
     private mutating func commonEncode(_ value: String, forKey key: Key) throws {
-        var newNode = XMLNode(name: keyConverting(key), attributes: [:], child: .text(value))
-        switch node.child {
-        case .text: throw NSError()
-        case .nodes(let nodes): node.child = .nodes(nodes + [newNode])
-        }
+        try context.addLeaf(node: XMLNode(name: keyConverting(key), attributes: [:], child: .text(value)))
     }
 
     mutating func encode(_ value: Bool, forKey key: Key) throws {
@@ -156,21 +177,25 @@ struct KeyedXMLEncodingContainer<Key: CodingKey>: KeyedEncodingContainerProtocol
     }
 
     mutating func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
-        let constructor = XMLConstructor(keyConverting: keyConverting)
+        if (value is Bool) { return try encode(value as! Bool, forKey: key) }
+        if (value is String) { return try encode(value as! String, forKey: key) }
+        if (value is Double) { return try encode(value as! Double, forKey: key) }
+        if (value is Float) { return try encode(value as! Float, forKey: key) }
+        if (value is Int) { return try encode(value as! Int, forKey: key) }
+        if (value is Int16) { return try encode(value as! Int16, forKey: key) }
+        if (value is Int32) { return try encode(value as! Int32, forKey: key) }
+        if (value is Int64) { return try encode(value as! Int64, forKey: key) }
+        if (value is UInt) { return try encode(value as! UInt, forKey: key) }
+        if (value is UInt16) { return try encode(value as! UInt16, forKey: key) }
+        if (value is UInt32) { return try encode(value as! UInt32, forKey: key) }
+        if (value is UInt64) { return try encode(value as! UInt64, forKey: key) }
+        let constructor = XMLConstructor(context: XMLNodeWritingContext(), keyConverting: keyConverting)
         try value.encode(to: constructor)
-        switch (node.child, constructor.root.child) {
-        case (.nodes(let ours), .nodes(let theirs)): node.child = .nodes(ours + theirs)
-        default: throw NSError()
-        }
+        try context.addNested(node: XMLNode(name: keyConverting(key), attributes: [:], child: .nodes([constructor.context.read()])))
     }
 
     mutating func nestedContainer<NestedKey: CodingKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> {
-        var newNode = XMLNode(name: keyConverting(key), attributes: [:], child: .nodes([]))
-        switch node.child {
-        case .text: fatalError()
-        case .nodes(let nodes): break
-        }
-        return KeyedEncodingContainer(KeyedXMLEncodingContainer<NestedKey>(node: &node, keyConverting: keyConverting))
+        return KeyedEncodingContainer(KeyedXMLEncodingContainer<NestedKey>(context: context, keyConverting: keyConverting))
     }
 
     mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {

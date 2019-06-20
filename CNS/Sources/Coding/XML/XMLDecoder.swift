@@ -222,8 +222,8 @@ struct StackDecorator<Element> {
         return array.removeLast()
     }
 
-    mutating func update(with closure: (inout Element) -> ()) {
-        closure(&array[array.count - 1])
+    mutating func update(with closure: (inout Element) throws -> ()) rethrows {
+        try closure(&array[array.count - 1])
     }
 
 }

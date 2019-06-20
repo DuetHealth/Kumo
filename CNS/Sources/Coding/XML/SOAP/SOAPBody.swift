@@ -39,6 +39,13 @@ struct SOAPBody<Contents> {
 
 extension SOAPBody: Encodable where Contents: Encodable {
 
+    func encode(to encoder: Encoder) throws {
+        var root = encoder.container(keyedBy: SOAPKeys.self)
+        var envelope = root.nestedContainer(keyedBy: SOAPKeys.self, forKey: .envelope)
+        var body = envelope.nestedContainer(keyedBy: TypeKey.self, forKey: .body)
+        try body.encode(contents, forKey: TypeKey(Contents.self))
+    }
+
 }
 
 extension SOAPBody: Decodable where Contents: Decodable {
