@@ -10,12 +10,12 @@ import Foundation
 
 struct SOAPBody<Contents> {
 
-    fileprivate enum SOAPKeys: CodingKey {
+    enum SOAPKeys: CodingKey {
         case envelope
         case body
     }
 
-    fileprivate struct TypeKey: CodingKey {
+    struct TypeKey: CodingKey {
 
         var intValue: Int?
         var stringValue: String
@@ -35,6 +35,11 @@ struct SOAPBody<Contents> {
     }
 
     let contents: Contents
+
+    init(contents: Contents) {
+        self.contents = contents
+    }
+
 }
 
 extension SOAPBody: Encodable where Contents: Encodable {

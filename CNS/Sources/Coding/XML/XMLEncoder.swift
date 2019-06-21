@@ -8,6 +8,12 @@
 
 import Foundation
 
+public enum XMLNamespaceUsage {
+    case define(using: XMLNamespace, including: [XMLNamespace])
+    case use(XMLNamespace)
+    case applyBeneath(XMLNamespace)
+}
+
 public class XMLEncoder {
 
     public enum KeyEncodingStrategy {
@@ -37,21 +43,27 @@ public class XMLEncoder {
     }
 
     public var keyEncodingStrategy = KeyEncodingStrategy.useDefaultKeys
+    public var userInfo = [CodingUserInfoKey: Any]()
 
     public init() { }
 
     public func encode<T: Encodable>(_ value: T) throws -> Data {
         let constructor = XMLConstructor(keyConverting: keyEncodingStrategy.convert(key:))
+        constructor.userInfo = userInfo
         try value.encode(to: constructor)
-        try print(constructor.context.read())
-        fatalError()
+        try print(constructor.context.consumeContext())
+        return try constructor.context.consumeContext().data(using: .utf8) ?? throwError(NSError())
     }
     
 }
 
 class XMLNodeWritingContext {
 
-    private var stack = StackDecorator([XMLNode.root])
+    private var stack: StackDecorator<XMLNode>
+
+    init(node: XMLNode = .root) {
+        stack = StackDecorator([node])
+    }
 
     func addNested(node: XMLNode) {
         stack.push(node)
@@ -66,9 +78,30 @@ class XMLNodeWritingContext {
         }
     }
 
-    func read() throws -> XMLNode {
-        // TODO: build a tree. Right now this does nothing.
-        return stack.peek!
+    func consumeNode() -> XMLNode {
+        return stack.pop()
+    }
+
+    func consumeContext() throws -> String {
+        while stack.array.count > 1 {
+            try addLeaf(node: stack.pop())
+        }
+        return "<?xml version=\"1.0\"?>\(recursiveWrite(node: stack.peek!))"
+    }
+
+    private func recursiveWrite(node: XMLNode) -> String {
+        let attributeString = node.attributes.reduce("") { "\($0) \($1.key)=\"\($1.value)\"" }
+        let rootPattern = node.isRoot ? "%@" : "<\(node.name)\(attributeString.isEmpty ? "" : " \(attributeString)")>%@</\(node.name)>"
+        switch node.child {
+        case .text(let text):
+            return String(format: rootPattern, text)
+        case .nodes(let nodes) where nodes.isEmpty:
+            return "<\(node.name)/>"
+        case .nodes(let nodes):
+            let children = nodes.reduce("") { $0 + recursiveWrite(node: $1) }
+            return String(format: rootPattern, children)
+        }
+
     }
 
 }
@@ -78,16 +111,17 @@ class XMLConstructor: Encoder {
     var codingPath: [CodingKey] = []
     var userInfo: [CodingUserInfoKey : Any] = [:]
 
-    let context = XMLNodeWritingContext()
+    let context: XMLNodeWritingContext
 
     private let keyConverting: (CodingKey) -> String
 
     init(context: XMLNodeWritingContext = XMLNodeWritingContext(), keyConverting: @escaping (CodingKey) -> String) {
+        self.context = context
         self.keyConverting = keyConverting
     }
 
     func container<Key: CodingKey>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> {
-        return KeyedEncodingContainer(KeyedXMLEncodingContainer(context: context, keyConverting: keyConverting))
+        return KeyedEncodingContainer(KeyedXMLEncodingContainer(context: context, userInfo: userInfo, keyConverting: keyConverting))
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
@@ -103,21 +137,22 @@ class XMLConstructor: Encoder {
 struct KeyedXMLEncodingContainer<Key: CodingKey>: KeyedEncodingContainerProtocol {
 
     var codingPath: [CodingKey] = []
+    var userInfo: [CodingUserInfoKey: Any]
 
     private let context: XMLNodeWritingContext
     private let keyConverting: (CodingKey) -> String
 
-    init(context: XMLNodeWritingContext, keyConverting: @escaping (CodingKey) -> String) {
+    private let currentNamespace: XMLNamespace?
+
+    init(context: XMLNodeWritingContext, userInfo: [CodingUserInfoKey: Any] = [:], currentNamespace: XMLNamespace? = nil, keyConverting: @escaping (CodingKey) -> String) {
         self.context = context
+        self.userInfo = userInfo
+        self.currentNamespace = currentNamespace
         self.keyConverting = keyConverting
     }
 
     mutating func encodeNil(forKey key: Key) throws {
         // TODO: apparently nil is encoded as xsi:nil="true"
-    }
-
-    private mutating func commonEncode(_ value: String, forKey key: Key) throws {
-        try context.addLeaf(node: XMLNode(name: keyConverting(key), attributes: [:], child: .text(value)))
     }
 
     mutating func encode(_ value: Bool, forKey key: Key) throws {
@@ -189,13 +224,14 @@ struct KeyedXMLEncodingContainer<Key: CodingKey>: KeyedEncodingContainerProtocol
         if (value is UInt16) { return try encode(value as! UInt16, forKey: key) }
         if (value is UInt32) { return try encode(value as! UInt32, forKey: key) }
         if (value is UInt64) { return try encode(value as! UInt64, forKey: key) }
-        let constructor = XMLConstructor(context: XMLNodeWritingContext(), keyConverting: keyConverting)
+        let constructor = XMLConstructor(context: XMLNodeWritingContext(node: node(given: key)), keyConverting: keyConverting)
         try value.encode(to: constructor)
-        try context.addNested(node: XMLNode(name: keyConverting(key), attributes: [:], child: .nodes([constructor.context.read()])))
+        try context.addLeaf(node: constructor.context.consumeNode())
     }
 
     mutating func nestedContainer<NestedKey: CodingKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> {
-        return KeyedEncodingContainer(KeyedXMLEncodingContainer<NestedKey>(context: context, keyConverting: keyConverting))
+        context.addNested(node: node(given: key))
+        return KeyedEncodingContainer(KeyedXMLEncodingContainer<NestedKey>(context: context, userInfo: userInfo, keyConverting: keyConverting))
     }
 
     mutating func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
@@ -220,6 +256,27 @@ struct KeyedXMLEncodingContainer<Key: CodingKey>: KeyedEncodingContainerProtocol
         """)
     }
 
+    private mutating func commonEncode(_ value: String, forKey key: Key) throws {
+        try context.addLeaf(node: XMLNode(name: keyConverting(key), attributes: [:], child: .text(value)))
+    }
+
+    private func node(given key: Key) -> XMLNode {
+        let name: String
+        let attributes: [String: String]
+        switch (userInfo[.xmlNamespaces] as? [HashedCodingKey: XMLNamespaceUsage])?[key] {
+        case .some(.use(let namespace)):
+            name = "\(namespace.prefix):\(keyConverting(key))"
+            attributes = [:]
+        case .some(.define(using: let namespace, including: let namespaces)):
+            name = "\(namespace.prefix):\(keyConverting(key))"
+            attributes = Dictionary(uniqueKeysWithValues: ([namespace] + namespaces).map { ($0.attributeName, $0.uri ?? "") })
+        default:
+            name = keyConverting(key)
+            attributes = [:]
+        }
+        return XMLNode(name: name, attributes: attributes)
+    }
+
 }
 
 
@@ -228,6 +285,15 @@ extension XMLEncoder: RequestEncoding {
 
     public var contentType: MIMEType {
         return MIMEType.applicationXML()
+    }
+
+}
+
+extension Dictionary where Key == HashedCodingKey {
+
+    subscript(_ codingKey: CodingKey) -> Value? {
+        get { return self[HashedCodingKey(codingKey)] }
+        set { self[HashedCodingKey(codingKey)] = newValue }
     }
 
 }

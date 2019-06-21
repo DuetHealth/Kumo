@@ -23,13 +23,19 @@
 		9422A356222C8CE50038E451 /* PostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A355222C8CE50038E451 /* PostTests.swift */; };
 		9422A358222CD7700038E451 /* DynamicBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A357222CD7700038E451 /* DynamicBody.swift */; };
 		9427B5A4229311C3003D9CF6 /* XMLEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */; };
-		9427B5A6229311CB003D9CF6 /* XMLDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A5229311CB003D9CF6 /* XMLDecoder.swift */; };
+		9427B5A6229311CB003D9CF6 /* XMLDecoders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A5229311CB003D9CF6 /* XMLDecoders.swift */; };
 		9427B5AB22932EC7003D9CF6 /* XMLProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5AA22932EC7003D9CF6 /* XMLProcessor.swift */; };
 		943ADDC322A6FBA20045A0B9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 943ADDC222A6FBA20045A0B9 /* RxRelay.framework */; };
 		9447837C22958ED200BE6960 /* XMLDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837B22958ED200BE6960 /* XMLDecodingTests.swift */; };
 		9447837E2296C8B300BE6960 /* SOAPEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837D2296C8B300BE6960 /* SOAPEncoder.swift */; };
 		944783812296C8CA00BE6960 /* SOAPDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944783802296C8CA00BE6960 /* SOAPDecoder.swift */; };
 		944783832296C9AF00BE6960 /* SOAPBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944783822296C9AF00BE6960 /* SOAPBody.swift */; };
+		9449941822BD3755008040DC /* XMLNamespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9449941722BD3755008040DC /* XMLNamespace.swift */; };
+		944E93D422BD5E51002CA79B /* XMLDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944E93D322BD5E51002CA79B /* XMLDecoder.swift */; };
+		944E93D622BD5E91002CA79B /* XMLNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944E93D522BD5E91002CA79B /* XMLNode.swift */; };
+		944E93D822BD5F25002CA79B /* KeyedXMLDecodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944E93D722BD5F25002CA79B /* KeyedXMLDecodingContainer.swift */; };
+		944E93DA22BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944E93D922BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift */; };
+		944E93DC22BD6045002CA79B /* XMLDeserializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944E93DB22BD6045002CA79B /* XMLDeserializer.swift */; };
 		9454216D2187879300932CAF /* RequestEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9454216C2187879300932CAF /* RequestEncoding.swift */; };
 		9454216F218787BB00932CAF /* RequestDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9454216E218787BB00932CAF /* RequestDecoding.swift */; };
 		94542171218787F600932CAF /* JSONWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94542170218787F600932CAF /* JSONWrapper.swift */; };
@@ -89,13 +95,19 @@
 		9422A355222C8CE50038E451 /* PostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTests.swift; sourceTree = "<group>"; };
 		9422A357222CD7700038E451 /* DynamicBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicBody.swift; sourceTree = "<group>"; };
 		9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLEncoder.swift; sourceTree = "<group>"; };
-		9427B5A5229311CB003D9CF6 /* XMLDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecoder.swift; sourceTree = "<group>"; };
+		9427B5A5229311CB003D9CF6 /* XMLDecoders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecoders.swift; sourceTree = "<group>"; };
 		9427B5AA22932EC7003D9CF6 /* XMLProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLProcessor.swift; sourceTree = "<group>"; };
 		943ADDC222A6FBA20045A0B9 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
 		9447837B22958ED200BE6960 /* XMLDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecodingTests.swift; sourceTree = "<group>"; };
 		9447837D2296C8B300BE6960 /* SOAPEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPEncoder.swift; sourceTree = "<group>"; };
 		944783802296C8CA00BE6960 /* SOAPDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPDecoder.swift; sourceTree = "<group>"; };
 		944783822296C9AF00BE6960 /* SOAPBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPBody.swift; sourceTree = "<group>"; };
+		9449941722BD3755008040DC /* XMLNamespace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLNamespace.swift; sourceTree = "<group>"; };
+		944E93D322BD5E51002CA79B /* XMLDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecoder.swift; sourceTree = "<group>"; };
+		944E93D522BD5E91002CA79B /* XMLNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLNode.swift; sourceTree = "<group>"; };
+		944E93D722BD5F25002CA79B /* KeyedXMLDecodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedXMLDecodingContainer.swift; sourceTree = "<group>"; };
+		944E93D922BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleValueXMLDecodingContainer.swift; sourceTree = "<group>"; };
+		944E93DB22BD6045002CA79B /* XMLDeserializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDeserializer.swift; sourceTree = "<group>"; };
 		9454216C2187879300932CAF /* RequestEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestEncoding.swift; sourceTree = "<group>"; };
 		9454216E218787BB00932CAF /* RequestDecoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoding.swift; sourceTree = "<group>"; };
 		94542170218787F600932CAF /* JSONWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONWrapper.swift; sourceTree = "<group>"; };
@@ -206,9 +218,13 @@
 		9427B5A2229311B0003D9CF6 /* XML */ = {
 			isa = PBXGroup;
 			children = (
-				9447837F2296C8B500BE6960 /* SOAP */,
+				9449941622BD373E008040DC /* Decoding */,
+				9449941522BD373A008040DC /* Encoding */,
+				944783822296C9AF00BE6960 /* SOAPBody.swift */,
+				9449941722BD3755008040DC /* XMLNamespace.swift */,
+				944E93D522BD5E91002CA79B /* XMLNode.swift */,
 				9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */,
-				9427B5A5229311CB003D9CF6 /* XMLDecoder.swift */,
+				9427B5A5229311CB003D9CF6 /* XMLDecoders.swift */,
 				9427B5AA22932EC7003D9CF6 /* XMLProcessor.swift */,
 			);
 			path = XML;
@@ -223,14 +239,24 @@
 			path = XML;
 			sourceTree = "<group>";
 		};
-		9447837F2296C8B500BE6960 /* SOAP */ = {
+		9449941522BD373A008040DC /* Encoding */ = {
 			isa = PBXGroup;
 			children = (
-				944783802296C8CA00BE6960 /* SOAPDecoder.swift */,
 				9447837D2296C8B300BE6960 /* SOAPEncoder.swift */,
-				944783822296C9AF00BE6960 /* SOAPBody.swift */,
 			);
-			path = SOAP;
+			path = Encoding;
+			sourceTree = "<group>";
+		};
+		9449941622BD373E008040DC /* Decoding */ = {
+			isa = PBXGroup;
+			children = (
+				944E93D322BD5E51002CA79B /* XMLDecoder.swift */,
+				944E93DB22BD6045002CA79B /* XMLDeserializer.swift */,
+				944783802296C8CA00BE6960 /* SOAPDecoder.swift */,
+				944E93D722BD5F25002CA79B /* KeyedXMLDecodingContainer.swift */,
+				944E93D922BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift */,
+			);
+			path = Decoding;
 			sourceTree = "<group>";
 		};
 		945421722187882E00932CAF /* Extensions */ = {
@@ -446,6 +472,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 94B6BCF821762D16005454C6;
 			productRefGroup = 94B6BD0321762D16005454C6 /* Products */;
@@ -510,17 +537,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9427B5A6229311CB003D9CF6 /* XMLDecoder.swift in Sources */,
+				9427B5A6229311CB003D9CF6 /* XMLDecoders.swift in Sources */,
 				945D40E5217A4A95008ACFD0 /* KeyedEncodingContainer+DynamicEncoding.swift in Sources */,
 				949AD287218A937300808C79 /* HTTPResponseStatus.swift in Sources */,
 				9427B5AB22932EC7003D9CF6 /* XMLProcessor.swift in Sources */,
 				945421762187889200932CAF /* Copying.swift in Sources */,
 				94B6BD2121762E71005454C6 /* ApplicationLayer.swift in Sources */,
 				945421742187883B00932CAF /* URLSession.swift in Sources */,
+				944E93D422BD5E51002CA79B /* XMLDecoder.swift in Sources */,
+				944E93DC22BD6045002CA79B /* XMLDeserializer.swift in Sources */,
 				94C3BD95219B0F8100B4A3E2 /* Progress.swift in Sources */,
 				949AD294218BD7D500808C79 /* ResponseError.swift in Sources */,
+				9449941822BD3755008040DC /* XMLNamespace.swift in Sources */,
 				944783812296C8CA00BE6960 /* SOAPDecoder.swift in Sources */,
 				94F2CDCD222A3602006D9C36 /* Service+Download.swift in Sources */,
+				944E93D822BD5F25002CA79B /* KeyedXMLDecodingContainer.swift in Sources */,
+				944E93DA22BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift in Sources */,
 				949AD296218BD80E00808C79 /* MultipartForm.swift in Sources */,
 				944783832296C9AF00BE6960 /* SOAPBody.swift in Sources */,
 				94F2CDCF222A3602006D9C36 /* Service+SideEffects.swift in Sources */,
@@ -531,6 +563,7 @@
 				945D40E1217A4A95008ACFD0 /* KeyedDecodingContainer+DynamicDecoding.swift in Sources */,
 				94F2CDD2222A3602006D9C36 /* Service+Put.swift in Sources */,
 				945D40E2217A4A95008ACFD0 /* UnkeyedDecodingContainer+DynamicDecoding.swift in Sources */,
+				944E93D622BD5E91002CA79B /* XMLNode.swift in Sources */,
 				945D40E4217A4A95008ACFD0 /* ErasedEncodable.swift in Sources */,
 				945D40E6217A4A95008ACFD0 /* UnkeyedEncodingContainer+DynamicEncoding.swift in Sources */,
 				949AD290218BD73800808C79 /* MIMEType.swift in Sources */,

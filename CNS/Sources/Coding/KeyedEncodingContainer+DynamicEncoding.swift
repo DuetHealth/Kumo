@@ -10,12 +10,12 @@ import Foundation
 
 public extension KeyedEncodingContainer {
 
-    public mutating func encode(_ value: [String: Any], forKey key: Key, strategy: DynamicKeyStrategy = .default) throws {
+    mutating func encode(_ value: [String: Any], forKey key: Key, strategy: DynamicKeyStrategy = .default) throws {
         var container = nestedContainer(keyedBy: DynamicCodingKeys.self, forKey: key)
         try container.encode(value, strategy: strategy)
     }
 
-    public mutating func encodeIfPresent(_ value: [String: Any]?, forKey key: Key, strategy: DynamicKeyStrategy = .default) throws {
+    mutating func encodeIfPresent(_ value: [String: Any]?, forKey key: Key, strategy: DynamicKeyStrategy = .default) throws {
         guard let value = value else {
             try encodeNil(forKey: key)
             return
@@ -23,12 +23,12 @@ public extension KeyedEncodingContainer {
         try encode(value, forKey: key, strategy: strategy)
     }
 
-    public mutating func encode(_ value: [Any], forKey key: Key, strategy: DynamicKeyStrategy = .default) throws {
+    mutating func encode(_ value: [Any], forKey key: Key, strategy: DynamicKeyStrategy = .default) throws {
         var container = nestedUnkeyedContainer(forKey: key)
         try container.encode(value, strategy: strategy)
     }
 
-    public mutating func encodeIfPresent(_ value: [Any]?, forKey key: Key, strategy: DynamicKeyStrategy = .default) throws {
+    mutating func encodeIfPresent(_ value: [Any]?, forKey key: Key, strategy: DynamicKeyStrategy = .default) throws {
         guard let value = value else {
             try encodeNil(forKey: key)
             return

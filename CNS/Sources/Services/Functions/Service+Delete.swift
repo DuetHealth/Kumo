@@ -10,7 +10,7 @@ import RxSwift
 
 public extension Service {
     
-    public func delete<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Response> {
+    func delete<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .delete, endpoint: endpoint, queryParameters: parameters)
@@ -28,7 +28,7 @@ public extension Service {
             .observeOn(operationScheduler)
     }
     
-    public func delete(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Void> {
+    func delete(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .delete, endpoint: endpoint, queryParameters: parameters)

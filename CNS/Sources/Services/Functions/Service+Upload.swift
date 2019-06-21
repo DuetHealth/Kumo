@@ -18,7 +18,7 @@ public extension Service {
     ///   - file: the URL of the file to upload
     ///   - key: the name of form part under which to embed the file's data
     /// - Returns: an `Observable` which emits a single empty element upon success.
-    public func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> Observable<Void> {
+    func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 var request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters)
@@ -47,7 +47,7 @@ public extension Service {
     ///   - file: the URL of the file to upload
     ///   - key: the name of form part under which to embed the file's data
     /// - Returns: an `Observable` which emits the progress of the upload.
-    public func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> Observable<Double> {
+    func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> Observable<Double> {
         return Observable.create { [self] observer in
             do {
                 var request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters)

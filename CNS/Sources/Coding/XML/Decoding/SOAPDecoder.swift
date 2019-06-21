@@ -8,11 +8,6 @@
 
 import Foundation
 
-public struct XMLNamespace {
-    let prefix: String
-    let uri: String?
-}
-
 public class SOAPDecoder {
 
     private let baseDecoder: XMLDecoder

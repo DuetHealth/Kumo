@@ -10,7 +10,7 @@ import RxSwift
 
 public extension Service {
     
-    public func download(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<URL> {
+    func download(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<URL> {
         return Observable.create { [self] observer in
             do {
                 var request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)

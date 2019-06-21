@@ -36,14 +36,13 @@ class XMLEncodingTests: XCTestCase {
     func testEncodingSimpleSOAPRequest() {
         let encoder = SOAPEncoder()
         encoder.keyEncodingStrategy = .convertToPascalCase
+        encoder.requestPayloadNamespace = XMLNamespace(prefix: "m", uri: "https://www.w3schools.com/prices")
         let request = SimpleRequest(name: "Foobar")
         do {
             let data = try encoder.encode(request)
             let expected = """
             <?xml version="1.0"?>
-            <soap:Envelope
-            xmlns:soap="http://www.w3.org/2003/05/soap-envelope/"
-            soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+            <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope/" soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
                 <soap:Body>
                     <m:SimpleRequest xmlns:m="https://www.w3schools.com/prices">
                         <m:Name>0.15</m:Name>
@@ -63,9 +62,7 @@ class XMLEncodingTests: XCTestCase {
             let data = try encoder.encode(request)
             let expected = """
             <?xml version="1.0"?>
-            <soap:Envelope
-            xmlns:soap="http://www.w3.org/2003/05/soap-envelope/"
-            soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+            <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope/" soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
                 <soap:Body>
                     <m:GetPriceResponse xmlns:m="https://www.w3schools.com/prices">
                         <m:Price>

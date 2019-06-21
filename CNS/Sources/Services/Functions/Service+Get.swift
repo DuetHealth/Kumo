@@ -10,7 +10,7 @@ import RxSwift
 
 public extension Service {
     
-    public func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Response> {
+    func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
@@ -28,7 +28,7 @@ public extension Service {
             .observeOn(operationScheduler)
     }
     
-    public func get(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Void> {
+    func get(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
@@ -46,7 +46,7 @@ public extension Service {
             .observeOn(operationScheduler)
     }
     
-    public func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], keyedUnder key: String) -> Observable<Response> {
+    func get<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], keyedUnder key: String) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
