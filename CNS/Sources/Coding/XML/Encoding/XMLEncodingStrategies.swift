@@ -36,7 +36,7 @@ struct XMLEncodingStrategies {
         switch (strategies.userInfo[.xmlNamespaces] as? [HashedCodingKey: XMLNamespaceUsage])?[key] {
         case .some(.useBeneath(let namespace)), .some(.defineBeneath(let namespace)):
             inheritedNamespace = namespace
-        default: inheritedNamespace = nil
+        default: inheritedNamespace = strategies.inheritedNamespace
         }
     }
 

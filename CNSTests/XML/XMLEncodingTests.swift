@@ -64,7 +64,7 @@ class XMLEncodingTests: XCTestCase {
         do {
             let data = try encoder.encode(request)
             let expected = """
-            <?xml version="1.0"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope/"><soap:Body><m:GetPriceResponse xmlns:m="https://www.w3schools.com/prices"><m:Sku><m:Value>00124230128212398-6</m:Value></m:Sku><m:Availability><m:IsAvailable>true</m:IsAvailable><m:Stock>100</m:Stock></m:Availability><m:Price><m:Amount>1.9</m:Amount><m:Units>Dollars</m:Units><m:Discount>0.15</m:Discount></m:Price></m:GetPriceResponse></soap:Body></soap:Envelope>
+            <?xml version="1.0"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope/"><soap:Body><m:GetPriceRequest xmlns:m="https://www.w3schools.com/prices"><m:Name>iPhone Excess to the Max</m:Name><m:Sku><m:Value>00124230128212398-6</m:Value></m:Sku><m:Availability><m:IsAvailable>true</m:IsAvailable><m:Stock>100</m:Stock></m:Availability><m:Price><m:Amount>1.9</m:Amount><m:Units>Dollars</m:Units><m:Discount>0.15</m:Discount></m:Price></m:GetPriceRequest></soap:Body></soap:Envelope>
             """.data(using: .utf8)!
             print(String(data: data, encoding: .utf8)!)
             XCTAssertTrue(data == expected)
