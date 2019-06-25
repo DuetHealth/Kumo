@@ -21,7 +21,7 @@ struct GetPriceResponse: Decodable, Equatable {
 
 class XMLDecodingTests: XCTestCase {
 
-    func testDecodingSOAPRequest() {
+    func testDecodingSimpleSOAPRequest() {
         let decoder = SOAPDecoder()
         decoder.keyDecodingStrategy = .convertFromPascalCase
         let data = """

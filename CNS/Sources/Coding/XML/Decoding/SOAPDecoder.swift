@@ -36,7 +36,7 @@ extension SOAPDecoder: RequestDecoding {
     }
 
     public func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
-        return (try self.decode(from: data) as SOAPBody<T>).contents
+        return try self.decode(from: data)
     }
 
 }

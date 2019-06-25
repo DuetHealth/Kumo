@@ -129,14 +129,20 @@ public class Service {
     }
     
     func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any], body: Data?) throws -> URLRequest {
-        guard var components = URLComponents(url: baseURL.appendingPathComponent(endpoint), resolvingAgainstBaseURL: false) else {
-            throw HTTPError.malformedURL(baseURL: baseURL, endpoint: endpoint, parameters: queryParameters)
+        let url = endpoint.isEmpty ? baseURL : baseURL.appendingPathComponent(endpoint)
+        let finalURL: URL
+        if queryParameters.isEmpty { finalURL = url }
+        else {
+            guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+                throw HTTPError.malformedURL(baseURL: url, endpoint: endpoint, parameters: queryParameters)
+            }
+            components.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
+            guard components.url != nil else {
+                throw HTTPError.malformedURL(baseURL: baseURL, endpoint: endpoint, parameters: queryParameters)
+            }
+            finalURL = components.url!
         }
-        components.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
-        guard let url = components.url else {
-            throw HTTPError.malformedURL(baseURL: baseURL, endpoint: endpoint, parameters: queryParameters)
-        }
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: finalURL)
         request.httpHeaders = [.contentType: requestEncoder.contentType.rawValue,
                                .accept: requestDecoder.acceptType.rawValue]
         request.httpMethod = method.rawValue

@@ -1,3 +1,10 @@
+//
+//  Utilities.swift
+//  CNS
+//
+//  Created by ライアン on 5/20/19.
+//  Copyright © 2019 Duet Health. All rights reserved.
+//
 
 struct StackDecorator<Element> {
 
@@ -34,7 +41,6 @@ struct StackDecorator<Element> {
 }
 
 func throwError<T>(_ error: @autoclosure () -> Error) throws -> T {
-    fatalError("boi")
     throw error()
 }
 

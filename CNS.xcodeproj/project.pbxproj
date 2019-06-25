@@ -23,8 +23,7 @@
 		9422A356222C8CE50038E451 /* PostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A355222C8CE50038E451 /* PostTests.swift */; };
 		9422A358222CD7700038E451 /* DynamicBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A357222CD7700038E451 /* DynamicBody.swift */; };
 		9427B5A4229311C3003D9CF6 /* XMLEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */; };
-		9427B5A6229311CB003D9CF6 /* XMLDecoders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A5229311CB003D9CF6 /* XMLDecoders.swift */; };
-		9427B5AB22932EC7003D9CF6 /* XMLProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5AA22932EC7003D9CF6 /* XMLProcessor.swift */; };
+		9427B5A6229311CB003D9CF6 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A5229311CB003D9CF6 /* Utilities.swift */; };
 		943ADDC322A6FBA20045A0B9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 943ADDC222A6FBA20045A0B9 /* RxRelay.framework */; };
 		9447837C22958ED200BE6960 /* XMLDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837B22958ED200BE6960 /* XMLDecodingTests.swift */; };
 		9447837E2296C8B300BE6960 /* SOAPEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837D2296C8B300BE6960 /* SOAPEncoder.swift */; };
@@ -36,6 +35,7 @@
 		944E93D822BD5F25002CA79B /* KeyedXMLDecodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944E93D722BD5F25002CA79B /* KeyedXMLDecodingContainer.swift */; };
 		944E93DA22BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944E93D922BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift */; };
 		944E93DC22BD6045002CA79B /* XMLDeserializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944E93DB22BD6045002CA79B /* XMLDeserializer.swift */; };
+		944E93DF22BD6604002CA79B /* HashedCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944E93DE22BD6604002CA79B /* HashedCodingKey.swift */; };
 		9454216D2187879300932CAF /* RequestEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9454216C2187879300932CAF /* RequestEncoding.swift */; };
 		9454216F218787BB00932CAF /* RequestDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9454216E218787BB00932CAF /* RequestDecoding.swift */; };
 		94542171218787F600932CAF /* JSONWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94542170218787F600932CAF /* JSONWrapper.swift */; };
@@ -62,6 +62,7 @@
 		94B6BD0C21762D17005454C6 /* CNS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B6BD0221762D16005454C6 /* CNS.framework */; };
 		94B6BD1321762D17005454C6 /* CNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 94B6BD0521762D17005454C6 /* CNS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94B6BD2121762E71005454C6 /* ApplicationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B6BD2021762E71005454C6 /* ApplicationLayer.swift */; };
+		94B9B6F322C13AC400F47E87 /* XMLEncodingStrategies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B9B6F222C13AC400F47E87 /* XMLEncodingStrategies.swift */; };
 		94C3BD95219B0F8100B4A3E2 /* Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C3BD94219B0F8100B4A3E2 /* Progress.swift */; };
 		94F2CDBB2229F852006D9C36 /* Service+Get.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDBA2229F852006D9C36 /* Service+Get.swift */; };
 		94F2CDCD222A3602006D9C36 /* Service+Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDC7222A3602006D9C36 /* Service+Download.swift */; };
@@ -70,6 +71,10 @@
 		94F2CDD0222A3602006D9C36 /* Service+Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCA222A3602006D9C36 /* Service+Upload.swift */; };
 		94F2CDD1222A3602006D9C36 /* Service+Delete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCB222A3602006D9C36 /* Service+Delete.swift */; };
 		94F2CDD2222A3602006D9C36 /* Service+Put.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCC222A3602006D9C36 /* Service+Put.swift */; };
+		94F6E00722BD68330011AFF8 /* XMLNodeWritingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00622BD68330011AFF8 /* XMLNodeWritingContext.swift */; };
+		94F6E00922BD68770011AFF8 /* XMLNamespaceUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */; };
+		94F6E00B22BD689B0011AFF8 /* XMLConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */; };
+		94F6E00D22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,8 +100,7 @@
 		9422A355222C8CE50038E451 /* PostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTests.swift; sourceTree = "<group>"; };
 		9422A357222CD7700038E451 /* DynamicBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicBody.swift; sourceTree = "<group>"; };
 		9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLEncoder.swift; sourceTree = "<group>"; };
-		9427B5A5229311CB003D9CF6 /* XMLDecoders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecoders.swift; sourceTree = "<group>"; };
-		9427B5AA22932EC7003D9CF6 /* XMLProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLProcessor.swift; sourceTree = "<group>"; };
+		9427B5A5229311CB003D9CF6 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		943ADDC222A6FBA20045A0B9 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
 		9447837B22958ED200BE6960 /* XMLDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecodingTests.swift; sourceTree = "<group>"; };
 		9447837D2296C8B300BE6960 /* SOAPEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPEncoder.swift; sourceTree = "<group>"; };
@@ -108,6 +112,7 @@
 		944E93D722BD5F25002CA79B /* KeyedXMLDecodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedXMLDecodingContainer.swift; sourceTree = "<group>"; };
 		944E93D922BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleValueXMLDecodingContainer.swift; sourceTree = "<group>"; };
 		944E93DB22BD6045002CA79B /* XMLDeserializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDeserializer.swift; sourceTree = "<group>"; };
+		944E93DE22BD6604002CA79B /* HashedCodingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashedCodingKey.swift; sourceTree = "<group>"; };
 		9454216C2187879300932CAF /* RequestEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestEncoding.swift; sourceTree = "<group>"; };
 		9454216E218787BB00932CAF /* RequestDecoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoding.swift; sourceTree = "<group>"; };
 		94542170218787F600932CAF /* JSONWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONWrapper.swift; sourceTree = "<group>"; };
@@ -137,6 +142,7 @@
 		94B6BD0B21762D17005454C6 /* CNSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CNSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		94B6BD1221762D17005454C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		94B6BD2021762E71005454C6 /* ApplicationLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationLayer.swift; sourceTree = "<group>"; };
+		94B9B6F222C13AC400F47E87 /* XMLEncodingStrategies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLEncodingStrategies.swift; sourceTree = "<group>"; };
 		94C3BD94219B0F8100B4A3E2 /* Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress.swift; sourceTree = "<group>"; };
 		94F2CDBA2229F852006D9C36 /* Service+Get.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Get.swift"; sourceTree = "<group>"; };
 		94F2CDC7222A3602006D9C36 /* Service+Download.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Download.swift"; sourceTree = "<group>"; };
@@ -145,6 +151,10 @@
 		94F2CDCA222A3602006D9C36 /* Service+Upload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Upload.swift"; sourceTree = "<group>"; };
 		94F2CDCB222A3602006D9C36 /* Service+Delete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Delete.swift"; sourceTree = "<group>"; };
 		94F2CDCC222A3602006D9C36 /* Service+Put.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Put.swift"; sourceTree = "<group>"; };
+		94F6E00622BD68330011AFF8 /* XMLNodeWritingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLNodeWritingContext.swift; sourceTree = "<group>"; };
+		94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLNamespaceUsage.swift; sourceTree = "<group>"; };
+		94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLConstructor.swift; sourceTree = "<group>"; };
+		94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedXMLEncodingContainer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,12 +230,11 @@
 			children = (
 				9449941622BD373E008040DC /* Decoding */,
 				9449941522BD373A008040DC /* Encoding */,
+				944E93DD22BD65F9002CA79B /* Utilities */,
 				944783822296C9AF00BE6960 /* SOAPBody.swift */,
 				9449941722BD3755008040DC /* XMLNamespace.swift */,
 				944E93D522BD5E91002CA79B /* XMLNode.swift */,
-				9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */,
-				9427B5A5229311CB003D9CF6 /* XMLDecoders.swift */,
-				9427B5AA22932EC7003D9CF6 /* XMLProcessor.swift */,
+				94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */,
 			);
 			path = XML;
 			sourceTree = "<group>";
@@ -242,7 +251,12 @@
 		9449941522BD373A008040DC /* Encoding */ = {
 			isa = PBXGroup;
 			children = (
+				9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */,
 				9447837D2296C8B300BE6960 /* SOAPEncoder.swift */,
+				94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */,
+				94F6E00622BD68330011AFF8 /* XMLNodeWritingContext.swift */,
+				94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */,
+				94B9B6F222C13AC400F47E87 /* XMLEncodingStrategies.swift */,
 			);
 			path = Encoding;
 			sourceTree = "<group>";
@@ -251,12 +265,21 @@
 			isa = PBXGroup;
 			children = (
 				944E93D322BD5E51002CA79B /* XMLDecoder.swift */,
-				944E93DB22BD6045002CA79B /* XMLDeserializer.swift */,
 				944783802296C8CA00BE6960 /* SOAPDecoder.swift */,
+				944E93DB22BD6045002CA79B /* XMLDeserializer.swift */,
 				944E93D722BD5F25002CA79B /* KeyedXMLDecodingContainer.swift */,
 				944E93D922BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift */,
 			);
 			path = Decoding;
+			sourceTree = "<group>";
+		};
+		944E93DD22BD65F9002CA79B /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				944E93DE22BD6604002CA79B /* HashedCodingKey.swift */,
+				9427B5A5229311CB003D9CF6 /* Utilities.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		945421722187882E00932CAF /* Extensions */ = {
@@ -537,10 +560,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9427B5A6229311CB003D9CF6 /* XMLDecoders.swift in Sources */,
+				9427B5A6229311CB003D9CF6 /* Utilities.swift in Sources */,
 				945D40E5217A4A95008ACFD0 /* KeyedEncodingContainer+DynamicEncoding.swift in Sources */,
+				944E93DF22BD6604002CA79B /* HashedCodingKey.swift in Sources */,
 				949AD287218A937300808C79 /* HTTPResponseStatus.swift in Sources */,
-				9427B5AB22932EC7003D9CF6 /* XMLProcessor.swift in Sources */,
 				945421762187889200932CAF /* Copying.swift in Sources */,
 				94B6BD2121762E71005454C6 /* ApplicationLayer.swift in Sources */,
 				945421742187883B00932CAF /* URLSession.swift in Sources */,
@@ -556,13 +579,16 @@
 				949AD296218BD80E00808C79 /* MultipartForm.swift in Sources */,
 				944783832296C9AF00BE6960 /* SOAPBody.swift in Sources */,
 				94F2CDCF222A3602006D9C36 /* Service+SideEffects.swift in Sources */,
+				94F6E00722BD68330011AFF8 /* XMLNodeWritingContext.swift in Sources */,
 				94F2CDD1222A3602006D9C36 /* Service+Delete.swift in Sources */,
 				949AD28D218BD6EC00808C79 /* StringEncoding.swift in Sources */,
+				94F6E00D22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift in Sources */,
 				945D40E3217A4A95008ACFD0 /* DynamicCodingKeys.swift in Sources */,
 				949AD292218BD75500808C79 /* UploadError.swift in Sources */,
 				945D40E1217A4A95008ACFD0 /* KeyedDecodingContainer+DynamicDecoding.swift in Sources */,
 				94F2CDD2222A3602006D9C36 /* Service+Put.swift in Sources */,
 				945D40E2217A4A95008ACFD0 /* UnkeyedDecodingContainer+DynamicDecoding.swift in Sources */,
+				94F6E00B22BD689B0011AFF8 /* XMLConstructor.swift in Sources */,
 				944E93D622BD5E91002CA79B /* XMLNode.swift in Sources */,
 				945D40E4217A4A95008ACFD0 /* ErasedEncodable.swift in Sources */,
 				945D40E6217A4A95008ACFD0 /* UnkeyedEncodingContainer+DynamicEncoding.swift in Sources */,
@@ -572,8 +598,10 @@
 				94F2CDCE222A3602006D9C36 /* Service+Post.swift in Sources */,
 				9454216F218787BB00932CAF /* RequestDecoding.swift in Sources */,
 				945D4114217F6222008ACFD0 /* Service.swift in Sources */,
+				94F6E00922BD68770011AFF8 /* XMLNamespaceUsage.swift in Sources */,
 				949AD28B218B375400808C79 /* FileType.swift in Sources */,
 				9454216D2187879300932CAF /* RequestEncoding.swift in Sources */,
+				94B9B6F322C13AC400F47E87 /* XMLEncodingStrategies.swift in Sources */,
 				94F2CDBB2229F852006D9C36 /* Service+Get.swift in Sources */,
 				945D4116217F6ADB008ACFD0 /* HTTPHeader.swift in Sources */,
 				945D40EC217A60BD008ACFD0 /* HTTPMethod.swift in Sources */,

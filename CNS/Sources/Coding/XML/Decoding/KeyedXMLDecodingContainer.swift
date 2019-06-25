@@ -93,20 +93,27 @@ struct KeyedXMLDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol
     func decode<T: Decodable>(_ type: T.Type, forKey key: Key) throws -> T {
         return try node.find(key: key, with: keyMatching)
             .map { try T.init(from: XMLDeserializer(node: $0, keyMatching: keyMatching)) }
-            ?? throwError(NSError())
+            ?? throwError(DecodingError.keyNotFound(key, DecodingError.Context(codingPath: [], debugDescription: "Could not find key \(key) nested under node \(node.name).")))
     }
 
     func nestedContainer<NestedKey: CodingKey>(keyedBy type: NestedKey.Type, forKey key: Key) throws -> KeyedDecodingContainer<NestedKey> {
         return try node.find(key: key, with: keyMatching)
             .map { KeyedDecodingContainer(KeyedXMLDecodingContainer<NestedKey>($0, keyMatching: keyMatching)) }
-            ?? throwError(NSError())
+            ?? throwError(DecodingError.keyNotFound(key, DecodingError.Context(codingPath: [], debugDescription: "Could not find key \(key) nested under node \(node.name).")))
     }
 
     func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
-        throw NSError()
+        // NOTE: for arrays
+        fatalError("""
+        If you're reading this, you must need it.
+        I didn't need it, so I didn't implement it.
+        I don't understand XML.
+        Please forgive me and implement this.
+        """)
     }
 
     func superDecoder() throws -> Decoder {
+        // NOTE: for subclassing?
         fatalError("""
         If you're reading this, you must need it.
         I didn't need it, so I didn't implement it.
@@ -116,6 +123,7 @@ struct KeyedXMLDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol
     }
 
     func superDecoder(forKey key: Key) throws -> Decoder {
+        // NOTE: for subclassing?
         fatalError("""
         If you're reading this, you must need it.
         I didn't need it, so I didn't implement it.
@@ -128,7 +136,7 @@ struct KeyedXMLDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol
         return try node.find(key: key, with: keyMatching)
             .map { SingleValueXMLDecodingContainer($0, keyMatching: keyMatching) }?
             .decode(T.self)
-            ?? throwError(NSError())
+            ?? throwError(DecodingError.keyNotFound(key, DecodingError.Context(codingPath: [], debugDescription: "Could not find key \(key) nested under node \(node.name).")))
     }
 
 }

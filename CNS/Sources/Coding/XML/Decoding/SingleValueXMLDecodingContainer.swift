@@ -100,9 +100,9 @@ struct SingleValueXMLDecodingContainer: SingleValueDecodingContainer {
 
     private func commonDecode<T>(_ initializer: (String) -> T?) throws -> T {
         switch node.child {
-        case .nodes: fatalError("FAIL and throw")
+        case .nodes: throw DecodingError.typeMismatch(T.self, DecodingError.Context(codingPath: codingPath, debugDescription: "Could not decode a value for node \"\(node.name)\" which has child nodes."))
         case .text(let string):
-            return try initializer(string) ?? throwError(NSError())
+            return try initializer(string) ?? throwError(DecodingError.typeMismatch(T.self, DecodingError.Context(codingPath: codingPath, debugDescription: "Could not decode value \"\(string)\" under node \"\(node.name)\" as type \(T.self).")))
         }
     }
 

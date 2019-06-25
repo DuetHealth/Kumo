@@ -25,7 +25,7 @@ struct XMLNode {
 
     let isRoot: Bool
 
-    init(name: String, attributes: [String: String], child: Child = .nodes([])) {
+    init(name: String, attributes: [String: String] = [:], child: Child = .nodes([])) {
         self.name = name
         self.attributes = attributes
         self.child = child

@@ -13,10 +13,16 @@ public extension CodingUserInfoKey {
 }
 
 public struct XMLNamespace {
-    let prefix: String
-    let uri: String?
+    public let prefix: String
+    public let uri: String?
 
-    var attributeName: String {
+    public var attributeName: String {
         return "xmlns:\(prefix)"
     }
+
+    public init(prefix: String, uri: String? = nil) {
+        self.prefix = prefix
+        self.uri = uri
+    }
+
 }

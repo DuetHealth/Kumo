@@ -26,7 +26,9 @@ class XMLDeserializer: NSObject, Decoder, XMLParserDelegate {
         parser.shouldReportNamespacePrefixes = true
         super.init()
         parser.delegate = self
-        guard parser.parse() else { throw parser.parserError ?? NSError() }
+        guard parser.parse() else {
+            throw parser.parserError ?? parsingError ?? DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Could not parse the given data as XML."))
+        }
     }
 
     init(node: XMLNode, keyMatching: @escaping (CodingKey, String) -> Bool) {
@@ -47,6 +49,7 @@ class XMLDeserializer: NSObject, Decoder, XMLParserDelegate {
     }
 
     func parser(_ parser: XMLParser, foundCDATA CDATABlock: Data) {
+        // NOTE: some data which may conflict with XML (i.e. HTML)?
         fatalError("""
         If you're reading this, you must need it.
         I didn't need it, so I didn't implement it.
@@ -70,7 +73,9 @@ class XMLDeserializer: NSObject, Decoder, XMLParserDelegate {
         stack.update {
             switch $0.child {
             case .nodes(let nodes): $0.child = .nodes(nodes + [finished])
-            case .text: fatalError("TODO: this is an XML error that should be thrown.")
+            case .text:
+                parsingError = DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "The node \"\($0.name)\" cannot have both a textual leaf child and node children."))
+                parser.abortParsing()
             }
         }
     }
@@ -81,7 +86,9 @@ class XMLDeserializer: NSObject, Decoder, XMLParserDelegate {
         guard stack.isNotEmpty, string.trimmingCharacters(in: .whitespacesAndNewlines).isNotEmpty else { return }
         stack.update {
             switch $0.child {
-            case .nodes(let nodes) where nodes.isNotEmpty: fatalError("TODO: this is an XML error that should be thrown.")
+            case .nodes(let nodes) where nodes.isNotEmpty:
+                parsingError = DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "The node \"\($0.name)\" cannot have both a textual leaf child and node children."))
+                parser.abortParsing()
             default: $0.child = .text(string)
             }
         }

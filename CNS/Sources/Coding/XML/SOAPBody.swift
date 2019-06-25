@@ -10,9 +10,9 @@ import Foundation
 
 struct SOAPBody<Contents> {
 
-    enum SOAPKeys: CodingKey {
-        case envelope
-        case body
+    enum SOAPKeys: String, CodingKey {
+        case envelope = "Envelope"
+        case body = "Body"
     }
 
     struct TypeKey: CodingKey {
