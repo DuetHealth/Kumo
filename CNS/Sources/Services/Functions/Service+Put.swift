@@ -61,7 +61,43 @@ public extension Service {
                 return Disposables.create()
             }
         }
-            .observeOn(operationScheduler)
+        .observeOn(operationScheduler)
+    }
+
+    public func put<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Any> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+        .observeOn(operationScheduler)
+    }
+
+    public func put(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Any> {
+        return Observable.create { [self] observer in
+            do {
+                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
+                let task = self.session.dataTask(with: request) {
+                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+        .observeOn(operationScheduler)
     }
     
 }
