@@ -25,7 +25,8 @@ public extension Service {
         }
         
         @discardableResult public func post(_ endpoint: String, body: [String: Any]) -> Disposable {
-            return base.post(endpoint, body: body)
+            let result: Observable<Void> = base.post(endpoint, body: body)
+            return result
                 .subscribe()
         }
         
@@ -40,7 +41,8 @@ public extension Service {
         }
         
         @discardableResult public func put(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Disposable {
-            return base.put(endpoint, parameters: parameters, body: body)
+            let result: Observable<Void> = base.put(endpoint, body: body)
+            return result
                 .subscribe()
         }
         
