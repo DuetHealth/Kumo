@@ -2,7 +2,7 @@ import Foundation
 
 public extension UnkeyedDecodingContainer {
 
-    public mutating func decode(_ type: [Any].Type, strategy: DynamicKeyStrategy = .camelToSnakeCase) throws -> [Any] {
+    mutating func decode(_ type: [Any].Type, strategy: DynamicKeyStrategy = .camelToSnakeCase) throws -> [Any] {
         var result = [Any]()
         while !isAtEnd {
             if try decodeNil() { continue }
@@ -20,7 +20,7 @@ public extension UnkeyedDecodingContainer {
         return result
     }
 
-    public mutating func decode(_ type: [String: Any].Type, strategy: DynamicKeyStrategy = .camelToSnakeCase) throws -> [String: Any] {
+    mutating func decode(_ type: [String: Any].Type, strategy: DynamicKeyStrategy = .camelToSnakeCase) throws -> [String: Any] {
         let container = try nestedContainer(keyedBy: DynamicCodingKeys.self)
         return container.decode(type, strategy: strategy)
     }

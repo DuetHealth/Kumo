@@ -1,5 +1,4 @@
 import Foundation
-import RxCocoa
 import RxSwift
 import SystemConfiguration
 
@@ -15,10 +14,10 @@ open class ApplicationLayer {
     private var commonHeaders = [String: String]()
     private var services = [ServiceKey: Service]()
     
-    private let networkConnectivityRelay = BehaviorRelay(value: NetworkConnectivity.unknown)
+    private let networkConnectivitySubject = BehaviorSubject(value: NetworkConnectivity.unknown)
     
     public var networkConnectivity: Observable<NetworkConnectivity> {
-        return networkConnectivityRelay
+        return networkConnectivitySubject
             .distinctUntilChanged()
     }
     
@@ -36,8 +35,7 @@ open class ApplicationLayer {
             }
         }
             .map { [unowned self] in self.observeReachability($0) }?
-            .debug()
-            .bind(to: networkConnectivityRelay)
+            .subscribe(onNext: { [unowned self] in self.networkConnectivitySubject.onNext($0) })
             .disposed(by: bag)
     }
     

@@ -34,7 +34,7 @@ public extension URLSessionConfiguration {
         httpAdditionalHeaders?[header.rawValue] = ""
     }
     
-    public var httpHeaders: [HTTPHeader: Any]? {
+    var httpHeaders: [HTTPHeader: Any]? {
         get {
             return httpAdditionalHeaders.map {
                 Dictionary(uniqueKeysWithValues: $0.compactMap { pair in
@@ -49,7 +49,7 @@ public extension URLSessionConfiguration {
 
 public extension URLRequest {
     
-    public var httpHeaders: [HTTPHeader: String]? {
+    var httpHeaders: [HTTPHeader: String]? {
         get {
             return allHTTPHeaderFields.map {
                 Dictionary(uniqueKeysWithValues: $0.map { pair in
@@ -66,23 +66,23 @@ public extension URLRequest {
         }
     }
     
-    public mutating func remove(header: HTTPHeader) {
+    mutating func remove(header: HTTPHeader) {
         setValue(nil, forHTTPHeaderField: header.rawValue)
     }
     
-    public mutating func set(accept: MIMEType) {
+    mutating func set(accept: MIMEType) {
         setValue(accept.rawValue, forHTTPHeaderField: HTTPHeader.accept.rawValue)
     }
     
-    public mutating func set(contentType: MIMEType) {
+    mutating func set(contentType: MIMEType) {
         setValue(contentType.rawValue, forHTTPHeaderField: HTTPHeader.contentType.rawValue)
     }
     
-    public mutating func set(contentLength: Int) {
+    mutating func set(contentLength: Int) {
         setValue("\(contentLength)", forHTTPHeaderField: HTTPHeader.contentLength.rawValue)
     }
     
-    public mutating func set(value: String, for header: HTTPHeader) {
+    mutating func set(value: String, for header: HTTPHeader) {
         setValue(value, forHTTPHeaderField: header.rawValue)
     }
     
