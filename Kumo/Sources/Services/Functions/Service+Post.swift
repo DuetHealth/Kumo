@@ -2,7 +2,7 @@ import RxSwift
 
 public extension Service {
     
-    public func post<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
+    func post<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters, body: body)
@@ -20,7 +20,7 @@ public extension Service {
             .observeOn(operationScheduler)
     }
     
-    public func post<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Void> {
+    func post<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters, body: body)
@@ -38,7 +38,7 @@ public extension Service {
             .observeOn(operationScheduler)
     }
     
-    public func post<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Response> {
+    func post<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters, body: body)
@@ -56,7 +56,7 @@ public extension Service {
             .observeOn(operationScheduler)
     }
     
-    public func post<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Any> {
+    func post<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Any> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters, body: body)
@@ -74,7 +74,7 @@ public extension Service {
             .observeOn(operationScheduler)
     }
     
-    public func post(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Void> {
+    func post(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters, body: body)

@@ -2,7 +2,7 @@ import RxSwift
 
 public extension Service {
     
-    public func put<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
+    func put<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
@@ -20,7 +20,7 @@ public extension Service {
             .observeOn(operationScheduler)
     }
     
-    public func put<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Void> {
+    func put<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
@@ -38,7 +38,7 @@ public extension Service {
             .observeOn(operationScheduler)
     }
     
-    public func put(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Void> {
+    func put(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)

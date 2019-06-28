@@ -21,11 +21,11 @@ class NetworkTest: XCTestCase {
                     .subscribe(onNext: {
                         emissions.append($0)
                     }, onError: { error in
-                        XCTFail("Expectation violated: test '\(function)' emitted an error.", file: file, line: line)
+                        XCTFail("Expectation violated - test '\(function)' emitted an error: \(error).", file: file, line: line)
                         expect.fulfill()
                     }, onCompleted: {
                         XCTAssertTrue(emissions.count == 1, "The sequence emitted more than one element.", file: file, line: line)
-                        XCTAssertTrue(successCondition(emissions.first!), "Expectation violated: '\(description)'", file: file, line: line)
+                        XCTAssertTrue(successCondition(emissions.first!), "Expectation violated - '\(description)'", file: file, line: line)
                         expect.fulfill()
                     })
                 self.wait(for: [expect], timeout: 10)
@@ -38,14 +38,14 @@ class NetworkTest: XCTestCase {
             { successCondition in
                 let expect = self.expectation(description: description)
                 _ = observable
-                    .subscribe(onNext: { _ in
-                        XCTFail("Expectation violated: test '\(function)' emitted an element.", file: file, line: line)
+                    .subscribe(onNext: { element in
+                        XCTFail("Expectation violated - test '\(function)' emitted an element: \(element).", file: file, line: line)
                         expect.fulfill()
                     }, onError: { error in
-                        XCTAssertTrue(successCondition(error), "Expectation violated: '\(description)'", file: file, line: line)
+                        XCTAssertTrue(successCondition(error), "Expectation violated - '\(description)'", file: file, line: line)
                         expect.fulfill()
                     }, onCompleted: {
-                        XCTFail("Expectation violated: test '\(function)' completed.", file: file, line: line)
+                        XCTFail("Expectation violated - test '\(function)' completed.", file: file, line: line)
                         expect.fulfill()
                     })
                 self.wait(for: [expect], timeout: 10)
