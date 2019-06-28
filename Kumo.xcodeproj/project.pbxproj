@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9422A33C222AEDF20038E451 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9422A339222AEDF20038E451 /* RxCocoa.framework */; };
-		9422A33D222AEDF20038E451 /* RxOptional.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9422A33A222AEDF20038E451 /* RxOptional.framework */; };
 		9422A33E222AEDF20038E451 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9422A33B222AEDF20038E451 /* RxSwift.framework */; };
 		9422A341222AFB570038E451 /* GetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A340222AFB570038E451 /* GetTests.swift */; };
 		9422A343222B00BE0038E451 /* MockApplicationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A342222B00BE0038E451 /* MockApplicationLayer.swift */; };
@@ -124,8 +122,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9422A349222B2B7C0038E451 /* RxAtomic.framework in Frameworks */,
-				9422A33C222AEDF20038E451 /* RxCocoa.framework in Frameworks */,
-				9422A33D222AEDF20038E451 /* RxOptional.framework in Frameworks */,
 				9422A33E222AEDF20038E451 /* RxSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -570,7 +566,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -627,7 +623,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;

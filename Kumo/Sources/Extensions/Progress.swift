@@ -5,7 +5,8 @@ extension Reactive where Base: Progress {
     
     var fractionComplete: Observable<Double> {
         return observe(Double.self, #keyPath(Progress.fractionCompleted))
-            .filterNil()
+            .filter { $0 == nil }
+            .map { $0! }
     }
     
 }
