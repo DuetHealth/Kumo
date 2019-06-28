@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		9422A33E222AEDF20038E451 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9422A33B222AEDF20038E451 /* RxSwift.framework */; };
 		9422A341222AFB570038E451 /* GetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A340222AFB570038E451 /* GetTests.swift */; };
-		9422A343222B00BE0038E451 /* MockApplicationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A342222B00BE0038E451 /* MockApplicationLayer.swift */; };
 		9422A349222B2B7C0038E451 /* RxAtomic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9422A348222B2B7C0038E451 /* RxAtomic.framework */; };
 		9422A34A222B2BD40038E451 /* RxAtomic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9422A348222B2B7C0038E451 /* RxAtomic.framework */; };
 		9422A34B222B2BD40038E451 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9422A339222AEDF20038E451 /* RxCocoa.framework */; };
@@ -70,7 +69,6 @@
 		9422A33A222AEDF20038E451 /* RxOptional.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxOptional.framework; path = Carthage/Build/iOS/RxOptional.framework; sourceTree = "<group>"; };
 		9422A33B222AEDF20038E451 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		9422A340222AFB570038E451 /* GetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetTests.swift; sourceTree = "<group>"; };
-		9422A342222B00BE0038E451 /* MockApplicationLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockApplicationLayer.swift; sourceTree = "<group>"; };
 		9422A348222B2B7C0038E451 /* RxAtomic.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAtomic.framework; path = Carthage/Build/iOS/RxAtomic.framework; sourceTree = "<group>"; };
 		9422A34E222B2CA40038E451 /* MockResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockResponse.swift; sourceTree = "<group>"; };
 		9422A351222B2F7A0038E451 /* NetworkTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTest.swift; sourceTree = "<group>"; };
@@ -164,7 +162,6 @@
 		9422A344222B034B0038E451 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
-				9422A342222B00BE0038E451 /* MockApplicationLayer.swift */,
 				9422A34E222B2CA40038E451 /* MockResponse.swift */,
 				9422A357222CD7700038E451 /* DynamicBody.swift */,
 			);
@@ -498,7 +495,6 @@
 				9422A341222AFB570038E451 /* GetTests.swift in Sources */,
 				9422A352222B2F7A0038E451 /* NetworkTest.swift in Sources */,
 				9422A34F222B2CA40038E451 /* MockResponse.swift in Sources */,
-				9422A343222B00BE0038E451 /* MockApplicationLayer.swift in Sources */,
 				9422A356222C8CE50038E451 /* PostTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
