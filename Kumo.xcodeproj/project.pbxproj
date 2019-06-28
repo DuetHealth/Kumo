@@ -79,6 +79,7 @@
 		9422A353222C267A0038E451 /* TestStructure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestStructure.swift; sourceTree = "<group>"; };
 		9422A355222C8CE50038E451 /* PostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTests.swift; sourceTree = "<group>"; };
 		9422A357222CD7700038E451 /* DynamicBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicBody.swift; sourceTree = "<group>"; };
+		944CC5FC22C6446800F24C80 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		9454216C2187879300932CAF /* RequestEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestEncoding.swift; sourceTree = "<group>"; };
 		9454216E218787BB00932CAF /* RequestDecoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoding.swift; sourceTree = "<group>"; };
 		94542170218787F600932CAF /* JSONWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONWrapper.swift; sourceTree = "<group>"; };
@@ -243,6 +244,7 @@
 		94B6BCF821762D16005454C6 = {
 			isa = PBXGroup;
 			children = (
+				944CC5FC22C6446800F24C80 /* Package.swift */,
 				94B6BD0421762D16005454C6 /* Kumo */,
 				94B6BD0F21762D17005454C6 /* KumoTests */,
 				94B6BD0321762D16005454C6 /* Products */,
@@ -568,7 +570,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -625,7 +627,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;

@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.source          = { git: 'https://gitlab.duethealth.com/ios-projects/experimental/Kumo.git', tag: "#{s.version}" }
   s.source_files    = 'Kumo/Sources/**/*.{h,m,swift}'
   s.swift_version   = '4.2'
-  s.ios.deployment_target = '11.0'
+  s.ios.deployment_target = '8.0'
 
   s.dependency 'RxSwift'
 
