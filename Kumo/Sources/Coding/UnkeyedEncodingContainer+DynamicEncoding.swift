@@ -2,12 +2,12 @@ import Foundation
 
 public extension UnkeyedEncodingContainer {
 
-    public mutating func encode(_ value: [String: Any], strategy: DynamicKeyStrategy = .default) throws {
+    mutating func encode(_ value: [String: Any], strategy: DynamicKeyStrategy = .default) throws {
         var container = nestedContainer(keyedBy: DynamicCodingKeys.self)
         try container.encode(value, strategy: strategy)
     }
 
-    public mutating func encode(_ value: [Any], strategy: DynamicKeyStrategy = .default) throws {
+    mutating func encode(_ value: [Any], strategy: DynamicKeyStrategy = .default) throws {
         try value.forEach {
             if let dictionary = $0 as? [String: Any] {
                 try encode(dictionary, strategy: strategy)

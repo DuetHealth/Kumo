@@ -4,8 +4,12 @@ import RxSwift
 extension Reactive where Base: Progress {
     
     var fractionComplete: Observable<Double> {
-        return observe(Double.self, #keyPath(Progress.fractionCompleted))
-            .filterNil()
+        return Observable<Double>.create { observer in
+            let observation = self.base.observe(\Base.fractionCompleted) { (base, _) in
+                observer.onNext(base.fractionCompleted)
+            }
+            return Disposables.create(with: observation.invalidate)
+        }
     }
     
 }

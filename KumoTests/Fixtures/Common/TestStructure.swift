@@ -1,11 +1,3 @@
-//
-//  TestStructure.swift
-//  CNSTests
-//
-//  Created by ライアン on 3/3/19.
-//  Copyright © 2019 Duet Health. All rights reserved.
-//
-
 import Foundation
 
 infix operator <| : BackwardPipePrecedence
