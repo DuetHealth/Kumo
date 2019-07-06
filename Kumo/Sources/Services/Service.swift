@@ -152,8 +152,8 @@ public class Service {
                 data.map {
                     do { return try .error(type.decode(data: $0, with: requestDecoder)) }
                     catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
-                    } ?? .error(HTTPError.ambiguousError(httpResponse.status))
                 } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+            } ?? .error(HTTPError.ambiguousError(httpResponse.status))
         }
         return .next(())
     }
@@ -175,6 +175,27 @@ public class Service {
         }
         return data.map {
             do { return try .next(self.requestDecoder.decode(Response.self, from: $0)) }
+            catch { return .error(error) }
+        } ?? .completed
+    }
+
+    /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
+    /// act on an element.
+    func resultToElement(data: Data?, response: URLResponse?, error: Error?) -> Event<Any> {
+        if let error = error { return .error(error) }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+        }
+        if httpResponse.status.isError {
+            return errorType.flatMap { type in
+                data.map {
+                    do { return try .error(type.decode(data: $0, with: requestDecoder)) }
+                    catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
+                } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+            } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+        }
+        return data.map {
+            do { return try .next(self.dynamicRequestDecodingStrategy($0)) }
             catch { return .error(error) }
         } ?? .completed
     }
@@ -203,73 +224,22 @@ public class Service {
         return Disposables.create(with: task.cancel)
     }
 
-    func response(keyedUnder key: String? = nil, forRequest request: URLRequest, observer: AnyObserver<Any>) -> Cancelable {
-        let task: URLSessionDataTask
-        if let key = key {
-            task = self.session.dataTask(with: request) {
-                let event: Event<JSONWrapper<Response>> = self.resultToElement(data: $0, response: $1, error: $2)
-                switch event {
-                case .error(let error): return observer.onError(error)
-                case .completed: return observer.onCompleted()
-                case .next(let wrapper):
-                    do { try observer.onNext(wrapper.value(forKey: key)) }
-                    catch { observer.onError(error) }
-                    observer.onCompleted()
-                }
-            }
-        } else {
-            task = self.session.dataTask(with: request) {
-                observer.on(self.resultToElement(data: $0, response: $1, error: $2))
-                observer.onCompleted()
-            }
+    func response(forRequest request: URLRequest, observer: AnyObserver<Any>) -> Cancelable {
+        let task = self.session.dataTask(with: request) {
+            observer.on(self.resultToElement(data: $0, response: $1, error: $2))
+            observer.onCompleted()
         }
         task.resume()
         return Disposables.create(with: task.cancel)
     }
 
-    func response(keyedUnder key: String? = nil, forRequest request: URLRequest, observer: AnyObserver<Void>) -> Cancelable {
-        let task: URLSessionDataTask
-        if let key = key {
-            task = self.session.dataTask(with: request) {
-                let event: Event<JSONWrapper<Response>> = self.resultToElement(data: $0, response: $1, error: $2)
-                switch event {
-                case .error(let error): return observer.onError(error)
-                case .completed: return observer.onCompleted()
-                case .next(let wrapper):
-                    do { try observer.onNext(wrapper.value(forKey: key)) }
-                    catch { observer.onError(error) }
-                    observer.onCompleted()
-                }
-            }
-        } else {
-            task = self.session.dataTask(with: request) {
-                observer.on(self.resultToElement(data: $0, response: $1, error: $2))
-                observer.onCompleted()
-            }
+    func response(forRequest request: URLRequest, observer: AnyObserver<Void>) -> Cancelable {
+        let task = self.session.dataTask(with: request) {
+            observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
+            observer.onCompleted()
         }
         task.resume()
         return Disposables.create(with: task.cancel)
-    }
-    
-    /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
-    /// act on an element.
-    func resultToElement(data: Data?, response: URLResponse?, error: Error?) -> Event<Any> {
-        if let error = error { return .error(error) }
-        guard let httpResponse = response as? HTTPURLResponse else {
-            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
-        }
-        if httpResponse.status.isError {
-            return errorType.flatMap { type in
-                data.map {
-                    do { return try .error(type.decode(data: $0, with: requestDecoder)) }
-                    catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
-                } ?? .error(HTTPError.ambiguousError(httpResponse.status))
-            } ?? .error(HTTPError.ambiguousError(httpResponse.status))
-        }
-        return data.map {
-            do { return try .next(self.dynamicRequestDecodingStrategy($0)) }
-            catch { return .error(error) }
-        } ?? .completed
     }
 
     /// Converts the results of a `URLSessionDownloadTask` into an Rx `Event` with which consumer

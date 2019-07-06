@@ -12,7 +12,8 @@ public extension Service {
         }
         
         @discardableResult func get(_ endpoint: String, parameters: [String: Any] = [:]) -> Disposable {
-            return base.get(endpoint, parameters: parameters)
+            let result: Observable<Void> = base.get(endpoint, parameters: parameters)
+            return result
                 .subscribe()
         }
         
@@ -39,7 +40,8 @@ public extension Service {
         }
         
         @discardableResult func delete(_ endpoint: String, parameters: [String: Any] = [:]) -> Disposable {
-            return base.delete(endpoint, parameters: parameters)
+            let result: Observable<Void> = base.delete(endpoint, parameters: parameters)
+            return result
                 .subscribe()
         }
         
