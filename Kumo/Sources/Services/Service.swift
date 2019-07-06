@@ -174,27 +174,77 @@ public class Service {
             catch { return .error(error) }
         } ?? .completed
     }
-    
-    /// Converts the results of a `URLSessionDownloadTask` into an Rx `Event` with which consumer
-    /// may act on an element.
-    func downloadResultToURL(url: URL?, response: URLResponse?, error: Error?) -> Event<URL> {
-        if let error = error { return .error(error) }
-        guard let httpResponse = response as? HTTPURLResponse else {
-            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+
+    func response<Response: Decodable>(keyedUnder key: String? = nil, forRequest request: URLRequest, observer: AnyObserver<Response>) -> Cancelable {
+        let task: URLSessionDataTask
+        if let key = key {
+            task = self.session.dataTask(with: request) {
+                let event: Event<JSONWrapper<Response>> = self.resultToElement(data: $0, response: $1, error: $2)
+                switch event {
+                case .error(let error): return observer.onError(error)
+                case .completed: return observer.onCompleted()
+                case .next(let wrapper):
+                    do { try observer.onNext(wrapper.value(forKey: key)) }
+                    catch { observer.onError(error) }
+                    observer.onCompleted()
+                }
+            }
+        } else {
+            task = self.session.dataTask(with: request) {
+                observer.on(self.resultToElement(data: $0, response: $1, error: $2))
+                observer.onCompleted()
+            }
         }
-        if httpResponse.status.isError {
-            return .error(HTTPError.ambiguousError(httpResponse.status))
+        task.resume()
+        return Disposables.create(with: task.cancel)
+    }
+
+    func response(keyedUnder key: String? = nil, forRequest request: URLRequest, observer: AnyObserver<Any>) -> Cancelable {
+        let task: URLSessionDataTask
+        if let key = key {
+            task = self.session.dataTask(with: request) {
+                let event: Event<JSONWrapper<Response>> = self.resultToElement(data: $0, response: $1, error: $2)
+                switch event {
+                case .error(let error): return observer.onError(error)
+                case .completed: return observer.onCompleted()
+                case .next(let wrapper):
+                    do { try observer.onNext(wrapper.value(forKey: key)) }
+                    catch { observer.onError(error) }
+                    observer.onCompleted()
+                }
+            }
+        } else {
+            task = self.session.dataTask(with: request) {
+                observer.on(self.resultToElement(data: $0, response: $1, error: $2))
+                observer.onCompleted()
+            }
         }
-        guard let url = url, let fileType = (response?.mimeType).flatMap({ try? FileType(mimeType: $0) }) else { return .completed }
-        let newURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString, isDirectory: false)
-            .appendingPathExtension(fileType.fileExtension)
-        do {
-            try FileManager.default.moveItem(atPath: url.path, toPath: newURL.path)
-            return .next(newURL)
-        } catch {
-            return .error(error)
+        task.resume()
+        return Disposables.create(with: task.cancel)
+    }
+
+    func response(keyedUnder key: String? = nil, forRequest request: URLRequest, observer: AnyObserver<Void>) -> Cancelable {
+        let task: URLSessionDataTask
+        if let key = key {
+            task = self.session.dataTask(with: request) {
+                let event: Event<JSONWrapper<Response>> = self.resultToElement(data: $0, response: $1, error: $2)
+                switch event {
+                case .error(let error): return observer.onError(error)
+                case .completed: return observer.onCompleted()
+                case .next(let wrapper):
+                    do { try observer.onNext(wrapper.value(forKey: key)) }
+                    catch { observer.onError(error) }
+                    observer.onCompleted()
+                }
+            }
+        } else {
+            task = self.session.dataTask(with: request) {
+                observer.on(self.resultToElement(data: $0, response: $1, error: $2))
+                observer.onCompleted()
+            }
         }
+        task.resume()
+        return Disposables.create(with: task.cancel)
     }
     
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
@@ -216,6 +266,28 @@ public class Service {
             do { return try .next(self.dynamicRequestDecodingStrategy($0)) }
             catch { return .error(error) }
         } ?? .completed
+    }
+
+    /// Converts the results of a `URLSessionDownloadTask` into an Rx `Event` with which consumer
+    /// may act on an element.
+    func downloadResultToURL(url: URL?, response: URLResponse?, error: Error?) -> Event<URL> {
+        if let error = error { return .error(error) }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+        }
+        if httpResponse.status.isError {
+            return .error(HTTPError.ambiguousError(httpResponse.status))
+        }
+        guard let url = url, let fileType = (response?.mimeType).flatMap({ try? FileType(mimeType: $0) }) else { return .completed }
+        let newURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: false)
+            .appendingPathExtension(fileType.fileExtension)
+        do {
+            try FileManager.default.moveItem(atPath: url.path, toPath: newURL.path)
+            return .next(newURL)
+        } catch {
+            return .error(error)
+        }
     }
     
 }

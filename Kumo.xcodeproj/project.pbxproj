@@ -55,6 +55,7 @@
 		94F2CDD0222A3602006D9C36 /* Service+Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCA222A3602006D9C36 /* Service+Upload.swift */; };
 		94F2CDD1222A3602006D9C36 /* Service+Delete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCB222A3602006D9C36 /* Service+Delete.swift */; };
 		94F2CDD2222A3602006D9C36 /* Service+Put.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCC222A3602006D9C36 /* Service+Put.swift */; };
+		EA1CB78D22CFA7B3002399EA /* Service+DataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,6 +116,7 @@
 		94F2CDCA222A3602006D9C36 /* Service+Upload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Upload.swift"; sourceTree = "<group>"; };
 		94F2CDCB222A3602006D9C36 /* Service+Delete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Delete.swift"; sourceTree = "<group>"; };
 		94F2CDCC222A3602006D9C36 /* Service+Put.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Put.swift"; sourceTree = "<group>"; };
+		EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+DataTask.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -310,6 +312,7 @@
 				94F2CDC7222A3602006D9C36 /* Service+Download.swift */,
 				94F2CDBA2229F852006D9C36 /* Service+Get.swift */,
 				94F2CDC8222A3602006D9C36 /* Service+Post.swift */,
+				EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */,
 				94F2CDCC222A3602006D9C36 /* Service+Put.swift */,
 				94F2CDC9222A3602006D9C36 /* Service+SideEffects.swift */,
 				94F2CDCA222A3602006D9C36 /* Service+Upload.swift */,
@@ -483,6 +486,7 @@
 				9454216F218787BB00932CAF /* RequestDecoding.swift in Sources */,
 				945D4114217F6222008ACFD0 /* Service.swift in Sources */,
 				949AD28B218B375400808C79 /* FileType.swift in Sources */,
+				EA1CB78D22CFA7B3002399EA /* Service+DataTask.swift in Sources */,
 				9454216D2187879300932CAF /* RequestEncoding.swift in Sources */,
 				94F2CDBB2229F852006D9C36 /* Service+Get.swift in Sources */,
 				945D4116217F6ADB008ACFD0 /* HTTPHeader.swift in Sources */,
