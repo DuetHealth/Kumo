@@ -72,6 +72,7 @@
 		94F6E00922BD68770011AFF8 /* XMLNamespaceUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */; };
 		94F6E00B22BD689B0011AFF8 /* XMLConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */; };
 		94F6E00D22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */; };
+		EA1CB78D22CFA7B3002399EA /* Service+DataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,6 +156,7 @@
 		94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLNamespaceUsage.swift; sourceTree = "<group>"; };
 		94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLConstructor.swift; sourceTree = "<group>"; };
 		94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedXMLEncodingContainer.swift; sourceTree = "<group>"; };
+		EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+DataTask.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -434,6 +436,7 @@
 				94F2CDC7222A3602006D9C36 /* Service+Download.swift */,
 				94F2CDBA2229F852006D9C36 /* Service+Get.swift */,
 				94F2CDC8222A3602006D9C36 /* Service+Post.swift */,
+				EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */,
 				94F2CDCC222A3602006D9C36 /* Service+Put.swift */,
 				94F2CDC9222A3602006D9C36 /* Service+SideEffects.swift */,
 				94F2CDCA222A3602006D9C36 /* Service+Upload.swift */,
@@ -618,6 +621,7 @@
 				945D4114217F6222008ACFD0 /* Service.swift in Sources */,
 				94F6E00922BD68770011AFF8 /* XMLNamespaceUsage.swift in Sources */,
 				949AD28B218B375400808C79 /* FileType.swift in Sources */,
+				EA1CB78D22CFA7B3002399EA /* Service+DataTask.swift in Sources */,
 				9454216D2187879300932CAF /* RequestEncoding.swift in Sources */,
 				94B9B6F322C13AC400F47E87 /* XMLEncodingStrategies.swift in Sources */,
 				94F2CDBB2229F852006D9C36 /* Service+Get.swift in Sources */,

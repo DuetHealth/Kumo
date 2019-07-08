@@ -2,58 +2,28 @@ import RxSwift
 
 public extension Service {
     
-    func put<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Response> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToElement(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create(with: task.cancel)
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
+    func put<Body: Encodable, Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body, keyedUnder key: String? = nil) -> Observable<Response> {
+        return dataTask(method: .put, endpoint, parameters: parameters, body: body, keyedUnder: key)
     }
-    
+
     func put<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create()
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
+        return dataTask(method: .put, endpoint, parameters: parameters, body: body)
     }
-    
+
+    func put<Body: Encodable>(_ endpoint: String, parameters: [String: Any] = [:], body: Body) -> Observable<Any> {
+        return dataTask(method: .put, endpoint, parameters: parameters, body: body)
+    }
+
+    func put<Response: Decodable>(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any], keyedUnder key: String? = nil) -> Observable<Response> {
+        return dataTask(method: .put, endpoint, parameters: parameters, body: body, keyedUnder: key)
+    }
+
     func put(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Void> {
-        return Observable.create { [self] observer in
-            do {
-                let request = try self.createRequest(method: .put, endpoint: endpoint, queryParameters: parameters, body: body)
-                let task = self.session.dataTask(with: request) {
-                    observer.on(self.resultToEvent(data: $0, response: $1, error: $2))
-                    observer.onCompleted()
-                }
-                task.resume()
-                return Disposables.create()
-            } catch {
-                observer.onError(error)
-                return Disposables.create()
-            }
-        }
-            .observeOn(operationScheduler)
+        return dataTask(method: .put, endpoint, parameters: parameters, body: body)
+    }
+
+    func put(_ endpoint: String, parameters: [String: Any] = [:], body: [String: Any]) -> Observable<Any> {
+        return dataTask(method: .put, endpoint, parameters: parameters, body: body)
     }
     
 }
