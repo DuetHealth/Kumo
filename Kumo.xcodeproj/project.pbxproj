@@ -49,6 +49,9 @@
 		946809A022C64E4B0077DBCE /* GetPriceResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9468099F22C64E4B0077DBCE /* GetPriceResponse.swift */; };
 		946809A222C64E660077DBCE /* GetPriceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946809A122C64E660077DBCE /* GetPriceRequest.swift */; };
 		946809A422C64E710077DBCE /* SimpleRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946809A322C64E710077DBCE /* SimpleRequest.swift */; };
+		94690FBD22CBA823002C37BF /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94690FBC22CBA823002C37BF /* Authorization.swift */; };
+		94690FBF22CCE097002C37BF /* URLSessionConfiguration+HTTPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94690FBE22CCE097002C37BF /* URLSessionConfiguration+HTTPHeader.swift */; };
+		94690FC222CCE16B002C37BF /* URLRequest+HTTPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94690FC122CCE16B002C37BF /* URLRequest+HTTPHeader.swift */; };
 		949AD287218A937300808C79 /* HTTPResponseStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD286218A937300808C79 /* HTTPResponseStatus.swift */; };
 		949AD28B218B375400808C79 /* FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD28A218B375400808C79 /* FileType.swift */; };
 		949AD28D218BD6EC00808C79 /* StringEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD28C218BD6EC00808C79 /* StringEncoding.swift */; };
@@ -130,6 +133,9 @@
 		9468099F22C64E4B0077DBCE /* GetPriceResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPriceResponse.swift; sourceTree = "<group>"; };
 		946809A122C64E660077DBCE /* GetPriceRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPriceRequest.swift; sourceTree = "<group>"; };
 		946809A322C64E710077DBCE /* SimpleRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleRequest.swift; sourceTree = "<group>"; };
+		94690FBC22CBA823002C37BF /* Authorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
+		94690FBE22CCE097002C37BF /* URLSessionConfiguration+HTTPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionConfiguration+HTTPHeader.swift"; sourceTree = "<group>"; };
+		94690FC122CCE16B002C37BF /* URLRequest+HTTPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+HTTPHeader.swift"; sourceTree = "<group>"; };
 		949AD286218A937300808C79 /* HTTPResponseStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResponseStatus.swift; sourceTree = "<group>"; };
 		949AD28A218B375400808C79 /* FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileType.swift; sourceTree = "<group>"; };
 		949AD28C218BD6EC00808C79 /* StringEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringEncoding.swift; sourceTree = "<group>"; };
@@ -310,7 +316,8 @@
 		945D40EA217A6081008ACFD0 /* HTTP */ = {
 			isa = PBXGroup;
 			children = (
-				945D4115217F6ADB008ACFD0 /* HTTPHeader.swift */,
+				94690FC022CCE09B002C37BF /* Headers */,
+				94690FBC22CBA823002C37BF /* Authorization.swift */,
 				945D40EB217A60BD008ACFD0 /* HTTPMethod.swift */,
 				949AD286218A937300808C79 /* HTTPResponseStatus.swift */,
 			);
@@ -354,6 +361,16 @@
 				946809A322C64E710077DBCE /* SimpleRequest.swift */,
 			);
 			path = XML;
+			sourceTree = "<group>";
+		};
+		94690FC022CCE09B002C37BF /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				945D4115217F6ADB008ACFD0 /* HTTPHeader.swift */,
+				94690FC122CCE16B002C37BF /* URLRequest+HTTPHeader.swift */,
+				94690FBE22CCE097002C37BF /* URLSessionConfiguration+HTTPHeader.swift */,
+			);
+			path = Headers;
 			sourceTree = "<group>";
 		};
 		949AD28E218BD71400808C79 /* Data */ = {
@@ -596,12 +613,15 @@
 				944783812296C8CA00BE6960 /* SOAPDecoder.swift in Sources */,
 				94F2CDCD222A3602006D9C36 /* Service+Download.swift in Sources */,
 				944E93D822BD5F25002CA79B /* KeyedXMLDecodingContainer.swift in Sources */,
+				94690FC222CCE16B002C37BF /* URLRequest+HTTPHeader.swift in Sources */,
 				944E93DA22BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift in Sources */,
 				949AD296218BD80E00808C79 /* MultipartForm.swift in Sources */,
 				944783832296C9AF00BE6960 /* SOAPBody.swift in Sources */,
 				94F2CDCF222A3602006D9C36 /* Service+SideEffects.swift in Sources */,
+				94690FBD22CBA823002C37BF /* Authorization.swift in Sources */,
 				94F6E00722BD68330011AFF8 /* XMLNodeWritingContext.swift in Sources */,
 				94F2CDD1222A3602006D9C36 /* Service+Delete.swift in Sources */,
+				94690FBF22CCE097002C37BF /* URLSessionConfiguration+HTTPHeader.swift in Sources */,
 				949AD28D218BD6EC00808C79 /* StringEncoding.swift in Sources */,
 				94F6E00D22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift in Sources */,
 				945D40E3217A4A95008ACFD0 /* DynamicCodingKeys.swift in Sources */,
