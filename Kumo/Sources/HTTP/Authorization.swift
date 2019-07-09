@@ -8,9 +8,9 @@ public enum Authorization {
     public var value: String {
         switch self {
         case .basic(username: let username, password: let password):
-            return "Basic: " + ("\(username):\(password)".data(using: .utf8).map { $0.base64EncodedString() } ?? "")
+            return "Basic " + ("\(username):\(password)".data(using: .utf8).map { $0.base64EncodedString() } ?? "")
         case .bearer(let token):
-            return "Bearer: \(token)"
+            return "Bearer \(token)"
         }
     }
 
