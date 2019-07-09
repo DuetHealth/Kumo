@@ -1,11 +1,3 @@
-//
-//  Authorization.swift
-//  Kumo
-//
-//  Created by ライアン on 7/2/19.
-//  Copyright © 2019 Duet Health. All rights reserved.
-//
-
 import Foundation
 
 public enum Authorization {
