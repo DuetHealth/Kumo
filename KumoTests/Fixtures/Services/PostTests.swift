@@ -5,13 +5,13 @@ import XCTest
 class PostTests: NetworkTest {
     
     func testSuccessfulPostRequestWithDynamicBodyEmittingVoid() {
-        successfulTest(of: service.post("post", body: ["one": ["two": 3]]))
+        successfulTest(of: service.perform(HTTP.Request.post("post").body(["one": ["two": 3]])))
             <| "Will eventually emit Void"
             <| always()
     }
     
     func testSuccessfulPostRequestWithDynamicBodyEmittingElement() {
-        successfulTest(of: service.post("anything", body: RequestBody.dynamicBody))
+        successfulTest(of: service.perform(HTTP.Request.post("anything").body(RequestBody.dynamicBody)))
             <| "Will eventually emit the body which was POSTed"
             <| { (response: MockObjectResponse<RequestBody>) in
                 let leaf = RequestBody.dynamicBody["leaf"] as? String
