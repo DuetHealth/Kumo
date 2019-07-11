@@ -1,18 +1,18 @@
 import Foundation
 
 public enum HTTPError: Error {
-    case malformedURL(baseURL: URL, endpoint: String, parameters: [String: Any])
+    case malformedURL(_ url: URL, parameters: [String: Any])
     case unserializableRequestBody(object: Any?, originalError: Error)
     case corruptedResponse(object: Any)
     case emptyResponse
     case unsupportedResponse
     case corruptedError(Error.Type, decodingError: Error)
-    case ambiguousError(HTTPResponseStatus)
+    case ambiguousError(HTTP.ResponseStatus)
 
     public var localizedDescription: String {
         switch self {
-        case .malformedURL(let baseURL, let endpoint, let parameters):
-            return "The URL formed by appending the path component '\(endpoint)' to '\(baseURL)' with parameters '\(parameters) is malformed: \(baseURL.appendingPathComponent(endpoint))"
+        case .malformedURL(let url, let parameters):
+            return "A valid URL could not be created with the URL \(url) and the parameters '\(parameters))."
         case .unserializableRequestBody(object: let object, originalError: let error):
             return "The following object cannot be serialized: \(String(describing: object)); reason: \(error)"
         case .corruptedResponse(object: let object):
