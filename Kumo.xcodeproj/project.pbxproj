@@ -19,6 +19,7 @@
 		9427B5A6229311CB003D9CF6 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A5229311CB003D9CF6 /* Utilities.swift */; };
 		9430733F22D764AD00AEAC8D /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9430733E22D764AD00AEAC8D /* HTTP.swift */; };
 		9430734122D7ACC600AEAC8D /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9430734022D7ACC600AEAC8D /* HTTPRequest.swift */; };
+		9430734422D7AFDA00AEAC8D /* BlobCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9430734322D7AFDA00AEAC8D /* BlobCache.swift */; };
 		9447837C22958ED200BE6960 /* XMLDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837B22958ED200BE6960 /* XMLDecodingTests.swift */; };
 		9447837E2296C8B300BE6960 /* SOAPEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837D2296C8B300BE6960 /* SOAPEncoder.swift */; };
 		944783812296C8CA00BE6960 /* SOAPDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944783802296C8CA00BE6960 /* SOAPDecoder.swift */; };
@@ -65,6 +66,10 @@
 		94B6BD1321762D17005454C6 /* CNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 94B6BD0521762D17005454C6 /* CNS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94B6BD2121762E71005454C6 /* ApplicationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B6BD2021762E71005454C6 /* ApplicationLayer.swift */; };
 		94B9B6F322C13AC400F47E87 /* XMLEncodingStrategies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B9B6F222C13AC400F47E87 /* XMLEncodingStrategies.swift */; };
+		94C185E922D8DEF200CD66DC /* FailableDataRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C185E822D8DEF200CD66DC /* FailableDataRepresentable.swift */; };
+		94C185EB22D8E01100CD66DC /* ThrowingDataRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C185EA22D8E01100CD66DC /* ThrowingDataRepresentable.swift */; };
+		94C185ED22D8E13400CD66DC /* UIImage+DataRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C185EC22D8E13400CD66DC /* UIImage+DataRepresentable.swift */; };
+		94C185EF22D8E19400CD66DC /* AnyDataRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C185EE22D8E19400CD66DC /* AnyDataRepresentable.swift */; };
 		94C3BD95219B0F8100B4A3E2 /* Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C3BD94219B0F8100B4A3E2 /* Progress.swift */; };
 		94F2CDBB2229F852006D9C36 /* Service+Get.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDBA2229F852006D9C36 /* Service+Get.swift */; };
 		94F2CDCD222A3602006D9C36 /* Service+Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDC7222A3602006D9C36 /* Service+Download.swift */; };
@@ -103,6 +108,7 @@
 		9427B5A5229311CB003D9CF6 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		9430733E22D764AD00AEAC8D /* HTTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTP.swift; sourceTree = "<group>"; };
 		9430734022D7ACC600AEAC8D /* HTTPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
+		9430734322D7AFDA00AEAC8D /* BlobCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobCache.swift; sourceTree = "<group>"; };
 		943ADDC222A6FBA20045A0B9 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
 		9447837B22958ED200BE6960 /* XMLDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecodingTests.swift; sourceTree = "<group>"; };
 		9447837D2296C8B300BE6960 /* SOAPEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPEncoder.swift; sourceTree = "<group>"; };
@@ -154,6 +160,10 @@
 		94B6BD1221762D17005454C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		94B6BD2021762E71005454C6 /* ApplicationLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationLayer.swift; sourceTree = "<group>"; };
 		94B9B6F222C13AC400F47E87 /* XMLEncodingStrategies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLEncodingStrategies.swift; sourceTree = "<group>"; };
+		94C185E822D8DEF200CD66DC /* FailableDataRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailableDataRepresentable.swift; sourceTree = "<group>"; };
+		94C185EA22D8E01100CD66DC /* ThrowingDataRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrowingDataRepresentable.swift; sourceTree = "<group>"; };
+		94C185EC22D8E13400CD66DC /* UIImage+DataRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+DataRepresentable.swift"; sourceTree = "<group>"; };
+		94C185EE22D8E19400CD66DC /* AnyDataRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDataRepresentable.swift; sourceTree = "<group>"; };
 		94C3BD94219B0F8100B4A3E2 /* Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress.swift; sourceTree = "<group>"; };
 		94F2CDBA2229F852006D9C36 /* Service+Get.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Get.swift"; sourceTree = "<group>"; };
 		94F2CDC7222A3602006D9C36 /* Service+Download.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Download.swift"; sourceTree = "<group>"; };
@@ -234,6 +244,15 @@
 				94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */,
 			);
 			path = XML;
+			sourceTree = "<group>";
+		};
+		9430734222D7AFC700AEAC8D /* Blobs */ = {
+			isa = PBXGroup;
+			children = (
+				94C185E722D8DEE500CD66DC /* DataRepresentable */,
+				9430734322D7AFDA00AEAC8D /* BlobCache.swift */,
+			);
+			path = Blobs;
 			sourceTree = "<group>";
 		};
 		9447837A22958EB800BE6960 /* XML */ = {
@@ -433,6 +452,7 @@
 			children = (
 				94B6BD0521762D17005454C6 /* CNS.h */,
 				94B6BD2021762E71005454C6 /* ApplicationLayer.swift */,
+				9430734222D7AFC700AEAC8D /* Blobs */,
 				945D40DA217A4713008ACFD0 /* Coding */,
 				949AD28E218BD71400808C79 /* Data */,
 				945D40E7217A4AA7008ACFD0 /* Errors */,
@@ -441,6 +461,17 @@
 				94C3BD91219B0CB100B4A3E2 /* Services */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		94C185E722D8DEE500CD66DC /* DataRepresentable */ = {
+			isa = PBXGroup;
+			children = (
+				94C185E822D8DEF200CD66DC /* FailableDataRepresentable.swift */,
+				94C185EA22D8E01100CD66DC /* ThrowingDataRepresentable.swift */,
+				94C185EC22D8E13400CD66DC /* UIImage+DataRepresentable.swift */,
+				94C185EE22D8E19400CD66DC /* AnyDataRepresentable.swift */,
+			);
+			path = DataRepresentable;
 			sourceTree = "<group>";
 		};
 		94C3BD91219B0CB100B4A3E2 /* Services */ = {
@@ -612,7 +643,9 @@
 				94B6BD2121762E71005454C6 /* ApplicationLayer.swift in Sources */,
 				945421742187883B00932CAF /* URLSession.swift in Sources */,
 				944E93D422BD5E51002CA79B /* XMLDecoder.swift in Sources */,
+				94C185EB22D8E01100CD66DC /* ThrowingDataRepresentable.swift in Sources */,
 				944E93DC22BD6045002CA79B /* XMLDeserializer.swift in Sources */,
+				94C185ED22D8E13400CD66DC /* UIImage+DataRepresentable.swift in Sources */,
 				94C3BD95219B0F8100B4A3E2 /* Progress.swift in Sources */,
 				949AD294218BD7D500808C79 /* ResponseError.swift in Sources */,
 				9449941822BD3755008040DC /* XMLNamespace.swift in Sources */,
@@ -647,8 +680,10 @@
 				9454216F218787BB00932CAF /* RequestDecoding.swift in Sources */,
 				945D4114217F6222008ACFD0 /* Service.swift in Sources */,
 				94F6E00922BD68770011AFF8 /* XMLNamespaceUsage.swift in Sources */,
+				94C185E922D8DEF200CD66DC /* FailableDataRepresentable.swift in Sources */,
 				949AD28B218B375400808C79 /* FileType.swift in Sources */,
 				EA1CB78D22CFA7B3002399EA /* Service+DataTask.swift in Sources */,
+				9430734422D7AFDA00AEAC8D /* BlobCache.swift in Sources */,
 				9454216D2187879300932CAF /* RequestEncoding.swift in Sources */,
 				94B9B6F322C13AC400F47E87 /* XMLEncodingStrategies.swift in Sources */,
 				94F2CDBB2229F852006D9C36 /* Service+Get.swift in Sources */,
@@ -658,6 +693,7 @@
 				9430734122D7ACC600AEAC8D /* HTTPRequest.swift in Sources */,
 				9427B5A4229311C3003D9CF6 /* XMLEncoder.swift in Sources */,
 				9447837E2296C8B300BE6960 /* SOAPEncoder.swift in Sources */,
+				94C185EF22D8E19400CD66DC /* AnyDataRepresentable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
