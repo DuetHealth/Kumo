@@ -344,5 +344,9 @@ extension FileManager {
     var documentsDirectory: URL {
         return urls(for: .documentDirectory, in: .userDomainMask).first!
     }
-    
+
+    var cachesDirectory: URL {
+        return try! url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    }
+
 }

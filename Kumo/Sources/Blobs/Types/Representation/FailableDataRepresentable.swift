@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol FailableDataRepresentable {
+public protocol FailableDataRepresentable: _DataRepresentable where _RepresentationArguments == RepresentationArguments {
     associatedtype RepresentationArguments
     init?(data: Data, using arguments: RepresentationArguments)
 }

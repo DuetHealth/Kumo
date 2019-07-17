@@ -1,106 +1,27 @@
 import Foundation
 import RxSwift
 
-public struct Percent: ExpressibleByFloatLiteral {
-    public typealias FloatLiteralType = Float
+#if canImport(UIKit)
+import UIKit
 
-    public static var oneQuarter: Percent {
-        return 0.25
+fileprivate enum Observations {
+
+    static func onMemoryWarning(invoke selector: Selector, on object: Any) {
+        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
     }
 
-    public static var half: Percent {
-        return 0.5
-    }
-
-    public static var threeQuarters: Percent {
-        return 0.75
-    }
-
-
-    private var value: Float
-
-    public init(floatLiteral value: Float) {
-        self.value = max(0, min(value, 1))
+    static func onTermination(invoke selector: Selector, on object: Any) {
+        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willTerminateNotification, object: nil)
     }
 
 }
-
-extension Percent {
-
-    public static var nearlyExpired: Percent {
-        return 0.05
-    }
-
-}
-
-public enum CacheLifetime {
-
-    public enum ExtensionPolicy {
-
-        case extendImmediately(by: DateComponents)
-
-        /// Extends the lifetime of the cached object by the given time if
-        ///
-        case extendDuringLifetime(remaining: Percent, by: DateComponents)
-
-        /// Extends the lifetime of the cached object by the given time if
-        ///
-        case extendWhenNearlyExpired(by: DateComponents)
-    }
-
-    case forever
-    case sometimeFromNow(DateComponents)
-    case sometimeFromReferenceDate(Date, DateComponents)
-}
-
-protocol StorageLocation {
-
-}
-
-public class Storage {
-
-    public struct Heuristics {
-        public var initialCacheLifetime = CacheLifetime.sometimeFromNow(DateComponents(day: 7))
-        public var lifetimeExtensionPolicy = CacheLifetime.ExtensionPolicy?.none
-    }
-
-    let location: StorageLocation
-
-    var heuristics = Heuristics()
-
-    init(location: StorageLocation) {
-        self.location = location
-    }
-
-}
-
-struct Cache<Key: _ObjectiveCBridgeable, Member: AnyObject> {
-
-}
-
-struct ApplicationMemory: StorageLocation {
-
-//    private let backingStorage = NSCache<String, >()
-
-
-
-}
-
-struct FileSystem: StorageLocation {
-
-    private let backingManager: FileManager
-
-    init() {
-        self.backingManager = FileManager.default
-    }
-
-}
+#endif
 
 public class BlobCache {
 
     public let service: Service
-    private let ephemeralStorage = Storage(location: ApplicationMemory())
-    private let persistentStorage = Storage(location: FileSystem())
+    private let ephemeralStorage = Storage(location: InMemory(), heuristics: .inMemory)
+    private let persistentStorage = Storage(location: FileSystem(), heuristics: .fileSystem)
 
     public var ephemeralStorageHeuristics: Storage.Heuristics {
         get { return ephemeralStorage.heuristics }
@@ -114,6 +35,11 @@ public class BlobCache {
 
     public init(using service: Service) {
         self.service = service
+        ephemeralStorage.fallback = persistentStorage
+#if canImport(UIKit)
+        Observations.onMemoryWarning(invoke: #selector(cleanEphemeralStorage), on: self)
+        Observations.onTermination(invoke: #selector(cleanPersistentStorage), on: self)
+#endif
     }
 
     public convenience init() {
@@ -125,12 +51,45 @@ public class BlobCache {
         self.init(using: Service(baseURL: baseURL))
     }
 
-    func fetch<D: FailableDataRepresentable>(from url: URL) -> Observable<D> {
-        fatalError()
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL) -> Observable<D> where D._RepresentationArguments == Void, D._ConversionArguments == Void {
+        return fetch(from: url, convertWith: (), representWith: ())
     }
 
-    func fetch<D: ThrowingDataRepresentable>(from url: URL) -> Observable<D> {
-        fatalError()
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, representWith representationArguments: D._RepresentationArguments) -> Observable<D> where D._ConversionArguments == Void {
+        return fetch(from: url, convertWith: (), representWith: representationArguments)
+    }
+
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments) -> Observable<D> where D._RepresentationArguments == Void {
+        return fetch(from: url, convertWith: conversionArguments, representWith: ())
+    }
+
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments, representWith representationArguments: D._RepresentationArguments) -> Observable<D> {
+        let downloadTask = service.download("\(fatalError())")
+            .flatMap { [self] downloadPath -> Observable<D> in
+                do {
+                    return try self.ephemeralStorage.acquire(fromPath: downloadPath, origin: url, convertWith: conversionArguments, representWith: representationArguments)
+                        .map(Observable.just)
+                        ?? Observable.empty()
+                } catch { return Observable.error(error) }
+            }
+        return Observable.create { [self] observer in
+            do {
+                try self.ephemeralStorage.fetch(for: url, convertWith: conversionArguments, representWith: representationArguments)
+                    .map(observer.onNext)
+                observer.onCompleted()
+            } catch { observer.onError(error) }
+            return Disposables.create()
+        }
+            .subscribeOn(MainScheduler.asyncInstance)
+            .ifEmpty(switchTo: downloadTask)
+    }
+
+    @objc private func cleanEphemeralStorage() {
+        ephemeralStorage.clean()
+    }
+
+    @objc private func cleanPersistentStorage() {
+        persistentStorage.clean()
     }
 
 }
