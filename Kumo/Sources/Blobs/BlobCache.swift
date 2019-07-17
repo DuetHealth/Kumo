@@ -1,4 +1,5 @@
 import Foundation
+import RxSwift
 
 #if canImport(UIKit)
 import UIKit
