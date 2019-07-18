@@ -5,7 +5,7 @@ public enum CacheLifetime {
     public enum ExtensionPolicy {
 
         /// Extends the lifetime of the cached object immediately regardless
-        /// of
+        /// of how much time that object has left.
         case extendImmediately(by: DateComponents)
 
         /// Extends the lifetime of the cached object by the given time if
@@ -14,7 +14,7 @@ public enum CacheLifetime {
         case extendDuringLifetime(remaining: Percent, by: DateComponents)
 
         /// Extends the lifetime of the cached object by the given time if
-        ///
+        /// the current lifetime has almost expired.
         case extendWhenNearlyExpired(by: DateComponents)
     }
 
@@ -24,7 +24,7 @@ public enum CacheLifetime {
 
     var expirationDate: Date {
         // If for whatever reason an expiration date can't be calculated, the current time
-        // is provided. This could result in thrashing.
+        // is provided. This could result in thrashing, so we may need to be mindful of this.
         switch self {
         case .forever: return .distantFuture
         case .sometimeFromNow(let components):
