@@ -268,7 +268,7 @@ public class Service {
 
 public extension Service {
 
-    func perform<Response: Decodable, Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) -> Observable<Response> {
+    func perform<Response: Decodable, Method: RequestMethod, Resource: RequestResource, Parameters: RequestParameters, Body: RequestBody, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> Observable<Response> {
         return Observable.create { [self] observer in
             do {
                 let urlRequest = try self.createURLRequest(from: request)
@@ -277,11 +277,11 @@ public extension Service {
                 observer.onError(error)
                 return Disposables.create()
             }
-            }
+        }
             .observeOn(operationScheduler)
     }
 
-    func perform<Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) -> Observable<Void> {
+    func perform<Method: RequestMethod, Resource: RequestResource, Parameters: RequestParameters, Body: RequestBody, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> Observable<Void> {
         return Observable.create { [self] observer in
             do {
                 let urlRequest = try self.createURLRequest(from: request)
@@ -290,11 +290,11 @@ public extension Service {
                 observer.onError(error)
                 return Disposables.create()
             }
-            }
+        }
             .observeOn(operationScheduler)
     }
 
-    func perform<Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) -> Observable<Any> {
+    func perform<Method: RequestMethod, Resource: RequestResource, Parameters: RequestParameters, Body: RequestBody, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> Observable<Any> {
         return Observable.create { [self] observer in
             do {
                 let urlRequest = try self.createURLRequest(from: request)
@@ -303,20 +303,38 @@ public extension Service {
                 observer.onError(error)
                 return Disposables.create()
             }
-            }
+        }
             .observeOn(operationScheduler)
+    }
+
+    func perform<Resource: RequestResource, Parameters: RequestParameters>(_ request: HTTP._DownloadRequest<Resource, Parameters>) -> Observable<URL> {
+        return Observable.create { [self] observer in
+            do {
+                var urlRequest = try self.createURLRequest(from: request.baseRepresentation)
+                urlRequest.remove(header: .accept)
+                let task = self.session.downloadTask(with: urlRequest) {
+                    observer.on(self.downloadResultToURL(url: $0, response: $1, error: $2))
+                    observer.onCompleted()
+                }
+                task.resume()
+                return Disposables.create(with: task.cancel)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
     }
 
 }
 
 extension Service {
 
-    func createURLRequest<Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(from request: HTTP._Request<Method, Resource, Body, Parameters, Key>) throws -> URLRequest {
+    func createURLRequest<Method: RequestMethod, Resource: RequestResource, Parameters: RequestParameters, Body: RequestBody, Key: ResponseNestedKey>(from request: HTTP._Request<Method, Resource, Parameters, Body, Key>) throws -> URLRequest {
         let url: URL
         switch request.resourceLocator {
-        case .endpoint(let endpoint):
+        case .relative(let endpoint):
             url = endpoint.isEmpty ? baseURL : baseURL.appendingPathComponent(endpoint)
-        case .absoluteURL(let absoluteURL):
+        case .absolute(let absoluteURL):
             url = absoluteURL
         }
         let finalURL: URL

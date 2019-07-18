@@ -64,7 +64,7 @@ public class BlobCache {
     }
 
     public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments, representWith representationArguments: D._RepresentationArguments) -> Observable<D> {
-        let downloadTask = service.download("\(fatalError())")
+        let downloadTask = service.perform(HTTP.Request.download(url))
             .flatMap { [self] downloadPath -> Observable<D> in
                 do {
                     return try self.ephemeralStorage.acquire(fromPath: downloadPath, origin: url, convertWith: conversionArguments, representWith: representationArguments)
