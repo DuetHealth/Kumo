@@ -252,10 +252,12 @@ public class Service {
         if httpResponse.status.isError {
             return .error(HTTPError.ambiguousError(httpResponse.status))
         }
-        guard let url = url, let fileType = (response?.mimeType).flatMap({ try? FileType(mimeType: $0) }) else { return .completed }
+        guard let url = url else { return .completed }
+        let fileName = UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased()
+        let fileType = (response?.mimeType).flatMap({ try? FileType(mimeType: $0) })
         let newURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString, isDirectory: false)
-            .appendingPathExtension(fileType.fileExtension)
+            .appendingPathComponent(fileName, isDirectory: false)
+            .appendingPathExtension(fileType?.fileExtension ?? "")
         do {
             try FileManager.default.moveItem(atPath: url.path, toPath: newURL.path)
             return .next(newURL)

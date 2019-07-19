@@ -12,10 +12,12 @@ class FileSystem: StorageLocation {
         let bundle = Bundle(for: type(of: self))
         self.parentDirectory = parentDirectory ?? backingManager.cachesDirectory
             .appendingPathComponent("\(bundle.bundleIdentifier ?? "cache").\(Bundle.main.bundleIdentifier ?? "path")")
+        if backingManager.fileExists(atPath: self.parentDirectory.path) { return }
+        try! backingManager.createDirectory(at: self.parentDirectory, withIntermediateDirectories: false, attributes: nil)
     }
 
     func fetch<D: _DataRepresentable>(for url: URL, arguments: D._RepresentationArguments) throws -> D? {
-        let path = parentDirectory.appendingPathComponent(String(format: "%02x", url.hashValue))
+        let path = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
         guard let data = backingManager.contents(atPath: path.path) else { return nil }
         let referenceDate: Date = try backingManager.valueForExtendedAttribute(.expirationDate, ofItemAtPath: path.path)
         let expirationDate: Date = try backingManager.valueForExtendedAttribute(.expirationReferenceDate, ofItemAtPath: path.path)
@@ -30,7 +32,7 @@ class FileSystem: StorageLocation {
     }
 
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments: D._ConversionArguments) throws {
-        let path = parentDirectory.appendingPathComponent(String(format: "%02x", url.hashValue))
+        let path = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
         guard let data = try object.data(using: arguments) else {
             throw CacheSerializationError.dataConversionFailed(D.self, object: object, arguments: arguments)
         }
@@ -45,7 +47,7 @@ class FileSystem: StorageLocation {
 
     func acquire<D: _DataRepresentable>(fromPath path: URL, origin url: URL, arguments: D._RepresentationArguments) throws -> D? {
         guard let data = backingManager.contents(atPath: path.path) else { return nil }
-        let newPath = parentDirectory.appendingPathComponent(String(format: "%02x", url.hashValue))
+        let newPath = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
         try backingManager.moveItem(at: path, to: newPath)
         let parameters = CachedObjectParameters()
         let initialExpirationDate = delegate?.newExpirationDate(given: parameters) ?? Date()
@@ -122,7 +124,7 @@ fileprivate extension Int {
     var bytes: Data {
         var copy = self
         return Data(bytes: withUnsafePointer(to: &copy) {
-            Array(UnsafeBufferPointer(start: $0, count: MemoryLayout<Int>.size)).map(UInt8.init)
+            Array(UnsafeBufferPointer(start: $0, count: MemoryLayout<Int>.stride)).map(UInt8.init)
         })
     }
 

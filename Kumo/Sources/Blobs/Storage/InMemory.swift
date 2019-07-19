@@ -23,7 +23,7 @@ class InMemory: StorageLocation {
     weak var delegate: StoragePruningDelegate?
 
     func fetch<D: _DataRepresentable>(for url: URL, arguments: D._RepresentationArguments) throws -> D? {
-        switch backingCache.object(forKey: String(format: "%02x", url.hashValue) as NSString) {
+        switch backingCache.object(forKey: murmur3_32(url.absoluteString) as NSString) {
         case .none:
             return nil
         case .some(let object) where object.value is D:
@@ -38,7 +38,7 @@ class InMemory: StorageLocation {
     }
 
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments: D._ConversionArguments) throws {
-        let cacheKey = String(format: "%02x", url.hashValue)
+        let cacheKey = murmur3_32(url.absoluteString)
         let expirationDate = delegate?.newExpirationDate(given: CachedObjectParameters()) ?? Date()
         backingCache.setObject(InMemory.Reference(key: cacheKey, value: object, expirationDate: expirationDate), forKey: cacheKey as NSString)
         keys.insert(cacheKey)
