@@ -44,6 +44,10 @@ public class Storage: StoragePruningDelegate {
         location.delegate = self
     }
 
+    func contains(_ url: URL) -> Bool {
+        return location.contains(url) || (fallback?.contains(url) ?? false)
+    }
+
     func fetch<D: _DataRepresentable & _DataConvertible>(for url: URL, convertWith conversionArguments: D._ConversionArguments, representWith representationArguments: D._RepresentationArguments) throws -> D? {
         if let immediate: D = try location.fetch(for: url, arguments: representationArguments) { return immediate }
         guard let secondary: D = try fallback?.fetch(for: url, convertWith: conversionArguments, representWith: representationArguments) else { return nil }

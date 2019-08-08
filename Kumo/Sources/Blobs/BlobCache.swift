@@ -51,6 +51,10 @@ public class BlobCache {
         self.init(using: Service(baseURL: baseURL))
     }
 
+    public func contains(_ url: URL) -> Bool {
+        return ephemeralStorage.contains(url)
+    }
+
     public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL) -> Observable<D> where D._RepresentationArguments == Void, D._ConversionArguments == Void {
         return fetch(from: url, convertWith: (), representWith: ())
     }
@@ -82,6 +86,11 @@ public class BlobCache {
         }
             .subscribeOn(MainScheduler.asyncInstance)
             .ifEmpty(switchTo: downloadTask)
+    }
+
+    public func cleanImmediately() {
+        cleanEphemeralStorage()
+        cleanPersistentStorage()
     }
 
     @objc private func cleanEphemeralStorage() {

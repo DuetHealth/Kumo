@@ -24,6 +24,7 @@ protocol StorageLocation: AnyObject {
     func fetch<D: _DataRepresentable>(for url: URL, arguments: D._RepresentationArguments) throws -> D?
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments: D._ConversionArguments) throws
     func acquire<D: _DataRepresentable>(fromPath path: URL, origin url: URL, arguments: D._RepresentationArguments) throws -> D?
+    func contains(_ url: URL) -> Bool
     func pruneExpired()
     func removeAll()
 }

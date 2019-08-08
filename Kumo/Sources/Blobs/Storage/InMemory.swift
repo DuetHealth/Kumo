@@ -48,6 +48,10 @@ class InMemory: StorageLocation {
         return nil
     }
 
+    func contains(_ url: URL) -> Bool {
+        return keys.contains(murmur3_32(url.absoluteString))
+    }
+
     func removeAll() {
         backingCache.removeAllObjects()
         keys.removeAll()

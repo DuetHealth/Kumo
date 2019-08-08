@@ -11,7 +11,7 @@ class FileSystem: StorageLocation {
         self.backingManager = backingManager
         let bundle = Bundle(for: type(of: self))
         self.parentDirectory = parentDirectory ?? backingManager.cachesDirectory
-            .appendingPathComponent("\(bundle.bundleIdentifier ?? "cache").\(Bundle.main.bundleIdentifier ?? "path")")
+            .appendingPathComponent("\(bundle.bundleIdentifier ?? "kumo.caches").\(Bundle.main.bundleIdentifier ?? "filecache")")
         if backingManager.fileExists(atPath: self.parentDirectory.path) { return }
         try! backingManager.createDirectory(at: self.parentDirectory, withIntermediateDirectories: false, attributes: nil)
     }
@@ -56,6 +56,11 @@ class FileSystem: StorageLocation {
             .expirationDate: initialExpirationDate
         ], ofItemAtPath: newPath.path)
         return try D.init(data: data, using: arguments)
+    }
+
+    func contains(_ url: URL) -> Bool {
+        let path = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
+        return backingManager.fileExists(atPath: path.path)
     }
 
     func removeAll() {
@@ -123,9 +128,12 @@ fileprivate extension Int {
 
     var bytes: Data {
         var copy = self
-        return Data(bytes: withUnsafePointer(to: &copy) {
-            Array(UnsafeBufferPointer(start: $0, count: MemoryLayout<Int>.stride)).map(UInt8.init)
-        })
+        var bytes = [UInt8]()
+        while copy > 0 {
+            bytes.append(UInt8(copy & 0xff))
+            copy >>= 8
+        }
+        return Data(bytes: bytes)
     }
 
 }

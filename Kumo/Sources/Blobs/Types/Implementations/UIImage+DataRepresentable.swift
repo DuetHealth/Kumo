@@ -8,3 +8,17 @@ extension UIImage: DirectFailableDataConvertible {
     }
 }
 #endif
+
+extension Data: _DataRepresentable {
+    public typealias _RepresentationArguments = Void
+    public init?(data: Data, using arguments: Void) throws {
+        self.init(bytes: data)
+    }
+}
+
+extension Data: _DataConvertible {
+    public typealias _ConversionArguments = Void
+    public func data(using arguments: Void) throws -> Data? {
+        return self
+    }
+}
