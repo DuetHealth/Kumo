@@ -52,7 +52,7 @@ public class Service {
     public var operationScheduler: SchedulerType = MainScheduler.instance
 
     /// The characters to be allowed in the query sectiom of request URLs.
-    public var urlQueryAllowedCharacter = CharacterSet.urlQueryAllowed
+    public var urlQueryAllowedCharacters = CharacterSet.urlQueryAllowed
 
     private(set) var session: URLSession
     
@@ -130,7 +130,7 @@ public class Service {
                 throw HTTPError.malformedURL(baseURL: url, endpoint: endpoint, parameters: queryParameters)
             }
             components.percentEncodedQuery = queryParameters.flatMap {
-                guard let key = $0.key.addingPercentEncoding(withAllowedCharacters: urlQueryAllowedCharacter) else {
+                guard let key = $0.key.addingPercentEncoding(withAllowedCharacters: urlQueryAllowedCharacters) else {
                     return nil
                 }
 
