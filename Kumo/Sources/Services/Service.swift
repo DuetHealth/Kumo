@@ -134,6 +134,10 @@ public class Service {
                     return nil
                 }
 
+                if let value = ($0.value as? String)?.addingPercentEncoding(withAllowedCharacters: urlQueryAllowedCharacters) {
+                    return "\(key)=\(value)"
+                }
+
                 return "\(key)=\($0.value)"
             }.joined(separator: "&")
             guard components.url != nil else {
