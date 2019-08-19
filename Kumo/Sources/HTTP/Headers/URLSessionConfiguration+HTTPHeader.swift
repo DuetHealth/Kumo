@@ -22,7 +22,7 @@ public extension URLSessionConfiguration {
             set(value: contentType.rawValue, for: .contentType)
         }
 
-        public func set(value: Any, for header: HTTPHeader) {
+        public func set(value: Any, for header: HTTP.Header) {
             if base.httpAdditionalHeaders != nil {
                 base.httpAdditionalHeaders![header.rawValue] = value
             } else {
@@ -30,11 +30,11 @@ public extension URLSessionConfiguration {
             }
         }
 
-        public func remove(_ header: HTTPHeader) {
+        public func remove(_ header: HTTP.Header) {
             base.httpAdditionalHeaders?[header.rawValue] = ""
         }
 
-        public subscript(_ header: HTTPHeader) -> Any? {
+        public subscript(_ header: HTTP.Header) -> Any? {
             get { return base.httpAdditionalHeaders?[header.rawValue] }
             set { newValue.map { set(value: $0, for: header) } ?? remove(header) }
         }
@@ -45,12 +45,12 @@ public extension URLSessionConfiguration {
         return CommonHTTPHeaders(self)
     }
 
-    var httpHeaders: [HTTPHeader: Any]? {
+    var httpHeaders: [HTTP.Header: Any]? {
         get {
             return httpAdditionalHeaders.map {
                 Dictionary(uniqueKeysWithValues: $0.compactMap { pair in
                     guard let string = pair.key.base as? String else { return nil }
-                    return (HTTPHeader(rawValue: string), pair.value)
+                    return (HTTP.Header(rawValue: string), pair.value)
                 })
             }
         }

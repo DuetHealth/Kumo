@@ -57,7 +57,7 @@ public class Service {
     private(set) var session: URLSession
     
     /// Returns the headers applied to all requests.
-    public var commonHTTPHeaders: [HTTPHeader: Any]? {
+    public var commonHTTPHeaders: [HTTP.Header: Any]? {
         return session.configuration.httpHeaders
     }
     
@@ -107,27 +107,27 @@ public class Service {
             .observeOn(operationScheduler)
     }
             
-    func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
+    func createRequest(method: HTTP.Method, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
         let data: Data?
         do { data = try body.map(dynamicRequestEncodingStrategy) }
         catch { throw HTTPError.unserializableRequestBody(object: body, originalError: error) }
         return try createRequest(method: method, endpoint: endpoint, queryParameters: queryParameters, body: data)
     }
     
-    func createRequest<Body: Encodable>(method: HTTPMethod, endpoint: String, queryParameters: [String: Any] = [:], body: Body? = nil) throws -> URLRequest {
+    func createRequest<Body: Encodable>(method: HTTP.Method, endpoint: String, queryParameters: [String: Any] = [:], body: Body? = nil) throws -> URLRequest {
         let data: Data?
         do { data = try body.map(requestEncoder.encode) }
         catch { throw HTTPError.unserializableRequestBody(object: body, originalError: error) }
         return try createRequest(method: method, endpoint: endpoint, queryParameters: queryParameters, body: data)
     }
     
-    func createRequest(method: HTTPMethod, endpoint: String, queryParameters: [String: Any], body: Data?) throws -> URLRequest {
+    func createRequest(method: HTTP.Method, endpoint: String, queryParameters: [String: Any], body: Data?) throws -> URLRequest {
         let url = endpoint.isEmpty ? baseURL : baseURL.appendingPathComponent(endpoint)
         let finalURL: URL
         if queryParameters.isEmpty { finalURL = url }
         else {
             guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-                throw HTTPError.malformedURL(baseURL: url, endpoint: endpoint, parameters: queryParameters)
+                throw HTTPError.malformedURL(url, parameters: queryParameters)
             }
             components.percentEncodedQuery = queryParameters.flatMap {
                 guard let key = $0.key.addingPercentEncoding(withAllowedCharacters: urlQueryAllowedCharacters) else {
@@ -141,7 +141,7 @@ public class Service {
                 return "\(key)=\($0.value)"
             }.joined(separator: "&")
             guard components.url != nil else {
-                throw HTTPError.malformedURL(baseURL: baseURL, endpoint: endpoint, parameters: queryParameters)
+                throw HTTPError.malformedURL(url, parameters: queryParameters)
             }
             finalURL = components.url!
         }
@@ -277,6 +277,79 @@ public class Service {
         }
     }
     
+}
+
+public extension Service {
+
+    func perform<Response: Decodable, Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) -> Observable<Response> {
+        return Observable.create { [self] observer in
+            do {
+                let urlRequest = try self.createURLRequest(from: request)
+                return self.response(keyedUnder: request.nestingKey, forRequest: urlRequest, observer: observer)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+
+    func perform<Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) -> Observable<Void> {
+        return Observable.create { [self] observer in
+            do {
+                let urlRequest = try self.createURLRequest(from: request)
+                return self.response(forRequest: urlRequest, observer: observer)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+
+    func perform<Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) -> Observable<Any> {
+        return Observable.create { [self] observer in
+            do {
+                let urlRequest = try self.createURLRequest(from: request)
+                return self.response(forRequest: urlRequest, observer: observer)
+            } catch {
+                observer.onError(error)
+                return Disposables.create()
+            }
+        }
+            .observeOn(operationScheduler)
+    }
+
+}
+
+extension Service {
+
+    func createURLRequest<Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(from request: HTTP._Request<Method, Resource, Body, Parameters, Key>) throws -> URLRequest {
+        let url: URL
+        switch request.resourceLocator {
+        case .endpoint(let endpoint):
+            url = endpoint.isEmpty ? baseURL : baseURL.appendingPathComponent(endpoint)
+        case .absoluteURL(let absoluteURL):
+            url = absoluteURL
+        }
+        let finalURL: URL
+        if request.parameters.isEmpty { finalURL = url }
+        else {
+            guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+                throw HTTPError.malformedURL(url, parameters: request.parameters)
+            }
+            components.queryItems = request.parameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
+            guard components.url != nil else {
+                throw HTTPError.malformedURL(url, parameters: request.parameters)
+            }
+            finalURL = components.url!
+        }
+        var urlRequest = URLRequest(url: finalURL)
+        urlRequest.httpMethod = request.method.rawValue
+        urlRequest.httpBody = try request.data(typedEncoder: requestEncoder, dynamicEncoder: dynamicRequestEncodingStrategy)
+        return urlRequest
+    }
+
 }
 
 extension FileManager {

@@ -17,6 +17,8 @@
 		9422A358222CD7700038E451 /* DynamicBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A357222CD7700038E451 /* DynamicBody.swift */; };
 		9427B5A4229311C3003D9CF6 /* XMLEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */; };
 		9427B5A6229311CB003D9CF6 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9427B5A5229311CB003D9CF6 /* Utilities.swift */; };
+		9430733F22D764AD00AEAC8D /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9430733E22D764AD00AEAC8D /* HTTP.swift */; };
+		9430734122D7ACC600AEAC8D /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9430734022D7ACC600AEAC8D /* HTTPRequest.swift */; };
 		9447837C22958ED200BE6960 /* XMLDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837B22958ED200BE6960 /* XMLDecodingTests.swift */; };
 		9447837E2296C8B300BE6960 /* SOAPEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9447837D2296C8B300BE6960 /* SOAPEncoder.swift */; };
 		944783812296C8CA00BE6960 /* SOAPDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944783802296C8CA00BE6960 /* SOAPDecoder.swift */; };
@@ -99,6 +101,8 @@
 		9422A357222CD7700038E451 /* DynamicBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicBody.swift; sourceTree = "<group>"; };
 		9427B5A3229311C3003D9CF6 /* XMLEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLEncoder.swift; sourceTree = "<group>"; };
 		9427B5A5229311CB003D9CF6 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		9430733E22D764AD00AEAC8D /* HTTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTP.swift; sourceTree = "<group>"; };
+		9430734022D7ACC600AEAC8D /* HTTPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
 		943ADDC222A6FBA20045A0B9 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
 		9447837B22958ED200BE6960 /* XMLDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecodingTests.swift; sourceTree = "<group>"; };
 		9447837D2296C8B300BE6960 /* SOAPEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOAPEncoder.swift; sourceTree = "<group>"; };
@@ -320,6 +324,8 @@
 				94690FBC22CBA823002C37BF /* Authorization.swift */,
 				945D40EB217A60BD008ACFD0 /* HTTPMethod.swift */,
 				949AD286218A937300808C79 /* HTTPResponseStatus.swift */,
+				9430734022D7ACC600AEAC8D /* HTTPRequest.swift */,
+				9430733E22D764AD00AEAC8D /* HTTP.swift */,
 			);
 			path = HTTP;
 			sourceTree = "<group>";
@@ -612,6 +618,7 @@
 				9449941822BD3755008040DC /* XMLNamespace.swift in Sources */,
 				944783812296C8CA00BE6960 /* SOAPDecoder.swift in Sources */,
 				94F2CDCD222A3602006D9C36 /* Service+Download.swift in Sources */,
+				9430733F22D764AD00AEAC8D /* HTTP.swift in Sources */,
 				944E93D822BD5F25002CA79B /* KeyedXMLDecodingContainer.swift in Sources */,
 				94690FC222CCE16B002C37BF /* URLRequest+HTTPHeader.swift in Sources */,
 				944E93DA22BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift in Sources */,
@@ -648,6 +655,7 @@
 				945D4116217F6ADB008ACFD0 /* HTTPHeader.swift in Sources */,
 				945D40EC217A60BD008ACFD0 /* HTTPMethod.swift in Sources */,
 				945D40E9217A4AB6008ACFD0 /* HTTPError.swift in Sources */,
+				9430734122D7ACC600AEAC8D /* HTTPRequest.swift in Sources */,
 				9427B5A4229311C3003D9CF6 /* XMLEncoder.swift in Sources */,
 				9447837E2296C8B300BE6960 /* SOAPEncoder.swift in Sources */,
 			);
