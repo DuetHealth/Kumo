@@ -277,7 +277,7 @@ public extension Service {
                 observer.onError(error)
                 return Disposables.create()
             }
-            }
+        }
             .observeOn(operationScheduler)
     }
 
@@ -290,7 +290,7 @@ public extension Service {
                 observer.onError(error)
                 return Disposables.create()
             }
-            }
+        }
             .observeOn(operationScheduler)
     }
 
@@ -303,7 +303,7 @@ public extension Service {
                 observer.onError(error)
                 return Disposables.create()
             }
-            }
+        }
             .observeOn(operationScheduler)
     }
 

@@ -12,7 +12,7 @@ public enum HTTPError: Error {
     public var localizedDescription: String {
         switch self {
         case .malformedURL(let url, let parameters):
-            return "A valid URL could not be created with the URL \(url) and the parameters '\(parameters))."
+            return "A valid URL could not be created with the URL '\(url)' and the parameters '\(parameters))'."
         case .unserializableRequestBody(object: let object, originalError: let error):
             return "The following object cannot be serialized: \(String(describing: object)); reason: \(error)"
         case .corruptedResponse(object: let object):
