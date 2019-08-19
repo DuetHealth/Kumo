@@ -50,7 +50,10 @@ public class Service {
     ///
     /// By default, tasks are observed on the main thread.
     public var operationScheduler: SchedulerType = MainScheduler.instance
-    
+
+    /// The characters to be allowed in the query sectiom of request URLs.
+    public var urlQueryAllowedCharacters = CharacterSet.urlQueryAllowed
+
     private(set) var session: URLSession
     
     /// Returns the headers applied to all requests.
@@ -126,7 +129,17 @@ public class Service {
             guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
                 throw HTTPError.malformedURL(baseURL: url, endpoint: endpoint, parameters: queryParameters)
             }
-            components.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
+            components.percentEncodedQuery = queryParameters.flatMap {
+                guard let key = $0.key.addingPercentEncoding(withAllowedCharacters: urlQueryAllowedCharacters) else {
+                    return nil
+                }
+
+                if let value = ($0.value as? String)?.addingPercentEncoding(withAllowedCharacters: urlQueryAllowedCharacters) {
+                    return "\(key)=\(value)"
+                }
+
+                return "\(key)=\($0.value)"
+            }.joined(separator: "&")
             guard components.url != nil else {
                 throw HTTPError.malformedURL(baseURL: baseURL, endpoint: endpoint, parameters: queryParameters)
             }
