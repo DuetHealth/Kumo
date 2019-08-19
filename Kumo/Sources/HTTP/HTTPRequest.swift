@@ -23,35 +23,28 @@ fileprivate struct AnyEncodable: Encodable {
 
 }
 
-fileprivate func mapBody<M1: RequestMethod, R1: RequestResource, P1: RequestParameters, B1: RequestBody, K1: ResponseNestedKey, M2: RequestMethod, R2: RequestResource, P2: RequestParameters, B2: RequestBody, K2: ResponseNestedKey>(from existing: HTTP._Request<M1, R1, P1, B1, K1>.BodyContainer) -> HTTP._Request<M2, R2, P2, B2, K2>.BodyContainer {
-    switch existing {
-    case .dynamic(let object): return HTTP._Request<M2, R2, P2, B2, K2>.BodyContainer.dynamic(object)
-    case .typed(let encodable): return HTTP._Request<M2, R2, P2, B2, K2>.BodyContainer.typed(encodable)
-    }
-}
-
 extension HTTP {
     public static let Request = _Request<_NoOption, _NoOption, _NoOption, _NoOption, _NoOption>.self
 
+    // TODO: _HasOption could probably be expanded with protocols/types that define whether the body
+    // needs encoded with a typed encoder or with a dynamic encoder (JSONSerialization).
+    fileprivate enum BodyContainer {
+        case typed(Encodable)
+        case dynamic(Any)
+    }
+
     enum ResourceLocator {
-        case endpoint(String)
-        case absoluteURL(URL)
+        case relative(String)
+        case absolute(URL)
     }
 
     public struct _Request<Method: RequestMethod, Resource: RequestResource, Parameters: RequestParameters, Body: RequestBody, Key: ResponseNestedKey> {
-
-        // TODO: _HasOption could probably be expanded with protocols/types that define whether the body
-        // needs encoded with a typed encoder or with a dynamic encoder (JSONSerialization).
-        fileprivate enum BodyContainer {
-            case typed(Encodable)
-            case dynamic(Any)
-        }
 
         var method: HTTP.Method
         var resourceLocator: HTTP.ResourceLocator
         var parameters: [String: Any]
         var nestingKey: String?
-        private var body: BodyContainer?
+        private var body: HTTP.BodyContainer?
 
         fileprivate init(method: HTTP.Method, resourceLocator: HTTP.ResourceLocator, parameters: [String: Any] = [:], body: BodyContainer? = nil, keyedUnder nestingKey: String? = nil) {
             self.method = method
@@ -74,50 +67,77 @@ extension HTTP {
 
     }
 
+    public struct _DownloadRequest<Resource: RequestResource, Parameters: RequestParameters> {
+
+        var baseRepresentation: HTTP._Request<_HasOption, Resource, Parameters, _NoOption, _NoOption> {
+            return HTTP._Request(method: .get, resourceLocator: resourceLocator, parameters: parameters)
+        }
+
+        var resourceLocator: HTTP.ResourceLocator
+        var parameters: [String: Any]
+
+        fileprivate init(resourceLocator: HTTP.ResourceLocator, parameters: [String: Any] = [:]) {
+            self.resourceLocator = resourceLocator
+            self.parameters = parameters
+        }
+
+    }
+
+    public struct _UploadRequest<Resource: RequestResource, Parameters: RequestParameters, Body: RequestBody> {
+
+    }
+
 }
 
 public extension HTTP._Request where Method == _NoOption, Resource == _NoOption, Body == _NoOption, Parameters == _NoOption, Key == _NoOption {
 
     static func get(_ endpoint: String) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .get, resourceLocator: .endpoint(endpoint))
+        return HTTP._Request(method: .get, resourceLocator: .relative(endpoint))
     }
 
     static func get(_ url: URL) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .get, resourceLocator: .absoluteURL(url))
+        return HTTP._Request(method: .get, resourceLocator: .absolute(url))
     }
 
     static func post(_ endpoint: String) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .post, resourceLocator: .endpoint(endpoint))
+        return HTTP._Request(method: .post, resourceLocator: .relative(endpoint))
     }
 
     static func post(_ url: URL) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .post, resourceLocator: .absoluteURL(url))
+        return HTTP._Request(method: .post, resourceLocator: .absolute(url))
     }
 
     static func put(_ endpoint: String) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .put, resourceLocator: .endpoint(endpoint))
+        return HTTP._Request(method: .put, resourceLocator: .relative(endpoint))
     }
 
     static func put(_ url: URL) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .put, resourceLocator: .absoluteURL(url))
+        return HTTP._Request(method: .put, resourceLocator: .absolute(url))
     }
 
     static func delete(_ endpoint: String) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .delete, resourceLocator: .endpoint(endpoint))
+        return HTTP._Request(method: .delete, resourceLocator: .relative(endpoint))
     }
 
     static func delete(_ url: URL) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .delete, resourceLocator: .absoluteURL(url))
+        return HTTP._Request(method: .delete, resourceLocator: .absolute(url))
     }
 
     static func patch(_ endpoint: String) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .patch, resourceLocator: .endpoint(endpoint))
+        return HTTP._Request(method: .patch, resourceLocator: .relative(endpoint))
     }
 
     static func patch(_ url: URL) -> HTTP._Request<_HasOption, _HasOption, _NoOption, _NoOption, _NoOption> {
-        return HTTP._Request(method: .patch, resourceLocator: .absoluteURL(url))
+        return HTTP._Request(method: .patch, resourceLocator: .absolute(url))
     }
 
+    static func download(_ url: URL) -> HTTP._DownloadRequest<_HasOption, _NoOption> {
+        return HTTP._DownloadRequest(resourceLocator: .absolute(url))
+    }
+
+    static func download(_ endpoint: String) -> HTTP._DownloadRequest<_HasOption, _NoOption> {
+        return HTTP._DownloadRequest(resourceLocator: .relative(endpoint))
+    }
 
 }
 
@@ -125,7 +145,7 @@ public extension HTTP._Request where Method == _NoOption, Resource == _NoOption,
 public extension HTTP._Request where Parameters == _NoOption {
 
     func parameters(_ parameters: [String: Any]) -> HTTP._Request<Method, Resource, _HasOption, Body, Key> {
-        return HTTP._Request<Method, Resource, _HasOption, Body, Key>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: body.map(mapBody(from:)), keyedUnder: nestingKey)
+        return HTTP._Request<Method, Resource, _HasOption, Body, Key>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: body, keyedUnder: nestingKey)
     }
 
 }
@@ -133,11 +153,11 @@ public extension HTTP._Request where Parameters == _NoOption {
 public extension HTTP._Request where Body == _NoOption {
 
     func body(_ body: Encodable) -> HTTP._Request<Method, Resource, Parameters, _HasOption, Key> {
-        return HTTP._Request<Method, Resource, Parameters, _HasOption, Key>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: HTTP._Request<Method, Resource, Parameters, _HasOption, Key>.BodyContainer.typed(body), keyedUnder: nestingKey)
+        return HTTP._Request<Method, Resource, Parameters, _HasOption, Key>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: .typed(body), keyedUnder: nestingKey)
     }
 
     func body(_ body: Any) -> HTTP._Request<Method, Resource, Parameters, _HasOption, Key> {
-        return HTTP._Request<Method, Resource, Parameters, _HasOption, Key>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: HTTP._Request<Method, Resource, Parameters, _HasOption, Key>.BodyContainer.dynamic(body), keyedUnder: nestingKey)
+        return HTTP._Request<Method, Resource, Parameters, _HasOption, Key>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: .dynamic(body), keyedUnder: nestingKey)
     }
 
 }
@@ -145,7 +165,19 @@ public extension HTTP._Request where Body == _NoOption {
 public extension HTTP._Request where Key == _NoOption {
 
     func keyed(under nestingKey: String) -> HTTP._Request<Method, Resource, Parameters, Body, _HasOption> {
-        return HTTP._Request<Method, Resource, Parameters, Body, _HasOption>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: body.map(mapBody(from:)), keyedUnder: nestingKey)
+        return HTTP._Request<Method, Resource, Parameters, Body, _HasOption>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: body, keyedUnder: nestingKey)
+    }
+
+}
+
+public extension HTTP._DownloadRequest where Parameters == _NoOption {
+
+    func parameter(_ key: String, _ value: Any) -> HTTP._DownloadRequest<Resource, _HasOption> {
+        return HTTP._DownloadRequest(resourceLocator: resourceLocator, parameters: [key: value])
+    }
+
+    func parameters(_ parameters: [String: Any]) -> HTTP._DownloadRequest<Resource, _HasOption> {
+        return HTTP._DownloadRequest(resourceLocator: resourceLocator, parameters: parameters)
     }
 
 }

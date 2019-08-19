@@ -25,7 +25,10 @@ public struct MIMEType: RawRepresentable {
     public let rawValue: String
     
     public init?(rawValue: String) {
-        fatalError("NOT YET IMPLEMENTED")
+        fatalError("""
+        Not yet implemented--must iterate through every available MIME type.
+        It may just be better to allow anything to be a MIME type.
+        """)
     }
     
     private init(_ value: String) {
