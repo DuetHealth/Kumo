@@ -34,7 +34,7 @@ extension HTTP {
         case multipart(MultipartForm)
     }
 
-    struct ContentType {
+    struct Content {
         let data: Data
         let mimeType: MIMEType
 
@@ -65,17 +65,17 @@ extension HTTP {
             self.nestingKey = nestingKey
         }
 
-        func data(typedEncoder: RequestEncoding, dynamicEncoder: (Any) throws -> Data) throws -> ContentType? {
+        func data(typedEncoder: RequestEncoding, dynamicEncoder: (Any) throws -> Data) throws -> Content? {
             switch body {
             case .some(.typed(let encodable)):
                 let data = try typedEncoder.encode(AnyEncodable(encodable))
-                return ContentType(data: data, mimeType: MIMEType.applicationJSON())
+                return Content(data: data, mimeType: MIMEType.applicationJSON())
             case .some(.dynamic(let object)):
                 let data = try dynamicEncoder(object)
-                return ContentType(data: data, mimeType: MIMEType.applicationJSON())
+                return Content(data: data, mimeType: MIMEType.applicationJSON())
             case .some(.multipart(let object)):
                 let data = object.data
-                return ContentType(data: data, mimeType: MIMEType.multipartFormData(boundary: object.boundary))
+                return Content(data: data, mimeType: MIMEType.multipartFormData(boundary: object.boundary))
             case .none:
                 return .none
             }
