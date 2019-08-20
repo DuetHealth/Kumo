@@ -31,6 +31,17 @@ extension HTTP {
     fileprivate enum BodyContainer {
         case typed(Encodable)
         case dynamic(Any)
+        case multipart(MultipartForm)
+    }
+
+    struct Content {
+        let data: Data
+        let mimeType: MIMEType
+
+        init(data: Data, mimeType: MIMEType) {
+            self.data = data
+            self.mimeType = mimeType
+        }
     }
 
     enum ResourceLocator {
@@ -54,12 +65,17 @@ extension HTTP {
             self.nestingKey = nestingKey
         }
 
-        func data(typedEncoder: RequestEncoding, dynamicEncoder: (Any) throws -> Data) throws -> Data? {
+        func data(typedEncoder: RequestEncoding, dynamicEncoder: (Any) throws -> Data) throws -> Content? {
             switch body {
             case .some(.typed(let encodable)):
-                return try typedEncoder.encode(AnyEncodable(encodable))
+                let data = try typedEncoder.encode(AnyEncodable(encodable))
+                return Content(data: data, mimeType: MIMEType.applicationJSON())
             case .some(.dynamic(let object)):
-                return try dynamicEncoder(object)
+                let data = try dynamicEncoder(object)
+                return Content(data: data, mimeType: MIMEType.applicationJSON())
+            case .some(.multipart(let object)):
+                let data = object.data
+                return Content(data: data, mimeType: MIMEType.multipartFormData(boundary: object.boundary))
             case .none:
                 return .none
             }
@@ -158,6 +174,10 @@ public extension HTTP._Request where Body == _NoOption {
 
     func body(_ body: Any) -> HTTP._Request<Method, Resource, Parameters, _HasOption, Key> {
         return HTTP._Request<Method, Resource, Parameters, _HasOption, Key>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: .dynamic(body), keyedUnder: nestingKey)
+    }
+
+    func body(_ multipartBody: MultipartForm) -> HTTP._Request<Method, Resource, Parameters, _HasOption, Key> {
+        return HTTP._Request<Method, Resource, Parameters, _HasOption, Key>(method: method, resourceLocator: resourceLocator, parameters: parameters, body: .multipart(multipartBody), keyedUnder: nestingKey)
     }
 
 }
