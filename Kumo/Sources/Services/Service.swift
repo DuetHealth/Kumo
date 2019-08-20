@@ -364,9 +364,11 @@ extension Service {
             }
             finalURL = components.url!
         }
+        let contentType = try request.data(typedEncoder: requestEncoder, dynamicEncoder: dynamicRequestEncodingStrategy)
         var urlRequest = URLRequest(url: finalURL)
+        urlRequest.setValue(contentType?.mimeType.rawValue, forHTTPHeaderField: "Content-Type")
         urlRequest.httpMethod = request.method.rawValue
-        urlRequest.httpBody = try request.data(typedEncoder: requestEncoder, dynamicEncoder: dynamicRequestEncodingStrategy)
+        urlRequest.httpBody = contentType?.data
         return urlRequest
     }
 
