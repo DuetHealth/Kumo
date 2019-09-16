@@ -7,7 +7,7 @@ struct XMLNode {
         case text(String)
     }
 
-    static var root: XMLNode {
+    static var sentinel: XMLNode {
         return XMLNode()
     }
 
@@ -15,20 +15,20 @@ struct XMLNode {
     var attributes: [String: String]
     var child: Child
 
-    let isRoot: Bool
+    let isSentinel: Bool
 
     init(name: String, attributes: [String: String] = [:], child: Child = .nodes([])) {
         self.name = name
         self.attributes = attributes
         self.child = child
-        isRoot = false
+        isSentinel = false
     }
 
     private init() {
         name = ""
         attributes = [:]
         child = .nodes([])
-        isRoot = true
+        isSentinel = true
     }
 
     var isEmpty: Bool {

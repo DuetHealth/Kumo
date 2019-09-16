@@ -1,7 +1,13 @@
 import Foundation
 
 public extension CodingUserInfoKey {
-    static let xmlNamespaces = CodingUserInfoKey(rawValue: #function)!
+    static var xmlNamespaces:CodingUserInfoKey {
+        return CodingUserInfoKey(rawValue: #function)!
+    }
+
+    static var rootNamespace: CodingUserInfoKey {
+        return CodingUserInfoKey(rawValue: #function)!
+    }
 }
 
 public struct XMLNamespace {
@@ -9,7 +15,7 @@ public struct XMLNamespace {
     public let uri: String?
 
     public var attributeName: String {
-        return "xmlns:\(prefix)"
+        return prefix.isEmpty ? "xmlns" : "xmlns:\(prefix)"
     }
 
     public init(prefix: String, uri: String? = nil) {

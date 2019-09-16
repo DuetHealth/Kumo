@@ -48,8 +48,9 @@ extension SOAPBody: Encodable where Contents: Encodable {
 extension SOAPBody: Decodable where Contents: Decodable {
 
     init(from decoder: Decoder) throws {
+        // We are ignoring the envelope here as it should be the root
+        // of the document and we assume it exists.
         self.contents = try decoder.container(keyedBy: SOAPKeys.self)
-            .nestedContainer(keyedBy: SOAPKeys.self, forKey: .envelope)
             .nestedContainer(keyedBy: TypeKey.self, forKey: .body)
             .decode(Contents.self, forKey: TypeKey(Contents.self))
     }
