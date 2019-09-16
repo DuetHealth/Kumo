@@ -35,4 +35,18 @@ class XMLEncodingTests: XCTestCase {
         } catch { XCTFail(error.localizedDescription) }
     }
 
+    func testEncodingEpicAuthenticationRequest() {
+        let encoder = XMLEncoder()
+        encoder.keyEncodingStrategy = .convertToPascalCase
+        encoder.userInfo[.rootNamespace] = XMLNamespace(prefix: "", uri: "urn:Epic-com:MyChartMobile.2010.Services")
+        let request = Authenticate(username: "Username", password: "Password", deviceID: "E31A21DE-1167-45D3-8845-FD5F65AA5E4C", appID: "com.advocate.myadvocate.tst-iPhone")
+        do {
+            let data = try encoder.encode(request)
+            let expected = """
+            <?xml version="1.0"?><Authenticate xmlns="urn:Epic-com:MyChartMobile.2010.Services"><Username>Username</Username><Password>Password</Password><DeviceID>E31A21DE-1167-45D3-8845-FD5F65AA5E4C</DeviceID><AppID>com.advocate.myadvocate.tst-iPhone</AppID></Authenticate>
+            """.data(using: .utf8)!
+            XCTAssertTrue(data == expected)
+        } catch { XCTFail(error.localizedDescription) }
+    }
+
 }

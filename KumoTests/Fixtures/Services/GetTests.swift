@@ -36,7 +36,7 @@ class GetTests: NetworkTest {
             <| (always() as (URL) -> Bool)
     }
     
-    func testSuccessfulGetRequestWithParametersAccessingElementKeyedUnderKey() {
+    func xtestSuccessfulGetRequestWithParametersAccessingElementKeyedUnderKey() {
         successfulTest(of: service.perform(HTTP.Request.get("get").parameters(parameters.actual).keyed(under: "args")))
             <| "Will eventually emit the value under the key 'args' in the mock response"
             <| { (args: [String: String]) in

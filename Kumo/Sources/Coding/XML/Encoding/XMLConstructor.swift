@@ -11,7 +11,7 @@ class XMLConstructor: Encoder {
         return strategies.userInfo
     }
 
-    init(context: XMLNodeWritingContext = XMLNodeWritingContext(), strategies: XMLEncodingStrategies) {
+    init(context: XMLNodeWritingContext, strategies: XMLEncodingStrategies) {
         self.context = context
         self.strategies = strategies
     }

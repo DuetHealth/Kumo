@@ -40,11 +40,19 @@ public class XMLEncoder {
     public init() { }
 
     public func encode<T: Encodable>(_ value: T) throws -> Data {
-        let constructor = XMLConstructor(strategies: XMLEncodingStrategies(keyEncodingStrategy: keyEncodingStrategy, nilEncoding: nilEncodingStrategy, userInfo: userInfo))
+        let context: XMLNodeWritingContext
+        if let rootNamespace = userInfo[.rootNamespace] as? XMLNamespace, let uri = rootNamespace.uri {
+            let root = String(describing: T.self)
+            context = XMLNodeWritingContext(node: XMLNode(name: root, attributes: [rootNamespace.attributeName: uri], child: XMLNode.Child.nodes([])))
+        } else {
+            context = XMLNodeWritingContext()
+        }
+
+        let constructor = XMLConstructor(context: context, strategies: XMLEncodingStrategies(keyEncodingStrategy: keyEncodingStrategy, nilEncoding: nilEncodingStrategy, userInfo: userInfo))
         try value.encode(to: constructor)
         return try constructor.context.consumeContext().data(using: .utf8) ?? throwError(NSError())
     }
-    
+
 }
 
 extension XMLEncoder: RequestEncoding {

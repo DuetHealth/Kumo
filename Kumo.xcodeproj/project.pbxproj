@@ -95,6 +95,7 @@
 		94F6E00922BD68770011AFF8 /* XMLNamespaceUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */; };
 		94F6E00B22BD689B0011AFF8 /* XMLConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */; };
 		94F6E00D22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */; };
+		B58694D12322B3CC006C20EE /* Authenticate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58694D02322B3CC006C20EE /* Authenticate.swift */; };
 		EA1CB78D22CFA7B3002399EA /* Service+DataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */; };
 /* End PBXBuildFile section */
 
@@ -202,6 +203,7 @@
 		94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLNamespaceUsage.swift; sourceTree = "<group>"; };
 		94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLConstructor.swift; sourceTree = "<group>"; };
 		94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedXMLEncodingContainer.swift; sourceTree = "<group>"; };
+		B58694D02322B3CC006C20EE /* Authenticate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticate.swift; sourceTree = "<group>"; };
 		EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+DataTask.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -415,6 +417,7 @@
 				946809A122C64E660077DBCE /* GetPriceRequest.swift */,
 				9468099F22C64E4B0077DBCE /* GetPriceResponse.swift */,
 				946809A322C64E710077DBCE /* SimpleRequest.swift */,
+				B58694D02322B3CC006C20EE /* Authenticate.swift */,
 			);
 			path = XML;
 			sourceTree = "<group>";
@@ -802,6 +805,7 @@
 				9447837C22958ED200BE6960 /* XMLDecodingTests.swift in Sources */,
 				9422A352222B2F7A0038E451 /* NetworkTest.swift in Sources */,
 				9422A34F222B2CA40038E451 /* MockResponse.swift in Sources */,
+				B58694D12322B3CC006C20EE /* Authenticate.swift in Sources */,
 				94609ADD22B7CAB400D5B0AC /* XMLEncodingTests.swift in Sources */,
 				9468099A22C64C500077DBCE /* PostTests.swift in Sources */,
 			);
