@@ -42,7 +42,12 @@ public class XMLEncoder {
     public func encode<T: Encodable>(_ value: T) throws -> Data {
         let context: XMLNodeWritingContext
         if let rootNamespace = userInfo[.rootNamespace] as? XMLNamespace, let uri = rootNamespace.uri {
-            let root = String(describing: T.self)
+            let root: String
+            if let base = (value as? AnyEncodable)?.base {
+                root = String(describing: type(of: base))
+            } else {
+                root = String(describing: T.self)
+            }
             context = XMLNodeWritingContext(node: XMLNode(name: root, attributes: [rootNamespace.attributeName: uri], child: XMLNode.Child.nodes([])))
         } else {
             context = XMLNodeWritingContext()

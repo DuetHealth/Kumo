@@ -28,8 +28,8 @@ public class XMLDecoder {
         }
     }
 
-    var objectDecodingStrategy: KeyDecodingStrategy = .useDefaultKeys
-    var keyDecodingStrategy: KeyDecodingStrategy = .useDefaultKeys
+    public var keyDecodingStrategy: KeyDecodingStrategy = .useDefaultKeys
+    public var objectDecodingStrategy: KeyDecodingStrategy = .useDefaultKeys
 
     public init() {
 

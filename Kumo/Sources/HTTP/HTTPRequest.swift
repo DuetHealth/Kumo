@@ -9,7 +9,7 @@ public typealias RequestOption = RequestMethod & RequestResource & RequestBody &
 public enum _NoOption: RequestOption { }
 public enum _HasOption: RequestOption { }
 
-fileprivate struct AnyEncodable: Encodable {
+struct AnyEncodable: Encodable {
 
     let base: Encodable
 
@@ -69,10 +69,10 @@ extension HTTP {
             switch body {
             case .some(.typed(let encodable)):
                 let data = try typedEncoder.encode(AnyEncodable(encodable))
-                return Content(data: data, mimeType: MIMEType.applicationJSON())
+                return Content(data: data, mimeType: typedEncoder.contentType)
             case .some(.dynamic(let object)):
                 let data = try dynamicEncoder(object)
-                return Content(data: data, mimeType: MIMEType.applicationJSON())
+                return Content(data: data, mimeType: typedEncoder.contentType)
             case .some(.multipart(let object)):
                 let data = object.data
                 return Content(data: data, mimeType: MIMEType.multipartFormData(boundary: object.boundary))
