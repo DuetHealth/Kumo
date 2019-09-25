@@ -95,7 +95,10 @@
 		94F6E00922BD68770011AFF8 /* XMLNamespaceUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */; };
 		94F6E00B22BD689B0011AFF8 /* XMLConstructor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */; };
 		94F6E00D22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */; };
-		B58694D12322B3CC006C20EE /* Authenticate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58694D02322B3CC006C20EE /* Authenticate.swift */; };
+		B55A1174233E4EDE006EAB34 /* UnkeyedXMLEncodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55A1173233E4EDE006EAB34 /* UnkeyedXMLEncodingContainer.swift */; };
+		B55A1178233E5D92006EAB34 /* Unkeyed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55A1177233E5D92006EAB34 /* Unkeyed.swift */; };
+		B55A2190233939B60050F9FC /* UnkeyedXMLDecodingContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55A218F233939B60050F9FC /* UnkeyedXMLDecodingContainer.swift */; };
+		B58694D12322B3CC006C20EE /* Epic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58694D02322B3CC006C20EE /* Epic.swift */; };
 		EA1CB78D22CFA7B3002399EA /* Service+DataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */; };
 /* End PBXBuildFile section */
 
@@ -203,7 +206,10 @@
 		94F6E00822BD68770011AFF8 /* XMLNamespaceUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLNamespaceUsage.swift; sourceTree = "<group>"; };
 		94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLConstructor.swift; sourceTree = "<group>"; };
 		94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyedXMLEncodingContainer.swift; sourceTree = "<group>"; };
-		B58694D02322B3CC006C20EE /* Authenticate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticate.swift; sourceTree = "<group>"; };
+		B55A1173233E4EDE006EAB34 /* UnkeyedXMLEncodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnkeyedXMLEncodingContainer.swift; sourceTree = "<group>"; };
+		B55A1177233E5D92006EAB34 /* Unkeyed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unkeyed.swift; sourceTree = "<group>"; };
+		B55A218F233939B60050F9FC /* UnkeyedXMLDecodingContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnkeyedXMLDecodingContainer.swift; sourceTree = "<group>"; };
+		B58694D02322B3CC006C20EE /* Epic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Epic.swift; sourceTree = "<group>"; };
 		EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+DataTask.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -304,6 +310,7 @@
 				94F6E00A22BD689B0011AFF8 /* XMLConstructor.swift */,
 				94F6E00622BD68330011AFF8 /* XMLNodeWritingContext.swift */,
 				94F6E00C22BD68D90011AFF8 /* KeyedXMLEncodingContainer.swift */,
+				B55A1173233E4EDE006EAB34 /* UnkeyedXMLEncodingContainer.swift */,
 				94B9B6F222C13AC400F47E87 /* XMLEncodingStrategies.swift */,
 			);
 			path = Encoding;
@@ -317,6 +324,7 @@
 				944E93DB22BD6045002CA79B /* XMLDeserializer.swift */,
 				944E93D722BD5F25002CA79B /* KeyedXMLDecodingContainer.swift */,
 				944E93D922BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift */,
+				B55A218F233939B60050F9FC /* UnkeyedXMLDecodingContainer.swift */,
 			);
 			path = Decoding;
 			sourceTree = "<group>";
@@ -417,7 +425,8 @@
 				946809A122C64E660077DBCE /* GetPriceRequest.swift */,
 				9468099F22C64E4B0077DBCE /* GetPriceResponse.swift */,
 				946809A322C64E710077DBCE /* SimpleRequest.swift */,
-				B58694D02322B3CC006C20EE /* Authenticate.swift */,
+				B58694D02322B3CC006C20EE /* Epic.swift */,
+				B55A1177233E5D92006EAB34 /* Unkeyed.swift */,
 			);
 			path = XML;
 			sourceTree = "<group>";
@@ -737,6 +746,7 @@
 				94F2CDCD222A3602006D9C36 /* Service+Download.swift in Sources */,
 				9430733F22D764AD00AEAC8D /* HTTP.swift in Sources */,
 				944E93D822BD5F25002CA79B /* KeyedXMLDecodingContainer.swift in Sources */,
+				B55A1174233E4EDE006EAB34 /* UnkeyedXMLEncodingContainer.swift in Sources */,
 				94690FC222CCE16B002C37BF /* URLRequest+HTTPHeader.swift in Sources */,
 				944E93DA22BD5F5B002CA79B /* SingleValueXMLDecodingContainer.swift in Sources */,
 				949AD296218BD80E00808C79 /* MultipartForm.swift in Sources */,
@@ -747,6 +757,7 @@
 				94F2CDCF222A3602006D9C36 /* Service+SideEffects.swift in Sources */,
 				94690FBD22CBA823002C37BF /* Authorization.swift in Sources */,
 				94F6E00722BD68330011AFF8 /* XMLNodeWritingContext.swift in Sources */,
+				B55A2190233939B60050F9FC /* UnkeyedXMLDecodingContainer.swift in Sources */,
 				94F2CDD1222A3602006D9C36 /* Service+Delete.swift in Sources */,
 				94690FBF22CCE097002C37BF /* URLSessionConfiguration+HTTPHeader.swift in Sources */,
 				949AD28D218BD6EC00808C79 /* StringEncoding.swift in Sources */,
@@ -805,7 +816,8 @@
 				9447837C22958ED200BE6960 /* XMLDecodingTests.swift in Sources */,
 				9422A352222B2F7A0038E451 /* NetworkTest.swift in Sources */,
 				9422A34F222B2CA40038E451 /* MockResponse.swift in Sources */,
-				B58694D12322B3CC006C20EE /* Authenticate.swift in Sources */,
+				B58694D12322B3CC006C20EE /* Epic.swift in Sources */,
+				B55A1178233E5D92006EAB34 /* Unkeyed.swift in Sources */,
 				94609ADD22B7CAB400D5B0AC /* XMLEncodingTests.swift in Sources */,
 				9468099A22C64C500077DBCE /* PostTests.swift in Sources */,
 			);

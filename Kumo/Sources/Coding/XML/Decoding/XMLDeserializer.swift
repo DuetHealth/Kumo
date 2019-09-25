@@ -33,7 +33,7 @@ class XMLDeserializer: NSObject, Decoder, XMLParserDelegate {
     }
 
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        throw NSError()
+        return UnkeyedXMLDecodingContainer(root: root, keyMatching: keyMatching)
     }
 
     func singleValueContainer() throws -> SingleValueDecodingContainer {
