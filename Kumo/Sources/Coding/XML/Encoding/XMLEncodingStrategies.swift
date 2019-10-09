@@ -58,6 +58,33 @@ struct XMLEncodingStrategies {
         return XMLNode(name: name, attributes: attributes)
     }
 
+    func createNode(listedUnder node: XMLNode) -> XMLNode {
+
+        guard let key = CodingUserInfoKey(rawValue: node.name), let name = userInfo[key] as? String else {
+            fatalError("""
+                        Attempted to add an element listed under \(node) but no element name was assigned.
+                        Add an element name by calling addElementNameForList(elementName:list) on the XMLEncoder.
+                        Example, given the following xml:
+
+                            ```
+                            <?xml version="1.0"?>
+                            <ListContainer xmlns="urn:xml.is.bad">
+                                <SimpleList>
+                                    <Element>xml</Element>
+                                    <Element>is</Element>
+                                    <Element>bad</Element>
+                                </SimpleList>
+                            </ListContainer>
+                            ```
+
+                        Call the following:
+
+                            `encoder.addElementNameForList(elementName: "Element", list: "SimpleList")`
+                       """)
+        }
+        return XMLNode(name: name, attributes: [:])
+    }
+
     func encodeNil(in node: inout XMLNode) {
         nilEncoding(&node)
     }

@@ -95,13 +95,9 @@ struct KeyedXMLDecodingContainer<Key: CodingKey>: KeyedDecodingContainerProtocol
     }
 
     func nestedUnkeyedContainer(forKey key: Key) throws -> UnkeyedDecodingContainer {
-        // NOTE: for arrays
-        fatalError("""
-        If you're reading this, you must need it.
-        I didn't need it, so I didn't implement it.
-        I don't understand XML.
-        Please forgive me and implement this.
-        """)
+        return try node.find(key: key, with: keyMatching)
+            .map { UnkeyedXMLDecodingContainer(root: $0, keyMatching: keyMatching) }
+            ?? throwError(DecodingError.keyNotFound(key, DecodingError.Context(codingPath: [], debugDescription: "Could not find key \(key) nested under node \(node.name).")))
     }
 
     func superDecoder() throws -> Decoder {

@@ -55,7 +55,11 @@ public class XMLEncoder {
 
         let constructor = XMLConstructor(context: context, strategies: XMLEncodingStrategies(keyEncodingStrategy: keyEncodingStrategy, nilEncoding: nilEncodingStrategy, userInfo: userInfo))
         try value.encode(to: constructor)
-        return try constructor.context.consumeContext().data(using: .utf8) ?? throwError(NSError())
+        return try constructor.context.consumeContext().data(using: .utf8) ?? throwError(NSError(domain: "com.duet.kumo.xmlencoder", code: 1, userInfo: [:]))
+    }
+
+    public func addElementNameForList(elementName: String, list: String) {
+        userInfo[CodingUserInfoKey(rawValue: list)!] = elementName
     }
 
 }

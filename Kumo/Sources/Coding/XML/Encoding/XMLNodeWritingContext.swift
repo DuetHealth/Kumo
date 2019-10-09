@@ -2,6 +2,10 @@ import Foundation
 
 class XMLNodeWritingContext {
 
+    var root: XMLNode {
+        return stack.array.first!
+    }
+
     private var stack: StackDecorator<XMLNode>
 
     init(node: XMLNode = .sentinel) {
@@ -15,7 +19,7 @@ class XMLNodeWritingContext {
     func addLeaf(node: XMLNode) throws {
         try stack.update { top in
             switch top.child {
-            case .text: throw NSError()
+            case .text: throw NSError(domain: "com.duet.kumo.xmlnodewritingcontext", code: 1, userInfo: [:])
             case .nodes(let nodes): top.child = .nodes(nodes + [node])
             }
         }
