@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name            = 'Kumo'
-  s.version         = '0.2.0'
+  s.version         = '0.3.0'
   s.summary         = 'Simple networking with little boilerplate built with reactive programming.' 
   s.homepage        = 'https://gitlab.duethealth.com/ios-projects/Dependencies/Kumo'
   s.license         = 'MIT'

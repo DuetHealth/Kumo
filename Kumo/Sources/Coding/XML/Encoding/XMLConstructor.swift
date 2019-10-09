@@ -11,7 +11,7 @@ class XMLConstructor: Encoder {
         return strategies.userInfo
     }
 
-    init(context: XMLNodeWritingContext = XMLNodeWritingContext(), strategies: XMLEncodingStrategies) {
+    init(context: XMLNodeWritingContext, strategies: XMLEncodingStrategies) {
         self.context = context
         self.strategies = strategies
     }
@@ -21,13 +21,7 @@ class XMLConstructor: Encoder {
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
-        // NOTE: for arrays.
-        fatalError("""
-        If you're reading this, you must need it.
-        I didn't need it, so I didn't implement it.
-        I don't understand XML.
-        Please forgive me and implement this.
-        """)
+        return UnkeyedXMLEncodingContainer(context: context, strategies: strategies)
     }
 
     func singleValueContainer() -> SingleValueEncodingContainer {

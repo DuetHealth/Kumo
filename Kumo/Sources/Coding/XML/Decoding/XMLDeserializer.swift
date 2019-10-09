@@ -33,7 +33,7 @@ class XMLDeserializer: NSObject, Decoder, XMLParserDelegate {
     }
 
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        throw NSError()
+        return UnkeyedXMLDecodingContainer(root: root, keyMatching: keyMatching)
     }
 
     func singleValueContainer() throws -> SingleValueDecodingContainer {
@@ -51,17 +51,25 @@ class XMLDeserializer: NSObject, Decoder, XMLParserDelegate {
     }
 
     func parserDidStartDocument(_ parser: XMLParser) {
-        stack.push(.root)
+
     }
 
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
-        stack.push(XMLNode(name: elementName, attributes: attributeDict))
+        let node = XMLNode(name: elementName, attributes: attributeDict)
+        if root == nil { root = node }
+        stack.push(node)
     }
 
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         // NOTE: Is this actually an error if false?
         guard stack.peek?.name == elementName else { return }
         let finished = stack.pop()
+
+        guard !stack.isEmpty else {
+            stack.push(finished)
+            return
+        }
+
         stack.update {
             switch $0.child {
             case .nodes(let nodes): $0.child = .nodes(nodes + [finished])
