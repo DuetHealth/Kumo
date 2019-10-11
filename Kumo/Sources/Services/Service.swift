@@ -85,6 +85,24 @@ public class Service {
             self.session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
         }
     }
+
+    public func reconfiguring(applying changes: @escaping (URLSessionConfiguration) -> ()) -> Observable<Void> {
+        return Observable<Void>.create { [weak self] subscriber in
+            guard let self = self else {
+                subscriber.onNext(())
+                subscriber.onCompleted()
+                return Disposables.create()
+            }
+            self.session.finishTasksAndInvalidate { [unowned self] session, _ in
+                let newConfiguration: URLSessionConfiguration = session.configuration.copy()
+                changes(newConfiguration)
+                self.session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+                subscriber.onNext(())
+                subscriber.onCompleted()
+            }
+            return Disposables.create()
+        }
+    }
     
     public func upload<Response: Decodable>(_ endpoint: String, file: URL, under key: String) -> Observable<Response> {
         return Observable.create { [self] observer in
