@@ -29,7 +29,10 @@ func murmur3_32(_ key: Data, _ seed: UInt32 = staticSeed) -> String {
                 result | UInt32(next.element) << (8 * (next.offset + 1))
         }
         word ^= k(word)
-        hash = ((word << r2) | (word >> (32 - r2))) &* m &+ n
+        var newHash = hash
+        newHash = newHash ^ k(word)
+        newHash = (newHash << r2) | (newHash >> (32 - r2)) &* m &+ n
+        hash = newHash
     }
     let remaining = bytes.count & 3
     if remaining != 0 {
