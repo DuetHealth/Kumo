@@ -17,7 +17,7 @@ let package = Package(
             dependencies: ["RxSwift"]
         ),
         .testTarget(
-            "name": "\(productName)Tests",
+            name: "\(productName)Tests",
             dependencies: [productName, "RxSwift"]
         )
     ]
