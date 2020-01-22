@@ -1,24 +1,22 @@
 // swift-tools-version:4.0
 import PackageDescription
 
-let productName = "Kumo"
-
 let package = Package(
-    name: productName,
+    name: "Kumo",
     products: [
-        .library(name: productName, targets: [productName])
+        .library(name: "Kumo", targets: ["Kumo"])
     ],
     dependencies: [
         .package(url: "https://github.com/reactivex/rxswift.git", from: "4.0.0")
     ],
     targets: [
         .target(
-            name: productName,
+            name: "Kumo",
             dependencies: ["RxSwift"]
         ),
         .testTarget(
-            "name": "\(productName)Tests",
-            dependencies: [productName, "RxSwift"]
+            name: "KumoTests",
+            dependencies: ["Kumo", "RxSwift"]
         )
     ]
 )
