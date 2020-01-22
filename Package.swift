@@ -17,7 +17,8 @@ let package = Package(
         ),
         .testTarget(
             name: "KumoTests",
-            dependencies: ["Kumo", "RxSwift", "RxCocoa"]
+            dependencies: ["Kumo", "RxSwift", "RxCocoa"],
+            path: "KumoTests"
         )
     ]
 )
