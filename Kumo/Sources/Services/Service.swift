@@ -147,7 +147,7 @@ public class Service {
             guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
                 throw HTTPError.malformedURL(url, parameters: queryParameters)
             }
-            components.percentEncodedQuery = queryParameters.flatMap {
+            components.percentEncodedQuery = queryParameters.compactMap {
                 guard let key = $0.key.addingPercentEncoding(withAllowedCharacters: urlQueryAllowedCharacters) else {
                     return nil
                 }

@@ -6,18 +6,16 @@ let package = Package(
     products: [
         .library(name: "Kumo", targets: ["Kumo"])
     ],
-    dependencies: [
-        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "5.0.0")
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "Kumo",
-            dependencies: ["RxSwift", "RxCocoa"],
+            dependencies: [],
             path: "Kumo"
         ),
         .testTarget(
             name: "KumoTests",
-            dependencies: ["Kumo", "RxSwift", "RxCocoa"],
+            dependencies: ["Kumo"],
             path: "KumoTests"
         )
     ]
