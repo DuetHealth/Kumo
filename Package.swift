@@ -1,4 +1,4 @@
-// swift-tools-version:4.0
+// swift-tools-version:5.1
 import PackageDescription
 
 let package = Package(
@@ -7,16 +7,16 @@ let package = Package(
         .library(name: "Kumo", targets: ["Kumo"])
     ],
     dependencies: [
-        .package(url: "https://github.com/reactivex/rxswift.git", from: "4.0.0")
+        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "5.0.0")
     ],
     targets: [
         .target(
             name: "Kumo",
-            dependencies: ["RxSwift"]
+            dependencies: ["RxSwift", "RxCocoa"]
         ),
         .testTarget(
             name: "KumoTests",
-            dependencies: ["Kumo", "RxSwift"]
+            dependencies: ["Kumo", "RxSwift", "RxCocoa"]
         )
     ]
 )
