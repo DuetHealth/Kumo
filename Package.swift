@@ -9,17 +9,11 @@ let package = Package(
     products: [
         .library(name: "Kumo", targets: ["Kumo"])
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/ReactiveX/RxSwift", from: "5.0.0")
+    ],
     targets: [
-        .target(
-            name: "Kumo",
-            dependencies: [],
-            path: "Kumo"
-        ),
-        .testTarget(
-            name: "KumoTests",
-            dependencies: ["Kumo"],
-            path: "KumoTests"
-        )
+        .target(name: "Kumo", dependencies: ["RxSwift"], path: "Kumo"),
+        .testTarget(name: "KumoTests", dependencies: ["Kumo"], path: "KumoTests")
     ]
 )
