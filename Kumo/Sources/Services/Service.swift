@@ -11,6 +11,22 @@ public struct ServiceKey: Hashable {
     
 }
 
+public struct ResponseObjectError: Error {
+
+    public var responseObject: URLResponse?
+    public var wrappedError: Error
+
+    init(error: Error, responseObject: URLResponse?) {
+        self.responseObject = responseObject
+        self.wrappedError = error
+    }
+
+    public var localizedDescription: String {
+        return wrappedError.localizedDescription
+    }
+
+}
+
 public class Service {
     
     /// The base URL for all requests. The URLs for requests performed by the service are made
@@ -174,60 +190,64 @@ public class Service {
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
     /// perform side effects.
     func resultToEvent(data: Data?, response: URLResponse?, error: Error?) -> Event<Void> {
-        if let error = error { return .error(error) }
+        if let error = error { return .error(ResponseObjectError(error: error, responseObject: response)) }
         guard let httpResponse = response as? HTTPURLResponse else {
-            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+            return .error(ResponseObjectError(error: response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse, responseObject: response))
         }
-        if httpResponse.status.isError {
-            return errorType.flatMap { type in
-                data.map {
-                    do { return try .error(type.decode(data: $0, with: requestDecoder)) }
-                    catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
-                } ?? .error(HTTPError.ambiguousError(httpResponse.status))
-            } ?? .error(HTTPError.ambiguousError(httpResponse.status))
-        }
+         if httpResponse.status.isError {
+               return errorType.flatMap { type in
+                   data.map {
+                       do { return try .error(ResponseObjectError(error: type.decode(data: $0, with: requestDecoder), responseObject: response)) }
+                       catch { return .error(ResponseObjectError(error: HTTPError.corruptedError(type.type, decodingError: error), responseObject: response)) }
+                   } ?? .error(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
+               } ?? .error(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
+           }
         return .next(())
     }
-    
+
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
     /// act on an element.
     func resultToElement<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Event<Response> {
-        if let error = error { return .error(error) }
+        if let error = error {
+            return .error(ResponseObjectError(error: error, responseObject: response))
+        }
         guard let httpResponse = response as? HTTPURLResponse else {
-            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+            return .error(ResponseObjectError(error: response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse, responseObject: response))
         }
         if httpResponse.status.isError {
             return errorType.flatMap { type in
                 data.map {
-                    do { return try .error(type.decode(data: $0, with: requestDecoder)) }
-                    catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
-                } ?? .error(HTTPError.ambiguousError(httpResponse.status))
-            } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+                    do { return try .error(ResponseObjectError(error: type.decode(data: $0, with: requestDecoder), responseObject: response)) }
+                    catch { return .error(ResponseObjectError(error: HTTPError.corruptedError(type.type, decodingError: error), responseObject: response)) }
+                } ?? .error(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
+            } ?? .error(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
         }
         return data.map {
             do { return try .next(self.requestDecoder.decode(Response.self, from: $0)) }
-            catch { return .error(error) }
+            catch { return .error(ResponseObjectError(error: error, responseObject: response)) }
         } ?? .completed
     }
 
     /// Converts the results of a `URLSessionDataTask` into an Rx `Event` with which consumers may
     /// act on an element.
     func resultToElement(data: Data?, response: URLResponse?, error: Error?) -> Event<Any> {
-        if let error = error { return .error(error) }
+        if let error = error {
+            return .error(ResponseObjectError(error: error, responseObject: response))
+        }
         guard let httpResponse = response as? HTTPURLResponse else {
-            return .error(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+            return .error(ResponseObjectError(error: response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse, responseObject: response))
         }
         if httpResponse.status.isError {
             return errorType.flatMap { type in
                 data.map {
-                    do { return try .error(type.decode(data: $0, with: requestDecoder)) }
-                    catch { return .error(HTTPError.corruptedError(type.type, decodingError: error)) }
-                } ?? .error(HTTPError.ambiguousError(httpResponse.status))
-            } ?? .error(HTTPError.ambiguousError(httpResponse.status))
+                    do { return try .error(ResponseObjectError(error: type.decode(data: $0, with: requestDecoder), responseObject: response)) }
+                    catch { return .error(ResponseObjectError(error: HTTPError.corruptedError(type.type, decodingError: error), responseObject: response)) }
+                } ?? .error(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
+            } ?? .error(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
         }
         return data.map {
             do { return try .next(self.dynamicRequestDecodingStrategy($0)) }
-            catch { return .error(error) }
+            catch { return .error(ResponseObjectError(error: error, responseObject: response)) }
         } ?? .completed
     }
 
