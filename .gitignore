@@ -26,3 +26,4 @@ fastlane/README.md
 fastlane/pro_fastlane.out
 Pods
 Carthage
+builds/
