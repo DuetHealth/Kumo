@@ -13,8 +13,8 @@ public struct ServiceKey: Hashable {
 
 public struct ResponseObjectError: Error {
 
-    public var responseObject: URLResponse?
-    public var wrappedError: Error
+    public let responseObject: URLResponse?
+    public let wrappedError: Error
 
     init(error: Error, responseObject: URLResponse?) {
         self.responseObject = responseObject
@@ -163,7 +163,7 @@ public class Service {
             guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
                 throw HTTPError.malformedURL(url, parameters: queryParameters)
             }
-            components.percentEncodedQuery = queryParameters.flatMap {
+            components.percentEncodedQuery = queryParameters.compactMap {
                 guard let key = $0.key.addingPercentEncoding(withAllowedCharacters: urlQueryAllowedCharacters) else {
                     return nil
                 }
