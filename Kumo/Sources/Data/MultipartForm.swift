@@ -20,12 +20,12 @@ public struct MultipartForm {
     }
     
     private var currentFormData = Data()
-    
-    init(encoding: String.Encoding) {
+
+    public init(encoding: String.Encoding) {
         self.encoding = encoding
     }
-    
-    init(file: URL, under key: String, encoding: String.Encoding) throws {
+
+    public init(file: URL, under key: String, encoding: String.Encoding) throws {
         self.encoding = encoding
         try addFile(from: file, under: key)
     }
@@ -34,15 +34,15 @@ public struct MultipartForm {
         self.encoding = encoding
         try? addFormData(data: data)
     }
-    
-    mutating func addFile(from url: URL, under key: String) throws {
+
+    public mutating func addFile(from url: URL, under key: String) throws {
         guard let fileType = try? FileType(fileExtension: url.pathExtension) else {
             throw UploadError.unknownFileType(url)
         }
         let disposition = try self.disposition(key: key, fileName: url.lastPathComponent)
         let contentType = try self.contentType(mimeType: fileType.mimeType)
         let fileData = try Data(contentsOf: url)
-        currentFormData = [
+        currentFormData += [
             "--\(boundary)\(crlf)".data(using: encoding)!,
             disposition,
             contentType,
@@ -52,7 +52,31 @@ public struct MultipartForm {
         ].reduce(Data(), +)
     }
 
-    mutating func addFormData(data: [String : Any]) throws {
+    public mutating func addFile(from fileData: Data, withName fileName: String, key: String? = nil, mimeType: String? = nil) throws {
+        let url = URL(fileURLWithPath: fileName)
+
+        let contentType: Data
+        if let mimeType = mimeType {
+            contentType = try self.contentType(mimeType: mimeType)
+        } else {
+            guard let fileType = try? FileType(fileExtension: url.pathExtension) else {
+                throw UploadError.unknownFileType(url)
+            }
+            contentType = try self.contentType(mimeType: fileType.mimeType)
+        }
+
+        let disposition = try self.disposition(key: key ?? fileName, fileName: url.lastPathComponent)
+        currentFormData += [
+            "--\(boundary)\(crlf)".data(using: encoding)!,
+            disposition,
+            contentType,
+            crlf(encoding, count: 2),
+            fileData,
+            crlf(encoding, count: 2)
+        ].reduce(Data(), +)
+    }
+
+    public mutating func addFormData(data: [String : Any]) throws {
         for (key,value) in data {
             let k = key
             let v = value as! String
