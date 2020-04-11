@@ -1,6 +1,10 @@
 import Foundation
 import RxSwift
 
+#if canImport(KumoCoding)
+import KumoCoding
+#endif
+
 public struct ServiceKey: Hashable {
     
     let stringValue: String

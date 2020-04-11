@@ -1,6 +1,7 @@
 import Foundation
 import XCTest
 @testable import Kumo
+@testable import KumoCoding
 
 class XMLDecodingTests: XCTestCase {
 

@@ -1,5 +1,8 @@
 import Foundation
+
+#if !os(macOS)
 import MobileCoreServices
+#endif
 
 public struct FileType: Equatable, Codable {
     

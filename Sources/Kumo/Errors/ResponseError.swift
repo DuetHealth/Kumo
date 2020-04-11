@@ -1,5 +1,9 @@
 import Foundation
 
+#if canImport(KumoCoding)
+import KumoCoding
+#endif
+
 public struct ResponseError {
     
     let type: (Error & Decodable).Type

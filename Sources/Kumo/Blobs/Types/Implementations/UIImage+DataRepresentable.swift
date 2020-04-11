@@ -1,5 +1,6 @@
-#if canImport(UIKit)
 import Foundation
+
+#if canImport(UIKit)
 import UIKit
 extension UIImage: DirectFailableDataRepresentable { }
 extension UIImage: DirectFailableDataConvertible {
