@@ -24,8 +24,8 @@
 		945D4114217F6222008ACFD0 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D4113217F6222008ACFD0 /* Service.swift */; };
 		945D4116217F6ADB008ACFD0 /* HTTPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D4115217F6ADB008ACFD0 /* HTTPHeader.swift */; };
 		94609ADD22B7CAB400D5B0AC /* XMLEncodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94609ADC22B7CAB400D5B0AC /* XMLEncodingTests.swift */; };
-		9468099922C64C500077DBCE /* GetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9468099722C64C4F0077DBCE /* GetTests.swift */; };
-		9468099A22C64C500077DBCE /* PostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9468099822C64C4F0077DBCE /* PostTests.swift */; };
+		9468099922C64C500077DBCE /* PostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9468099722C64C4F0077DBCE /* PostTests.swift */; };
+		9468099A22C64C500077DBCE /* GetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9468099822C64C4F0077DBCE /* GetTests.swift */; };
 		946809A022C64E4B0077DBCE /* GetPriceResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9468099F22C64E4B0077DBCE /* GetPriceResponse.swift */; };
 		946809A222C64E660077DBCE /* GetPriceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946809A122C64E660077DBCE /* GetPriceRequest.swift */; };
 		946809A422C64E710077DBCE /* SimpleRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946809A322C64E710077DBCE /* SimpleRequest.swift */; };
@@ -38,7 +38,6 @@
 		946F43B122DCEAD600CE9EC9 /* ThrowingDataConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946F43B022DCEAD600CE9EC9 /* ThrowingDataConvertible.swift */; };
 		949AD287218A937300808C79 /* HTTPResponseStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD286218A937300808C79 /* HTTPResponseStatus.swift */; };
 		949AD28B218B375400808C79 /* FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD28A218B375400808C79 /* FileType.swift */; };
-		949AD28D218BD6EC00808C79 /* StringEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD28C218BD6EC00808C79 /* StringEncoding.swift */; };
 		949AD292218BD75500808C79 /* UploadError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD291218BD75500808C79 /* UploadError.swift */; };
 		949AD294218BD7D500808C79 /* ResponseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD293218BD7D500808C79 /* ResponseError.swift */; };
 		949AD296218BD80E00808C79 /* MultipartForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949AD295218BD80E00808C79 /* MultipartForm.swift */; };
@@ -153,8 +152,8 @@
 		945D4113217F6222008ACFD0 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		945D4115217F6ADB008ACFD0 /* HTTPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeader.swift; sourceTree = "<group>"; };
 		94609ADC22B7CAB400D5B0AC /* XMLEncodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLEncodingTests.swift; sourceTree = "<group>"; };
-		9468099722C64C4F0077DBCE /* GetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetTests.swift; sourceTree = "<group>"; };
-		9468099822C64C4F0077DBCE /* PostTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostTests.swift; sourceTree = "<group>"; };
+		9468099722C64C4F0077DBCE /* PostTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostTests.swift; sourceTree = "<group>"; };
+		9468099822C64C4F0077DBCE /* GetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetTests.swift; sourceTree = "<group>"; };
 		9468099F22C64E4B0077DBCE /* GetPriceResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPriceResponse.swift; sourceTree = "<group>"; };
 		946809A122C64E660077DBCE /* GetPriceRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPriceRequest.swift; sourceTree = "<group>"; };
 		946809A322C64E710077DBCE /* SimpleRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleRequest.swift; sourceTree = "<group>"; };
@@ -167,7 +166,6 @@
 		946F43B022DCEAD600CE9EC9 /* ThrowingDataConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrowingDataConvertible.swift; sourceTree = "<group>"; };
 		949AD286218A937300808C79 /* HTTPResponseStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResponseStatus.swift; sourceTree = "<group>"; };
 		949AD28A218B375400808C79 /* FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileType.swift; sourceTree = "<group>"; };
-		949AD28C218BD6EC00808C79 /* StringEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringEncoding.swift; sourceTree = "<group>"; };
 		949AD291218BD75500808C79 /* UploadError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadError.swift; sourceTree = "<group>"; };
 		949AD293218BD7D500808C79 /* ResponseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseError.swift; sourceTree = "<group>"; };
 		949AD295218BD80E00808C79 /* MultipartForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartForm.swift; sourceTree = "<group>"; };
@@ -310,7 +308,6 @@
 			isa = PBXGroup;
 			children = (
 				945421752187889200932CAF /* Copying.swift */,
-				949AD28C218BD6EC00808C79 /* StringEncoding.swift */,
 				945421732187883B00932CAF /* URLSession.swift */,
 				94C3BD94219B0F8100B4A3E2 /* Progress.swift */,
 			);
@@ -343,12 +340,11 @@
 		9468099622C64C4F0077DBCE /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				9468099722C64C4F0077DBCE /* GetTests.swift */,
-				9468099822C64C4F0077DBCE /* PostTests.swift */,
+				9468099722C64C4F0077DBCE /* PostTests.swift */,
+				9468099822C64C4F0077DBCE /* GetTests.swift */,
 			);
-			name = Services;
-			path = KumoTests/Fixtures/Services;
-			sourceTree = SOURCE_ROOT;
+			path = Services;
+			sourceTree = "<group>";
 		};
 		9468099B22C64DF20077DBCE /* Services */ = {
 			isa = PBXGroup;
@@ -495,7 +491,8 @@
 				9422A344222B034B0038E451 /* Mocks */,
 				94B6BD1221762D17005454C6 /* Info.plist */,
 			);
-			path = KumoTests;
+			name = KumoTests;
+			path = Tests/KumoTests;
 			sourceTree = "<group>";
 		};
 		94C185E722D8DEE500CD66DC /* Types */ = {
@@ -826,7 +823,6 @@
 				94690FBD22CBA823002C37BF /* Authorization.swift in Sources */,
 				94F2CDD1222A3602006D9C36 /* Service+Delete.swift in Sources */,
 				94690FBF22CCE097002C37BF /* URLSessionConfiguration+HTTPHeader.swift in Sources */,
-				949AD28D218BD6EC00808C79 /* StringEncoding.swift in Sources */,
 				949AD292218BD75500808C79 /* UploadError.swift in Sources */,
 				94F2CDD2222A3602006D9C36 /* Service+Put.swift in Sources */,
 				946F43AB22DCEA5900CE9EC9 /* DataRepresentable.swift in Sources */,
@@ -859,7 +855,7 @@
 				9422A358222CD7700038E451 /* DynamicBody.swift in Sources */,
 				9422A354222C267A0038E451 /* TestStructure.swift in Sources */,
 				946809A022C64E4B0077DBCE /* GetPriceResponse.swift in Sources */,
-				9468099922C64C500077DBCE /* GetTests.swift in Sources */,
+				9468099922C64C500077DBCE /* PostTests.swift in Sources */,
 				946809A222C64E660077DBCE /* GetPriceRequest.swift in Sources */,
 				94A4E68E22E0F5420033B480 /* BlobCacheTests.swift in Sources */,
 				946809A422C64E710077DBCE /* SimpleRequest.swift in Sources */,
@@ -869,7 +865,7 @@
 				B58694D12322B3CC006C20EE /* Epic.swift in Sources */,
 				B55A1178233E5D92006EAB34 /* Unkeyed.swift in Sources */,
 				94609ADD22B7CAB400D5B0AC /* XMLEncodingTests.swift in Sources */,
-				9468099A22C64C500077DBCE /* PostTests.swift in Sources */,
+				9468099A22C64C500077DBCE /* GetTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1114,7 +1110,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = KumoTests/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Tests/KumoTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1137,7 +1133,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = KumoTests/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Tests/KumoTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
