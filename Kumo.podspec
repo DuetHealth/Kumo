@@ -6,10 +6,23 @@ Pod::Spec.new do |s|
   s.license         = 'MIT'
   s.author          = 'ライアン'
   s.source          = { git: 'https://gitlab.duethealth.com/ios-projects/Dependencies/Kumo.git', tag: "#{s.version}" }
-  s.source_files    = 'Kumo/Sources/**/*.{h,m,swift}'
   s.swift_version   = '5.1'
-  s.ios.deployment_target = '11.0'
 
-  s.dependency 'RxSwift'
+  s.ios.deployment_target = '11.0'
+  s.osx.deployment_target = '10.13'
+  s.tvos.deployment_target = '11.0'
+
+  s.default_subspecs = 'Kumo', 'KumoCoding'
+
+  s.subspec 'KumoCoding' do |sp|
+    sp.name = 'KumoCoding'
+    sp.source_files = 'Sources/KumoCoding/**/*.{h,m,swift}'
+  end
+
+  s.subspec 'Kumo' do |myLib|
+    myLib.dependency 'Kumo/KumoCoding'
+    myLib.source_files = 'Sources/Kumo/**/*.{h,m,swift}'
+    myLib.dependency 'RxSwift'
+  end
 
 end

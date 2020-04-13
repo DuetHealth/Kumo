@@ -1,5 +1,9 @@
 import Foundation
 
+#if canImport(KumoCoding)
+import KumoCoding
+#endif
+
 public protocol RequestMethod { }
 public protocol RequestResource { }
 public protocol RequestBody { }
@@ -8,20 +12,6 @@ public protocol ResponseNestedKey { }
 public typealias RequestOption = RequestMethod & RequestResource & RequestBody & RequestParameters & ResponseNestedKey
 public enum _NoOption: RequestOption { }
 public enum _HasOption: RequestOption { }
-
-struct AnyEncodable: Encodable {
-
-    let base: Encodable
-
-    init(_ base: Encodable) {
-        self.base = base
-    }
-
-    func encode(to encoder: Encoder) throws {
-        try base.encode(to: encoder)
-    }
-
-}
 
 extension HTTP {
     public static let Request = _Request<_NoOption, _NoOption, _NoOption, _NoOption, _NoOption>.self

@@ -1,5 +1,9 @@
 import Foundation
 
+#if canImport(KumoCoding)
+import KumoCoding
+#endif
+
 public extension URLSessionConfiguration {
 
     struct CommonHTTPHeaders {

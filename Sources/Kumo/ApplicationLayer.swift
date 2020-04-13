@@ -49,7 +49,13 @@ open class ApplicationLayer {
             context.info = Unmanaged.passRetained(ObserverReference(observer)).toOpaque()
             SCNetworkReachabilitySetCallback(reachability, { _, flags, info in
                 guard let observer = info.map({ Unmanaged<ObserverReference<NetworkConnectivity>>.fromOpaque($0).takeUnretainedValue() }) else { return }
-                if flags.isReachable { observer.base.onNext(flags.contains(.isWWAN) ? .wwan : .internet) }
+                if flags.isReachable {
+#if os(iOS)
+                    observer.base.onNext(flags.contains(.isWWAN) ? .wwan : .internet)
+#else
+                    observer.base.onNext(.internet) //No cellular on non-iOS
+#endif
+                }
                 else { observer.base.onNext(.notConnected) }
             }, &context)
             SCNetworkReachabilitySetDispatchQueue(reachability, DispatchQueue.main)

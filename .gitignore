@@ -27,3 +27,6 @@ fastlane/pro_fastlane.out
 Pods
 Carthage
 builds/
+.swiftpm
+Package.resolved
+.build
