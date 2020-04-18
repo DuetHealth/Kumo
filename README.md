@@ -1,3 +1,7 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Swift Package Manager](https://github.com/DuetHealth/Kumo/workflows/Swift%20Package%20Manager/badge.svg)](https://github.com/DuetHealth/Kumo/actions?query=workflow%3A%22Swift+Package+Manager%22) 
+[![Actions Status](https://github.com/DuetHealth/Kumo/workflows/carthage/badge.svg)](https://github.com/DuetHealth/Kumo/actions?query=workflow%3ACarthage) 
+[![Actions Status](https://github.com/DuetHealth/Kumo/workflows/cocoapods/badge.svg)](https://github.com/DuetHealth/Kumo/actions?query=workflow%3ACocoapods)
+
 # Kumo
 
 Kumo is a simple networking library with little boilerplate built with reactive programming.
