@@ -58,7 +58,6 @@ class XMLEncodingTests: XCTestCase {
         let listContainer = ListContainer(simpleList: ["car", "cdr", "cons"])
         do {
             let data = try encoder.encode(listContainer)
-            let foo = String(data: data, encoding: .utf8)!
             let expected = """
             <?xml version="1.0"?><ListContainer xmlns="urn:xml.is.bad"><SimpleList><Element>car</Element><Element>cdr</Element><Element>cons</Element></SimpleList></ListContainer>
             """.data(using: .utf8)!
