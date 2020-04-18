@@ -5,7 +5,7 @@ typealias HTTPMethod = HTTP.Method
 
 public extension HTTP {
 
-    public enum Method: String {
+    enum Method: String {
         case get = "GET"
         case post = "POST"
         case put = "PUT"

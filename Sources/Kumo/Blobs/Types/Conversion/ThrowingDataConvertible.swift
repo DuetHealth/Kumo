@@ -11,11 +11,11 @@ public protocol DirectThrowingDataConvertible: ThrowingDataConvertible where Con
 
 public extension DirectThrowingDataConvertible {
 
-    public func data(using arguments: Void) throws -> Data? {
+    func data(using arguments: Void) throws -> Data? {
         return try data()
     }
 
-    public func data(using arguments: Void) throws -> Data {
+    func data(using arguments: Void) throws -> Data {
         return try data()
     }
 

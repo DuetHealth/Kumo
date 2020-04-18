@@ -5,7 +5,7 @@ public typealias HTTPHeader = HTTP.Header
 
 public extension HTTP {
 
-    public struct Header: Hashable {
+    struct Header: Hashable {
 
         public static let accept = HTTP.Header(rawValue: "Accept")
         public static let acceptLanguage = HTTP.Header(rawValue: "Accept-Language")

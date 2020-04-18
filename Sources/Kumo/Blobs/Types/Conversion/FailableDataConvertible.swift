@@ -11,7 +11,7 @@ public protocol DirectFailableDataConvertible: FailableDataConvertible where Con
 
 public extension DirectFailableDataConvertible {
 
-    public func data(using arguments: Void) -> Data? {
+    func data(using arguments: Void) -> Data? {
         return data()
     }
 
