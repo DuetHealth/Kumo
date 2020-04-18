@@ -7,11 +7,11 @@ Kumo is a simple networking library with little boilerplate built with reactive 
 
 ### Installation
 
-Cocoapods: `pod 'Kumo', git: 'git@gitlab.duethealth.com:ios-projects/dependencies/Kumo.git'`
+Cocoapods: `pod 'Kumo', git: 'https://github.com/DuetHealth/Kumo.git'`
 
-Carthage: `git "https://gitlab.duethealth.com/ios-projects/dependencies/Kumo" "master"`
+Carthage: `git "https://github.com/DuetHealth/Kumo.git" "master"`
 
-Swift Package Manager: `.package(url: "git@gitlab.duethealth.com:ios-projects/dependencies/Kumo.git", from: "0.3.6")`
+Swift Package Manager: `.package(url: "https://github.com/DuetHealth/Kumo.git", from: "0.3.6")`
 
 ## License
 
