@@ -7,7 +7,7 @@ public protocol ThrowingDataRepresentable: _DataRepresentable where _Representat
 
 public extension ThrowingDataRepresentable {
 
-    public init?(data: Data, using arguments: _RepresentationArguments) throws {
+    init?(data: Data, using arguments: _RepresentationArguments) throws {
         try self.init(data: data, using: arguments)
     }
     

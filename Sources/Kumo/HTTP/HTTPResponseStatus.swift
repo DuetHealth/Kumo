@@ -5,7 +5,7 @@ public typealias HTTPResponseStatus = HTTP.ResponseStatus
 
 public extension HTTP {
 
-    public enum ResponseStatus: Int {
+    enum ResponseStatus: Int {
 
         case unknown = -1337
 

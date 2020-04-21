@@ -3,7 +3,7 @@ import RxSwift
 
 public extension Service {
     
-    public struct SideEffectScope {
+    struct SideEffectScope {
         
         let base: Service
         
