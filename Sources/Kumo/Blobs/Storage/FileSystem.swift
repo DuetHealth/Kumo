@@ -133,7 +133,7 @@ fileprivate extension Int {
             bytes.append(UInt8(copy & 0xff))
             copy >>= 8
         }
-        return Data(bytes: bytes)
+        return Data(bytes)
     }
 
 }
