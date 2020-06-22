@@ -1,8 +1,5 @@
 import Foundation
 
-@available(*, deprecated, renamed: "HTTP.Header")
-public typealias HTTPHeader = HTTP.Header
-
 public extension HTTP {
 
     struct Header: Hashable {

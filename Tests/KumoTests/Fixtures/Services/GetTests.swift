@@ -48,7 +48,8 @@ class GetTests: NetworkTest {
         erroringTest(of: service.perform(HTTP.Request.get("status/401")))
             <| "Will eventually emit an error"
             <| { (error: Error) in
-                guard case .some(HTTPError.ambiguousError(.unauthorized401)) = error as? HTTPError else { return false }
+                guard let responseObjectError = error as? ResponseObjectError else { return false }
+                guard case .some(HTTPError.ambiguousError(.unauthorized401)) = responseObjectError.wrappedError as? HTTPError else { return false }
                 return true
             }
     }

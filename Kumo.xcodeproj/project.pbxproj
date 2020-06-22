@@ -3,12 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1E9BDE1623D8D3EF0074B7B3 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1E9BDE1523D8D3EF0074B7B3 /* RxSwift */; };
-		1E9BDE1823D8D3EF0074B7B3 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 1E9BDE1723D8D3EF0074B7B3 /* RxCocoa */; };
 		9422A34F222B2CA40038E451 /* MockResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A34E222B2CA40038E451 /* MockResponse.swift */; };
 		9422A352222B2F7A0038E451 /* NetworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A351222B2F7A0038E451 /* NetworkTest.swift */; };
 		9422A354222C267A0038E451 /* TestStructure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A353222C267A0038E451 /* TestStructure.swift */; };
@@ -57,19 +55,16 @@
 		94C185ED22D8E13400CD66DC /* UIImage+DataRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C185EC22D8E13400CD66DC /* UIImage+DataRepresentable.swift */; };
 		94C185EF22D8E19400CD66DC /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C185EE22D8E19400CD66DC /* Errors.swift */; };
 		94C3BD95219B0F8100B4A3E2 /* Progress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C3BD94219B0F8100B4A3E2 /* Progress.swift */; };
-		94F2CDBB2229F852006D9C36 /* Service+Get.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDBA2229F852006D9C36 /* Service+Get.swift */; };
 		94F2CDCD222A3602006D9C36 /* Service+Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDC7222A3602006D9C36 /* Service+Download.swift */; };
-		94F2CDCE222A3602006D9C36 /* Service+Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDC8222A3602006D9C36 /* Service+Post.swift */; };
 		94F2CDCF222A3602006D9C36 /* Service+SideEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDC9222A3602006D9C36 /* Service+SideEffects.swift */; };
 		94F2CDD0222A3602006D9C36 /* Service+Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCA222A3602006D9C36 /* Service+Upload.swift */; };
-		94F2CDD1222A3602006D9C36 /* Service+Delete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCB222A3602006D9C36 /* Service+Delete.swift */; };
-		94F2CDD2222A3602006D9C36 /* Service+Put.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCC222A3602006D9C36 /* Service+Put.swift */; };
 		B55A1178233E5D92006EAB34 /* Unkeyed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55A1177233E5D92006EAB34 /* Unkeyed.swift */; };
 		B58694D12322B3CC006C20EE /* Epic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58694D02322B3CC006C20EE /* Epic.swift */; };
+		B59A570924A7084F00EA68FF /* AnyCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59A570824A7084F00EA68FF /* AnyCancellable.swift */; };
+		B5B657D424A6444F00776C23 /* KumoNamespaceProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5B657D324A6444F00776C23 /* KumoNamespaceProxy.swift */; };
 		D0F9B5A62441566800038580 /* KumoCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = D0F9B5A42441566800038580 /* KumoCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0F9B5AB2441567200038580 /* KumoCoding.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0F9B5A22441566800038580 /* KumoCoding.framework */; };
 		D0F9B5AC2441567200038580 /* KumoCoding.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D0F9B5A22441566800038580 /* KumoCoding.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D0F9B5B12441570400038580 /* CNS.h in Headers */ = {isa = PBXBuildFile; fileRef = D0F9B5B02441570400038580 /* CNS.h */; };
 		D0F9B5D52441583400038580 /* UnkeyedDecodingContainer+DynamicDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F9B5B22441583300038580 /* UnkeyedDecodingContainer+DynamicDecoding.swift */; };
 		D0F9B5D62441583400038580 /* StringEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F9B5B32441583300038580 /* StringEncoding.swift */; };
 		D0F9B5D72441583400038580 /* XMLNamespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F9B5B52441583300038580 /* XMLNamespace.swift */; };
@@ -101,7 +96,6 @@
 		D0F9B5F12441583400038580 /* KeyedEncodingContainer+DynamicEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F9B5D22441583400038580 /* KeyedEncodingContainer+DynamicEncoding.swift */; };
 		D0F9B5F22441583400038580 /* RequestDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F9B5D32441583400038580 /* RequestDecoding.swift */; };
 		D0F9B5F32441583400038580 /* UnkeyedEncodingContainer+DynamicEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F9B5D42441583400038580 /* UnkeyedEncodingContainer+DynamicEncoding.swift */; };
-		EA1CB78D22CFA7B3002399EA /* Service+DataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -188,19 +182,16 @@
 		94C185EC22D8E13400CD66DC /* UIImage+DataRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+DataRepresentable.swift"; sourceTree = "<group>"; };
 		94C185EE22D8E19400CD66DC /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		94C3BD94219B0F8100B4A3E2 /* Progress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Progress.swift; sourceTree = "<group>"; };
-		94F2CDBA2229F852006D9C36 /* Service+Get.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Get.swift"; sourceTree = "<group>"; };
 		94F2CDC7222A3602006D9C36 /* Service+Download.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Download.swift"; sourceTree = "<group>"; };
-		94F2CDC8222A3602006D9C36 /* Service+Post.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Post.swift"; sourceTree = "<group>"; };
 		94F2CDC9222A3602006D9C36 /* Service+SideEffects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+SideEffects.swift"; sourceTree = "<group>"; };
 		94F2CDCA222A3602006D9C36 /* Service+Upload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Upload.swift"; sourceTree = "<group>"; };
-		94F2CDCB222A3602006D9C36 /* Service+Delete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Delete.swift"; sourceTree = "<group>"; };
-		94F2CDCC222A3602006D9C36 /* Service+Put.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Put.swift"; sourceTree = "<group>"; };
 		B55A1177233E5D92006EAB34 /* Unkeyed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unkeyed.swift; sourceTree = "<group>"; };
 		B58694D02322B3CC006C20EE /* Epic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Epic.swift; sourceTree = "<group>"; };
+		B59A570824A7084F00EA68FF /* AnyCancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCancellable.swift; sourceTree = "<group>"; };
+		B5B657D324A6444F00776C23 /* KumoNamespaceProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KumoNamespaceProxy.swift; sourceTree = "<group>"; };
 		D0F9B5A22441566800038580 /* KumoCoding.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KumoCoding.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0F9B5A42441566800038580 /* KumoCoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KumoCoding.h; sourceTree = "<group>"; };
 		D0F9B5A52441566800038580 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Supporting Files/Info.plist"; sourceTree = "<group>"; };
-		D0F9B5B02441570400038580 /* CNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CNS.h; path = Sources/Kumo/CNS.h; sourceTree = SOURCE_ROOT; };
 		D0F9B5B22441583300038580 /* UnkeyedDecodingContainer+DynamicDecoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UnkeyedDecodingContainer+DynamicDecoding.swift"; sourceTree = "<group>"; };
 		D0F9B5B32441583300038580 /* StringEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringEncoding.swift; sourceTree = "<group>"; };
 		D0F9B5B52441583300038580 /* XMLNamespace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XMLNamespace.swift; sourceTree = "<group>"; };
@@ -232,7 +223,6 @@
 		D0F9B5D22441583400038580 /* KeyedEncodingContainer+DynamicEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "KeyedEncodingContainer+DynamicEncoding.swift"; sourceTree = "<group>"; };
 		D0F9B5D32441583400038580 /* RequestDecoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestDecoding.swift; sourceTree = "<group>"; };
 		D0F9B5D42441583400038580 /* UnkeyedEncodingContainer+DynamicEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UnkeyedEncodingContainer+DynamicEncoding.swift"; sourceTree = "<group>"; };
-		EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+DataTask.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -241,8 +231,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0F9B5AB2441567200038580 /* KumoCoding.framework in Frameworks */,
-				1E9BDE1623D8D3EF0074B7B3 /* RxSwift in Frameworks */,
-				1E9BDE1823D8D3EF0074B7B3 /* RxCocoa in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,6 +298,7 @@
 				945421752187889200932CAF /* Copying.swift */,
 				945421732187883B00932CAF /* URLSession.swift */,
 				94C3BD94219B0F8100B4A3E2 /* Progress.swift */,
+				B59A570824A7084F00EA68FF /* AnyCancellable.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -471,7 +460,7 @@
 			isa = PBXGroup;
 			children = (
 				94B6BD2021762E71005454C6 /* ApplicationLayer.swift */,
-				D0F9B5B02441570400038580 /* CNS.h */,
+				B5B657D324A6444F00776C23 /* KumoNamespaceProxy.swift */,
 				9430734222D7AFC700AEAC8D /* Blobs */,
 				949AD28E218BD71400808C79 /* Data */,
 				945D40E7217A4AA7008ACFD0 /* Errors */,
@@ -518,12 +507,7 @@
 		94F2CDB92229F852006D9C36 /* Functions */ = {
 			isa = PBXGroup;
 			children = (
-				94F2CDCB222A3602006D9C36 /* Service+Delete.swift */,
 				94F2CDC7222A3602006D9C36 /* Service+Download.swift */,
-				94F2CDBA2229F852006D9C36 /* Service+Get.swift */,
-				94F2CDC8222A3602006D9C36 /* Service+Post.swift */,
-				EA1CB78C22CFA7B3002399EA /* Service+DataTask.swift */,
-				94F2CDCC222A3602006D9C36 /* Service+Put.swift */,
 				94F2CDC9222A3602006D9C36 /* Service+SideEffects.swift */,
 				94F2CDCA222A3602006D9C36 /* Service+Upload.swift */,
 			);
@@ -625,7 +609,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D0F9B5B12441570400038580 /* CNS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,8 +640,6 @@
 			);
 			name = Kumo;
 			packageProductDependencies = (
-				1E9BDE1523D8D3EF0074B7B3 /* RxSwift */,
-				1E9BDE1723D8D3EF0074B7B3 /* RxCocoa */,
 			);
 			productName = CNS;
 			productReference = 94B6BD0221762D16005454C6 /* Kumo.framework */;
@@ -734,7 +715,6 @@
 			);
 			mainGroup = 94B6BCF821762D16005454C6;
 			packageReferences = (
-				1E9BDE1423D8D3EF0074B7B3 /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			productRefGroup = 94B6BD0321762D16005454C6 /* Products */;
 			projectDirPath = "";
@@ -793,30 +773,27 @@
 				94A4E69022E1F2210033B480 /* Hashing.swift in Sources */,
 				94A4E68122DE0B3D0033B480 /* ExtendedAttributes.swift in Sources */,
 				946F43AD22DCEA7500CE9EC9 /* DataConvertible.swift in Sources */,
+				B5B657D424A6444F00776C23 /* KumoNamespaceProxy.swift in Sources */,
 				94F2CDCF222A3602006D9C36 /* Service+SideEffects.swift in Sources */,
 				94690FBD22CBA823002C37BF /* Authorization.swift in Sources */,
-				94F2CDD1222A3602006D9C36 /* Service+Delete.swift in Sources */,
 				94690FBF22CCE097002C37BF /* URLSessionConfiguration+HTTPHeader.swift in Sources */,
 				949AD292218BD75500808C79 /* UploadError.swift in Sources */,
-				94F2CDD2222A3602006D9C36 /* Service+Put.swift in Sources */,
 				946F43AB22DCEA5900CE9EC9 /* DataRepresentable.swift in Sources */,
 				94F2CDD0222A3602006D9C36 /* Service+Upload.swift in Sources */,
-				94F2CDCE222A3602006D9C36 /* Service+Post.swift in Sources */,
 				945D4114217F6222008ACFD0 /* Service.swift in Sources */,
 				946F43AF22DCEA9200CE9EC9 /* FailableDataConvertible.swift in Sources */,
 				94C185E922D8DEF200CD66DC /* FailableDataRepresentable.swift in Sources */,
 				949AD28B218B375400808C79 /* FileType.swift in Sources */,
-				EA1CB78D22CFA7B3002399EA /* Service+DataTask.swift in Sources */,
 				9430734422D7AFDA00AEAC8D /* BlobCache.swift in Sources */,
 				94A4E67B22DCF3660033B480 /* InMemory.swift in Sources */,
 				94A4E67D22DCF38B0033B480 /* FileSystem.swift in Sources */,
-				94F2CDBB2229F852006D9C36 /* Service+Get.swift in Sources */,
 				945D4116217F6ADB008ACFD0 /* HTTPHeader.swift in Sources */,
 				94A4E67322DCF3160033B480 /* Percent.swift in Sources */,
 				945D40EC217A60BD008ACFD0 /* HTTPMethod.swift in Sources */,
 				945D40E9217A4AB6008ACFD0 /* HTTPError.swift in Sources */,
 				9430734122D7ACC600AEAC8D /* HTTPRequest.swift in Sources */,
 				94A4E67922DCF35F0033B480 /* StorageLocation.swift in Sources */,
+				B59A570924A7084F00EA68FF /* AnyCancellable.swift in Sources */,
 				94C185EF22D8E19400CD66DC /* Errors.swift in Sources */,
 				94A4E67622DCF3540033B480 /* Storage.swift in Sources */,
 			);
@@ -1031,6 +1008,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/Kumo/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1060,6 +1038,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/Kumo/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1082,6 +1061,7 @@
 				DEVELOPMENT_TEAM = 75Y586SA36;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/KumoTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1102,6 +1082,7 @@
 				DEVELOPMENT_TEAM = 75Y586SA36;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/KumoTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1210,30 +1191,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		1E9BDE1423D8D3EF0074B7B3 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		1E9BDE1523D8D3EF0074B7B3 /* RxSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1E9BDE1423D8D3EF0074B7B3 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxSwift;
-		};
-		1E9BDE1723D8D3EF0074B7B3 /* RxCocoa */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1E9BDE1423D8D3EF0074B7B3 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxCocoa;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 94B6BCF921762D16005454C6 /* Project object */;
 }
