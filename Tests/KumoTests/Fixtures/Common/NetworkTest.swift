@@ -11,7 +11,6 @@ class NetworkTest: XCTestCase {
         return (actual: base, expected: base.mapValues(String.init(describing:)))
     }()
 
-    // TODO: these are failing because they're timing out, probably due to the cancellable not being retained.
     func successfulTest<T>(of observable: AnyPublisher<T, Error>, file: StaticString = #file, line: UInt = #line, function: String = #function) -> (_ description: String) -> ((_ successCondition: @escaping (T) -> Bool) -> Void) {
         return { description in
             { successCondition in

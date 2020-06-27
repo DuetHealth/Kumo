@@ -65,7 +65,7 @@ class FileSystem: StorageLocation {
 
     func removeAll() {
         (backingManager.subpaths(atPath: parentDirectory.path) ?? []).forEach {
-            try? backingManager.removeItem(atPath: $0)
+            try? backingManager.removeItem(at: parentDirectory.appendingPathComponent($0))
         }
     }
 
