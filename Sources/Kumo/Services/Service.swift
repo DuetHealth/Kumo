@@ -271,6 +271,13 @@ public class Service {
 }
 
 public extension Service {
+    func fulfill<T>(promise: Future<T, Error>.Promise, for result: Result<T, Error>) {
+        switch result {
+        case let .failure(error): promise(.failure(error))
+        case let .success(value): promise(.success(value))
+        }
+    }
+
     func perform<Response: Decodable, Method: RequestMethod, Resource: RequestResource, Parameters: RequestParameters, Body: RequestBody, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Response, Error> {
         Deferred<AnyPublisher<Response, Error>> {
             Future<Response, Error> { promise in
@@ -326,13 +333,6 @@ public extension Service {
             .eraseToAnyPublisher()
         }
         .eraseToAnyPublisher()
-    }
-
-    func fulfill<T>(promise: Future<T, Error>.Promise, for result: Result<T, Error>) {
-        switch result {
-        case let .failure(error): promise(.failure(error))
-        case let .success(url): promise(.success(url))
-        }
     }
 
     func perform<Method: RequestMethod, Resource: RequestResource, Parameters: RequestParameters, Body: RequestBody, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Any, Error> {

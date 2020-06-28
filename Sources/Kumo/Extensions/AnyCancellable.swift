@@ -9,11 +9,11 @@ public extension AnyCancellable {
     ///
     /// - Parameter object: the object to which this cancellables lifetime is tethered.
     func withLifetime(of object: AnyObject) {
-        if var cancellables = objc_getAssociatedObject(object, &cancellableKey) as? [AnyCancellable] {
+        if var cancellables = objc_getAssociatedObject(object, &cancellableKey) as? Set<AnyCancellable> {
             self.store(in: &cancellables)
             return
         }
-        var cancellables = [AnyCancellable]()
+        var cancellables = Set<AnyCancellable>()
         self.store(in: &cancellables)
         objc_setAssociatedObject(object, &cancellableKey, cancellables, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }

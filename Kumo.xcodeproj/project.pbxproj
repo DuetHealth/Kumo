@@ -295,10 +295,10 @@
 		945421722187882E00932CAF /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				945421752187889200932CAF /* Copying.swift */,
-				945421732187883B00932CAF /* URLSession.swift */,
-				94C3BD94219B0F8100B4A3E2 /* Progress.swift */,
 				B59A570824A7084F00EA68FF /* AnyCancellable.swift */,
+				945421752187889200932CAF /* Copying.swift */,
+				94C3BD94219B0F8100B4A3E2 /* Progress.swift */,
+				945421732187883B00932CAF /* URLSession.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
