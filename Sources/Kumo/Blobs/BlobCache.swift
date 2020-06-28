@@ -69,11 +69,15 @@ public class BlobCache {
             .flatMap { [self] downloadPath -> AnyPublisher<D, Error> in
                 do {
                     if let data: D = try self.ephemeralStorage.acquire(fromPath: downloadPath, origin: url, convertWith: conversionArguments, representWith: representationArguments) {
-                        return Just(data).mapError { $0 }.eraseToAnyPublisher()
+                        return Just(data)
+                            .setFailureType(to: Error.self)
+                            .eraseToAnyPublisher()
                     }
-                    return Empty(completeImmediately: true).eraseToAnyPublisher()
+                    return Empty(completeImmediately: true)
+                        .eraseToAnyPublisher()
                 } catch {
-                    return Fail(error: error).eraseToAnyPublisher()
+                    return Fail(error: error)
+                        .eraseToAnyPublisher()
                 }
             }
             .eraseToAnyPublisher()
@@ -89,7 +93,9 @@ public class BlobCache {
         }
         .flatMap { (data: D?) -> AnyPublisher<D, Error> in
             if let data = data {
-                return Just(data).mapError { $0 }.eraseToAnyPublisher()
+                return Just(data)
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
             } else {
                 return downloadTask
             }
