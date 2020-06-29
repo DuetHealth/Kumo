@@ -1,21 +1,14 @@
 import Combine
 import Foundation
 
-fileprivate var cancellableKey = UInt8.max
+fileprivate var cancellablesKey = UInt8.zero
 
-public extension AnyCancellable {
+public extension Cancellable {
 
-    /// Retains the resources associated with a subscription until the argument object is deallocated.
-    ///
-    /// - Parameter object: the object to which this cancellables lifetime is tethered.
     func withLifetime(of object: AnyObject) {
-        if var cancellables = objc_getAssociatedObject(object, &cancellableKey) as? Set<AnyCancellable> {
-            self.store(in: &cancellables)
-            return
-        }
-        var cancellables = Set<AnyCancellable>()
-        self.store(in: &cancellables)
-        objc_setAssociatedObject(object, &cancellableKey, cancellables, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        var cancellables = objc_getAssociatedObject(self, &cancellablesKey) as? Set<AnyCancellable> ?? Set<AnyCancellable>()
+        AnyCancellable(self).store(in: &cancellables)
+        objc_setAssociatedObject(self, &cancellables, cancellables, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
 }
