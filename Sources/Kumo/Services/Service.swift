@@ -363,10 +363,7 @@ public extension Service {
                     urlRequest.remove(header: .accept)
                     let task = self.session.downloadTask(with: urlRequest) {
                         let result: Result<URL, Error> = self.downloadResultToURL(url: $0, response: $1, error: $2)
-                        switch result {
-                        case let .failure(error): promise(.failure(error))
-                        case let .success(url): promise(.success(url))
-                        }
+                        self.fulfill(promise: promise, for: result)
                     }
                     task.resume()
                 } catch {
