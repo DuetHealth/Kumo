@@ -66,6 +66,11 @@ public class Service {
     /// By default, tasks are published on the main thread.
     public var receivingScheduler = DispatchQueue.main
 
+    /// The scheduler on which to perform work such as decoding data.
+    ///
+    /// By default, work is done on `DispatchQueue.global()`.
+    public var subscriptionScheduler = DispatchQueue.global()
+
     /// The characters to be allowed in the query sectiom of request URLs.
     public var urlQueryAllowedCharacters = CharacterSet.urlQueryAllowed
 
@@ -129,6 +134,7 @@ public class Service {
             }
             .eraseToAnyPublisher()
         }
+        .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
         .eraseToAnyPublisher()
     }
@@ -309,9 +315,11 @@ public extension Service {
                 }
                 task.resume()
             }
-            .receive(on: self.receivingScheduler)
+
             .eraseToAnyPublisher()
         }
+        .subscribe(on: subscriptionScheduler)
+        .receive(on: receivingScheduler)
         .eraseToAnyPublisher()
     }
 
@@ -329,9 +337,10 @@ public extension Service {
                     promise(.failure(error))
                 }
             }
-            .receive(on: self.receivingScheduler)
             .eraseToAnyPublisher()
         }
+        .subscribe(on: subscriptionScheduler)
+        .receive(on: receivingScheduler)
         .eraseToAnyPublisher()
     }
 
@@ -349,9 +358,10 @@ public extension Service {
                     promise(.failure(error))
                 }
             }
-            .receive(on: self.receivingScheduler)
             .eraseToAnyPublisher()
         }
+        .subscribe(on: subscriptionScheduler)
+        .receive(on: receivingScheduler)
         .eraseToAnyPublisher()
     }
 
@@ -370,9 +380,10 @@ public extension Service {
                     promise(.failure(error))
                 }
             }
-            .receive(on: self.receivingScheduler)
             .eraseToAnyPublisher()
         }
+        .subscribe(on: subscriptionScheduler)
+        .receive(on: receivingScheduler)
         .eraseToAnyPublisher()
     }
 }

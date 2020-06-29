@@ -27,6 +27,7 @@ public extension Service {
                 promise(.failure(error))
             }
         }
+        .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
         .eraseToAnyPublisher()
     }

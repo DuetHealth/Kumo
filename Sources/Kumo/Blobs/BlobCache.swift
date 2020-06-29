@@ -101,6 +101,7 @@ public class BlobCache {
             }
         }
         .eraseToAnyPublisher()
+        .subscribe(on: DispatchQueue.global())
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
