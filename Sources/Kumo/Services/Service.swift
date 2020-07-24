@@ -96,6 +96,7 @@ public class Service {
 
     internal func copySettings(from _: ApplicationLayer) {}
 
+    /// Provides a way to reconfigure the URLSessionConfiguration that powers the Service.
     public func reconfigure(applying changes: @escaping (URLSessionConfiguration) -> Void) {
         session.finishTasksAndInvalidate { [unowned self] session, _ in
             let newConfiguration: URLSessionConfiguration = session.configuration.copy()
@@ -104,15 +105,25 @@ public class Service {
         }
     }
 
-    public func reconfiguring(applying changes: @escaping (URLSessionConfiguration) -> Void) -> Future<Void, Never> {
+    /// Provides a way to asynchronously reconfigure the URLSessionConfiguration that powers the Service.
+    /// Prefer this over `reconfigure(applying:_)` when making a request that will modify the session
+    /// configuration based on the result of the request, e.g.: upon logging in and receiving a token that will be
+    /// added to subsequent headers.
+    public func reconfiguring(applying changes: @escaping (URLSessionConfiguration) -> Void) -> AnyPublisher<Void, Never> {
         Future<Void, Never> { [weak self] promise in
             guard let self = self else {
                 promise(.success(()))
                 return
             }
-            self.reconfigure(applying: changes)
-            promise(.success(()))
+            self.session.finishTasksAndInvalidate { [unowned self] session, _ in
+                let newConfiguration: URLSessionConfiguration = session.configuration.copy()
+                changes(newConfiguration)
+                self.session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+                promise(.success(()))
+            }
         }
+        .receive(on: receivingScheduler)
+        .eraseToAnyPublisher()
     }
 
     public func upload<Response: Decodable>(_ endpoint: String, file: URL, under key: String) -> AnyPublisher<Response, Error> {
