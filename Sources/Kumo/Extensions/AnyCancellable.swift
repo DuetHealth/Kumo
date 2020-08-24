@@ -3,7 +3,7 @@ import Foundation
 
 fileprivate var cancellablesKey = UInt8.zero
 
-public extension Cancellable {
+extension Cancellable {
 
     func withLifetime(of object: AnyObject) {
         var cancellables = objc_getAssociatedObject(object, &cancellablesKey) as? [AnyCancellable] ?? [AnyCancellable]()
