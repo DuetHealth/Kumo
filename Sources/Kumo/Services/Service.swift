@@ -30,7 +30,7 @@ public struct ResponseObjectError: Error {
 public class Service {
     /// The base URL for all requests. The URLs for requests performed by the service are made
     /// by appending path components to this URL.
-    public let baseURL: URL
+    public let baseURL: URL?
 
     private let delegate = URLSessionInvalidationDelegate()
 
@@ -81,9 +81,9 @@ public class Service {
         return session.configuration.httpHeaders
     }
 
-    public init(baseURL: URL, runsInBackground: Bool = false, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
+    public init(baseURL: URL?, runsInBackground: Bool = false, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
         self.baseURL = baseURL
-        let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL.absoluteString) : .default
+        let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL?.absoluteString ?? UUID().uuidString) : .default
         configuration?(sessionConfiguration)
         session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: nil)
         dynamicRequestEncodingStrategy = { object in
@@ -165,6 +165,10 @@ public class Service {
     }
 
     func createRequest(method: HTTP.Method, endpoint: String, queryParameters: [String: Any], body: Data?) throws -> URLRequest {
+        guard let baseURL = self.url(given: endpoint) else {
+            throw HTTPError.malformedURLString(endpoint, parameters: queryParameters)
+        }
+
         let url = endpoint.isEmpty ? baseURL : baseURL.appendingPathComponent(endpoint)
         let finalURL: URL
         if queryParameters.isEmpty { finalURL = url }
@@ -285,6 +289,13 @@ public class Service {
             return .failure(error)
         }
     }
+
+    private func url(given endpoint: String) -> URL? {
+        if let url = self.baseURL {
+            return url
+        }
+        return URL(string: endpoint)
+    }
 }
 
 public extension Service {
@@ -401,9 +412,13 @@ public extension Service {
 
 extension Service {
     func createURLRequest<Method: RequestMethod, Resource: RequestResource, Parameters: RequestParameters, Body: RequestBody, Key: ResponseNestedKey>(from request: HTTP._Request<Method, Resource, Parameters, Body, Key>) throws -> URLRequest {
+
         let url: URL
         switch request.resourceLocator {
         case let .relative(endpoint):
+            guard let baseURL = self.url(given: endpoint) else {
+                throw HTTPError.malformedURLString(endpoint, parameters: request.parameters)
+            }
             url = endpoint.isEmpty ? baseURL : baseURL.appendingPathComponent(endpoint)
         case let .absolute(absoluteURL):
             url = absoluteURL

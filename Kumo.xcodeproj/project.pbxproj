@@ -191,7 +191,6 @@
 		B5B657D324A6444F00776C23 /* KumoNamespaceProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KumoNamespaceProxy.swift; sourceTree = "<group>"; };
 		D0F9B5A22441566800038580 /* KumoCoding.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KumoCoding.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0F9B5A42441566800038580 /* KumoCoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KumoCoding.h; sourceTree = "<group>"; };
-		D0F9B5A52441566800038580 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Supporting Files/Info.plist"; sourceTree = "<group>"; };
 		D0F9B5B22441583300038580 /* UnkeyedDecodingContainer+DynamicDecoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UnkeyedDecodingContainer+DynamicDecoding.swift"; sourceTree = "<group>"; };
 		D0F9B5B32441583300038580 /* StringEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringEncoding.swift; sourceTree = "<group>"; };
 		D0F9B5B52441583300038580 /* XMLNamespace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XMLNamespace.swift; sourceTree = "<group>"; };
@@ -531,7 +530,6 @@
 				D0F9B5F42441584600038580 /* Extensions */,
 				D0F9B5B42441583300038580 /* XML */,
 				D0F9B5A42441566800038580 /* KumoCoding.h */,
-				D0F9B5A52441566800038580 /* Info.plist */,
 			);
 			name = KumoCoding;
 			path = Sources/KumoCoding;

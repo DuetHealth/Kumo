@@ -40,11 +40,10 @@ public class BlobCache {
     }
 
     public convenience init() {
-        // TODO:
-        fatalError("Implement no base URL on a service.")
+        self.init(using: Service(baseURL: nil))
     }
 
-    public convenience init(baseURL: URL) {
+    public convenience init(baseURL: URL?) {
         self.init(using: Service(baseURL: baseURL))
     }
 
@@ -101,6 +100,7 @@ public class BlobCache {
             }
         }
         .eraseToAnyPublisher()
+
         .subscribe(on: DispatchQueue.global())
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
