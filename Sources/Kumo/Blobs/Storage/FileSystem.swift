@@ -48,7 +48,16 @@ class FileSystem: StorageLocation {
     func acquire<D: _DataRepresentable>(fromPath path: URL, origin url: URL, arguments: D._RepresentationArguments) throws -> D? {
         guard let data = backingManager.contents(atPath: path.path) else { return nil }
         let newPath = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
-        try backingManager.moveItem(at: path, to: newPath)
+
+        do {
+            try backingManager.moveItem(at: path, to: newPath)
+        } catch {
+            let nsError = error as NSError
+            if nsError.code != 516 || nsError.domain != NSCocoaErrorDomain {
+                throw error
+            }
+        }
+
         let parameters = CachedObjectParameters()
         let initialExpirationDate = delegate?.newExpirationDate(given: parameters) ?? Date()
         try backingManager.setExtendedAttributes([
