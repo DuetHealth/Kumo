@@ -60,6 +60,7 @@
 		94F2CDD0222A3602006D9C36 /* Service+Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F2CDCA222A3602006D9C36 /* Service+Upload.swift */; };
 		B55A1178233E5D92006EAB34 /* Unkeyed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55A1177233E5D92006EAB34 /* Unkeyed.swift */; };
 		B58694D12322B3CC006C20EE /* Epic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58694D02322B3CC006C20EE /* Epic.swift */; };
+		B58782DC2538F9D700A62D73 /* AnyPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58782DB2538F9D700A62D73 /* AnyPublisher.swift */; };
 		B59A570924A7084F00EA68FF /* AnyCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59A570824A7084F00EA68FF /* AnyCancellable.swift */; };
 		B5B657D424A6444F00776C23 /* KumoNamespaceProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5B657D324A6444F00776C23 /* KumoNamespaceProxy.swift */; };
 		D0F9B5A62441566800038580 /* KumoCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = D0F9B5A42441566800038580 /* KumoCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -187,6 +188,7 @@
 		94F2CDCA222A3602006D9C36 /* Service+Upload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Service+Upload.swift"; sourceTree = "<group>"; };
 		B55A1177233E5D92006EAB34 /* Unkeyed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unkeyed.swift; sourceTree = "<group>"; };
 		B58694D02322B3CC006C20EE /* Epic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Epic.swift; sourceTree = "<group>"; };
+		B58782DB2538F9D700A62D73 /* AnyPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPublisher.swift; sourceTree = "<group>"; };
 		B59A570824A7084F00EA68FF /* AnyCancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCancellable.swift; sourceTree = "<group>"; };
 		B5B657D324A6444F00776C23 /* KumoNamespaceProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KumoNamespaceProxy.swift; sourceTree = "<group>"; };
 		D0F9B5A22441566800038580 /* KumoCoding.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KumoCoding.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -298,6 +300,7 @@
 				945421752187889200932CAF /* Copying.swift */,
 				94C3BD94219B0F8100B4A3E2 /* Progress.swift */,
 				945421732187883B00932CAF /* URLSession.swift */,
+				B58782DB2538F9D700A62D73 /* AnyPublisher.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -794,6 +797,7 @@
 				B59A570924A7084F00EA68FF /* AnyCancellable.swift in Sources */,
 				94C185EF22D8E19400CD66DC /* Errors.swift in Sources */,
 				94A4E67622DCF3540033B480 /* Storage.swift in Sources */,
+				B58782DC2538F9D700A62D73 /* AnyPublisher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
