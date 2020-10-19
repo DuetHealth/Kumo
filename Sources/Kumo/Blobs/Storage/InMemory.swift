@@ -1,9 +1,7 @@
 import Foundation
 
 class InMemory: StorageLocation {
-
     private class Reference {
-
         let key: String
         let value: Any
         var referenceDate = Date()
@@ -20,31 +18,35 @@ class InMemory: StorageLocation {
     private let backingCache = NSCache<NSString, Reference>()
 
     private var keys = Set<String>()
+    private var queue = DispatchQueue(label: "key_queue")
     weak var delegate: StoragePruningDelegate?
 
-    func fetch<D: _DataRepresentable>(for url: URL, arguments: D._RepresentationArguments) throws -> D? {
+    func fetch<D: _DataRepresentable>(for url: URL, arguments _: D._RepresentationArguments) throws -> D? {
         switch backingCache.object(forKey: murmur3_32(url.absoluteString) as NSString) {
         case .none:
             return nil
-        case .some(let object) where object.value is D:
-            if let newExpirationDate = delegate?.newExpirationDate(given: CachedObjectParameters.init(referenceDate: object.referenceDate, expirationDate: object.expirationDate)) {
+        case let .some(object) where object.value is D:
+            if let newExpirationDate = delegate?.newExpirationDate(given: CachedObjectParameters(referenceDate: object.referenceDate, expirationDate: object.expirationDate)) {
                 object.referenceDate = Date()
                 object.expirationDate = newExpirationDate
             }
             return object.value as? D
-        case .some(let object):
+        case let .some(object):
             throw StorageAccessError.typeMismatch(expected: D.self, found: object.value)
         }
     }
 
-    func write<D: _DataConvertible>(_ object: D, from url: URL, arguments: D._ConversionArguments) throws {
-        let cacheKey = murmur3_32(url.absoluteString)
-        let expirationDate = delegate?.newExpirationDate(given: CachedObjectParameters()) ?? Date()
-        backingCache.setObject(InMemory.Reference(key: cacheKey, value: object, expirationDate: expirationDate), forKey: cacheKey as NSString)
-        keys.insert(cacheKey)
+    func write<D: _DataConvertible>(_ object: D, from url: URL, arguments _: D._ConversionArguments) throws {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            let cacheKey = murmur3_32(url.absoluteString)
+            let expirationDate = self.delegate?.newExpirationDate(given: CachedObjectParameters()) ?? Date()
+            self.backingCache.setObject(InMemory.Reference(key: cacheKey, value: object, expirationDate: expirationDate), forKey: cacheKey as NSString)
+            self.keys.insert(cacheKey)
+        }
     }
 
-    func acquire<D: _DataRepresentable>(fromPath path: URL, origin url: URL, arguments: D._RepresentationArguments) throws -> D? {
+    func acquire<D: _DataRepresentable>(fromPath _: URL, origin _: URL, arguments _: D._RepresentationArguments) throws -> D? {
         return nil
     }
 
@@ -53,19 +55,24 @@ class InMemory: StorageLocation {
     }
 
     func removeAll() {
-        backingCache.removeAllObjects()
-        keys.removeAll()
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            self.backingCache.removeAllObjects()
+            self.keys.removeAll()
+        }
     }
 
     func pruneExpired() {
-        keys.filter {
-            guard let reference = backingCache.object(forKey: $0 as NSString) else { return true }
-            return reference.expirationDate < Date().addingTimeInterval(.ulpOfOne)
-        }
-            .forEach {
-                keys.remove($0)
-                backingCache.removeObject(forKey: $0 as NSString)
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            self.keys.filter {
+                guard let reference = self.backingCache.object(forKey: $0 as NSString) else { return true }
+                return reference.expirationDate < Date().addingTimeInterval(.ulpOfOne)
             }
+            .forEach {
+                self.keys.remove($0)
+                self.backingCache.removeObject(forKey: $0 as NSString)
+            }
+        }
     }
-
 }

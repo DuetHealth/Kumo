@@ -1,8 +1,5 @@
 import Foundation
 
-@available(*, deprecated, renamed: "HTTP.Method")
-typealias HTTPMethod = HTTP.Method
-
 public extension HTTP {
 
     enum Method: String {

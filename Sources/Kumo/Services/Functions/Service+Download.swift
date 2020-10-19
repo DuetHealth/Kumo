@@ -1,25 +1,24 @@
+import Combine
 import Foundation
-import RxSwift
 
 public extension Service {
-    
-    func download(_ endpoint: String, parameters: [String: Any] = [:]) -> Observable<URL> {
-        return Observable.create { [self] observer in
+
+    func download(_ endpoint: String, parameters: [String: Any] = [:]) -> AnyPublisher<URL, Error> {
+        Future<URL, Error> { promise in
             do {
                 var request = try self.createRequest(method: .get, endpoint: endpoint, queryParameters: parameters)
                 request.remove(header: .accept)
                 let task = self.session.downloadTask(with: request) {
-                    observer.on(self.downloadResultToURL(url: $0, response: $1, error: $2))
-                    observer.onCompleted()
+                    let result = self.downloadResultToURL(url: $0, response: $1, error: $2)
+                    self.fulfill(promise: promise, for: result)
                 }
                 task.resume()
-                return Disposables.create(with: task.cancel)
             } catch {
-                observer.onError(error)
-                return Disposables.create()
+                promise(.failure(error))
             }
         }
-            .observeOn(operationScheduler)
+        .receive(on: receivingScheduler)
+        .eraseToAnyPublisher()
     }
-    
+
 }
