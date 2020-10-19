@@ -9,7 +9,7 @@ public extension Service {
     ///   - endpoint: the path extension corresponding to the endpoint
     ///   - file: the URL of the file to upload
     ///   - key: the name of form part under which to embed the file's data
-    /// - Returns: an `AnyPublisher` which emits a single empty element upon success.
+    /// - Returns: an `AnyPublisher` which publishes a single empty element upon success.
     func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> AnyPublisher<Void, Error> {
         Future<Void, Error> { promise in
             do {
@@ -38,7 +38,7 @@ public extension Service {
     ///   - endpoint: the path extension corresponding to the endpoint
     ///   - file: the URL of the file to upload
     ///   - key: the name of form part under which to embed the file's data
-    /// - Returns: an `AnyPublisher` which emits the progress of the upload.
+    /// - Returns: an `AnyPublisher` which publishes the progress of the upload.
     func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> AnyPublisher<Double, Error> {
         AnyPublisher<URLSessionUploadTask, Error>.create { subscriber in
             var task = URLSessionUploadTask?.none
