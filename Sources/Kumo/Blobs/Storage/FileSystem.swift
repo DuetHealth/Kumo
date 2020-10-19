@@ -52,10 +52,7 @@ class FileSystem: StorageLocation {
         do {
             try backingManager.moveItem(at: path, to: newPath)
         } catch {
-            let nsError = error as NSError
-            if nsError.code != 516 || nsError.domain != NSCocoaErrorDomain {
-                throw error
-            }
+            if !(error as NSError).isFileExistsError { throw error }
         }
 
         let parameters = CachedObjectParameters()
@@ -133,7 +130,7 @@ extension Date: DirectThrowingDataConvertible {
 
 }
 
-fileprivate extension Int {
+private extension Int {
 
     var bytes: Data {
         var copy = self
@@ -143,6 +140,21 @@ fileprivate extension Int {
             copy >>= 8
         }
         return Data(bytes)
+    }
+
+}
+
+extension NSError {
+
+    enum FileErrors {
+
+        static var domain = NSCocoaErrorDomain
+        static var fileExistsErrorCode = 516
+
+    }
+
+    var isFileExistsError: Bool {
+        return code == FileErrors.fileExistsErrorCode && domain == FileErrors.domain
     }
 
 }

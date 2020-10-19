@@ -39,7 +39,7 @@ class NetworkTest: XCTestCase {
         return { description in
             { successCondition in
                 let expect = self.expectation(description: description)
-                _ = observable.sink(receiveCompletion: { completion in
+                observable.sink(receiveCompletion: { completion in
                     switch completion {
                     case let .failure(error):
                         XCTAssertTrue(successCondition(error), "Expectation violated - '\(description)'", file: file, line: line)
