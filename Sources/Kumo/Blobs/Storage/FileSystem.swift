@@ -48,7 +48,13 @@ class FileSystem: StorageLocation {
     func acquire<D: _DataRepresentable>(fromPath path: URL, origin url: URL, arguments: D._RepresentationArguments) throws -> D? {
         guard let data = backingManager.contents(atPath: path.path) else { return nil }
         let newPath = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
-        try backingManager.moveItem(at: path, to: newPath)
+
+        do {
+            try backingManager.moveItem(at: path, to: newPath)
+        } catch {
+            if !(error as NSError).isFileExistsError { throw error }
+        }
+
         let parameters = CachedObjectParameters()
         let initialExpirationDate = delegate?.newExpirationDate(given: parameters) ?? Date()
         try backingManager.setExtendedAttributes([
@@ -65,7 +71,7 @@ class FileSystem: StorageLocation {
 
     func removeAll() {
         (backingManager.subpaths(atPath: parentDirectory.path) ?? []).forEach {
-            try? backingManager.removeItem(atPath: $0)
+            try? backingManager.removeItem(at: parentDirectory.appendingPathComponent($0))
         }
     }
 
@@ -124,7 +130,7 @@ extension Date: DirectThrowingDataConvertible {
 
 }
 
-fileprivate extension Int {
+private extension Int {
 
     var bytes: Data {
         var copy = self
@@ -133,7 +139,22 @@ fileprivate extension Int {
             bytes.append(UInt8(copy & 0xff))
             copy >>= 8
         }
-        return Data(bytes: bytes)
+        return Data(bytes)
+    }
+
+}
+
+extension NSError {
+
+    enum FileErrors {
+
+        static var domain = NSCocoaErrorDomain
+        static var fileExistsErrorCode = 516
+
+    }
+
+    var isFileExistsError: Bool {
+        return code == FileErrors.fileExistsErrorCode && domain == FileErrors.domain
     }
 
 }

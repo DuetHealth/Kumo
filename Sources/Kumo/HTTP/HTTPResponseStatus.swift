@@ -1,8 +1,5 @@
 import Foundation
 
-@available(*, deprecated, renamed: "HTTP.ResponseStatus")
-public typealias HTTPResponseStatus = HTTP.ResponseStatus
-
 public extension HTTP {
 
     enum ResponseStatus: Int {

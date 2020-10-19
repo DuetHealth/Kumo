@@ -13,7 +13,7 @@ extension UIImage: DirectFailableDataConvertible {
 extension Data: _DataRepresentable {
     public typealias _RepresentationArguments = Void
     public init?(data: Data, using arguments: Void) throws {
-        self.init(bytes: data)
+        self.init(data)
     }
 }
 

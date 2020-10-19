@@ -7,7 +7,7 @@ public struct JSONWrapper<Inner: Decodable>: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: DynamicCodingKeys.self)
         matchContainer = MatchContainer<Inner>()
-        let shouldContinueAfterMatch = (matchContainer as? AmbiguousMatching)?.shouldContinueAfterMatch ?? false
+        let shouldContinueAfterMatch = (matchContainer as? AmbiguousMatching)?.shouldContinueAfterMatch ?? true
         
         for key in container.allKeys {
             guard let value = try? container.decode(Inner.self, forKey: key) else { continue }

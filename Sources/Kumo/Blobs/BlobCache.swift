@@ -1,24 +1,21 @@
+import Combine
 import Foundation
-import RxSwift
 
 #if canImport(UIKit)
-import UIKit
+    import UIKit
 
-fileprivate enum Observations {
+    fileprivate enum Observations {
+        static func onMemoryWarning(invoke selector: Selector, on object: Any) {
+            NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+        }
 
-    static func onMemoryWarning(invoke selector: Selector, on object: Any) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
+        static func onTermination(invoke selector: Selector, on object: Any) {
+            NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willTerminateNotification, object: nil)
+        }
     }
-
-    static func onTermination(invoke selector: Selector, on object: Any) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willTerminateNotification, object: nil)
-    }
-
-}
 #endif
 
 public class BlobCache {
-
     public let service: Service
     private let ephemeralStorage = Storage(location: InMemory(), heuristics: .inMemory)
     private let persistentStorage = Storage(location: FileSystem(), heuristics: .fileSystem)
@@ -36,18 +33,17 @@ public class BlobCache {
     public init(using service: Service) {
         self.service = service
         ephemeralStorage.fallback = persistentStorage
-#if canImport(UIKit)
-        Observations.onMemoryWarning(invoke: #selector(cleanEphemeralStorage), on: self)
-        Observations.onTermination(invoke: #selector(cleanPersistentStorage), on: self)
-#endif
+        #if canImport(UIKit)
+            Observations.onMemoryWarning(invoke: #selector(cleanEphemeralStorage), on: self)
+            Observations.onTermination(invoke: #selector(cleanPersistentStorage), on: self)
+        #endif
     }
 
     public convenience init() {
-        // TODO:
-        fatalError("Implement no base URL on a service.")
+        self.init(using: Service(baseURL: nil))
     }
 
-    public convenience init(baseURL: URL) {
+    public convenience init(baseURL: URL?) {
         self.init(using: Service(baseURL: baseURL))
     }
 
@@ -55,37 +51,59 @@ public class BlobCache {
         return ephemeralStorage.contains(url)
     }
 
-    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL) -> Observable<D> where D._RepresentationArguments == Void, D._ConversionArguments == Void {
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL) -> AnyPublisher<D, Error> where D._RepresentationArguments == Void, D._ConversionArguments == Void {
         return fetch(from: url, convertWith: (), representWith: ())
     }
 
-    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, representWith representationArguments: D._RepresentationArguments) -> Observable<D> where D._ConversionArguments == Void {
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, representWith representationArguments: D._RepresentationArguments) -> AnyPublisher<D, Error> where D._ConversionArguments == Void {
         return fetch(from: url, convertWith: (), representWith: representationArguments)
     }
 
-    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments) -> Observable<D> where D._RepresentationArguments == Void {
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments) -> AnyPublisher<D, Error> where D._RepresentationArguments == Void {
         return fetch(from: url, convertWith: conversionArguments, representWith: ())
     }
 
-    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments, representWith representationArguments: D._RepresentationArguments) -> Observable<D> {
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments, representWith representationArguments: D._RepresentationArguments) -> AnyPublisher<D, Error> {
         let downloadTask = service.perform(HTTP.Request.download(url))
-            .flatMap { [self] downloadPath -> Observable<D> in
+            .flatMap { [self] downloadPath -> AnyPublisher<D, Error> in
                 do {
-                    return try self.ephemeralStorage.acquire(fromPath: downloadPath, origin: url, convertWith: conversionArguments, representWith: representationArguments)
-                        .map(Observable.just)
-                        ?? Observable.empty()
-                } catch { return Observable.error(error) }
+                    if let data: D = try self.ephemeralStorage.acquire(fromPath: downloadPath, origin: url, convertWith: conversionArguments, representWith: representationArguments) {
+                        return Just(data)
+                            .setFailureType(to: Error.self)
+                            .eraseToAnyPublisher()
+                    }
+                    return Empty(completeImmediately: true)
+                        .eraseToAnyPublisher()
+                } catch {
+                    return Fail(error: error)
+                        .eraseToAnyPublisher()
+                }
             }
-        return Observable.create { [self] observer in
-            do {
-                try self.ephemeralStorage.fetch(for: url, convertWith: conversionArguments, representWith: representationArguments)
-                    .map(observer.onNext)
-                observer.onCompleted()
-            } catch { observer.onError(error) }
-            return Disposables.create()
+            .eraseToAnyPublisher()
+
+        return Deferred<Future<D?, Error>> {
+            Future<D?, Error> { [self] promise in
+                do {
+                    promise(.success(try self.ephemeralStorage.fetch(for: url, convertWith: conversionArguments, representWith: representationArguments)))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
         }
-            .subscribeOn(MainScheduler.asyncInstance)
-            .ifEmpty(switchTo: downloadTask)
+        .flatMap { (data: D?) -> AnyPublisher<D, Error> in
+            if let data = data {
+                return Just(data)
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            } else {
+                return downloadTask
+            }
+        }
+        .eraseToAnyPublisher()
+
+        .subscribe(on: DispatchQueue.global())
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
     }
 
     public func cleanImmediately() {
@@ -100,5 +118,4 @@ public class BlobCache {
     @objc private func cleanPersistentStorage() {
         persistentStorage.clean()
     }
-
 }

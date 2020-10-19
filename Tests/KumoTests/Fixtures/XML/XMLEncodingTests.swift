@@ -31,7 +31,6 @@ class XMLEncodingTests: XCTestCase {
             let expected = """
             <?xml version="1.0"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope/"><soap:Body><m:GetPriceRequest xmlns:m="https://www.w3schools.com/prices"><m:Name>iPhone Excess to the Max</m:Name><m:Sku><m:Value>00124230128212398-6</m:Value></m:Sku><m:Availability><m:IsAvailable>true</m:IsAvailable><m:Stock>100</m:Stock></m:Availability><m:Price><m:Amount>1.9</m:Amount><m:Units>Dollars</m:Units><m:Discount>0.15</m:Discount></m:Price></m:GetPriceRequest></soap:Body></soap:Envelope>
             """.data(using: .utf8)!
-            print(String(data: data, encoding: .utf8)!)
             XCTAssertTrue(data == expected)
         } catch { XCTFail(error.localizedDescription) }
     }
@@ -40,11 +39,11 @@ class XMLEncodingTests: XCTestCase {
         let encoder = XMLEncoder()
         encoder.keyEncodingStrategy = .convertToPascalCase
         encoder.userInfo[.rootNamespace] = XMLNamespace(prefix: "", uri: "urn:Epic-com:MyChartMobile.2010.Services")
-        let request = Authenticate(username: "Username", password: "Password", deviceID: "E31A21DE-1167-45D3-8845-FD5F65AA5E4C", appID: "com.advocate.myadvocate.tst-iPhone")
+        let request = Authenticate(username: "Username", password: "Password", deviceID: "E31A21DE-1167-45D3-8845-FD5F65AA5E4C", appID: "com.testapp.foo")
         do {
             let data = try encoder.encode(request)
             let expected = """
-            <?xml version="1.0"?><Authenticate xmlns="urn:Epic-com:MyChartMobile.2010.Services"><Username>Username</Username><Password>Password</Password><DeviceID>E31A21DE-1167-45D3-8845-FD5F65AA5E4C</DeviceID><AppID>com.advocate.myadvocate.tst-iPhone</AppID></Authenticate>
+            <?xml version="1.0"?><Authenticate xmlns="urn:Epic-com:MyChartMobile.2010.Services"><Username>Username</Username><Password>Password</Password><DeviceID>E31A21DE-1167-45D3-8845-FD5F65AA5E4C</DeviceID><AppID>com.testapp.foo</AppID></Authenticate>
             """.data(using: .utf8)!
             XCTAssertTrue(data == expected)
         } catch { XCTFail(error.localizedDescription) }

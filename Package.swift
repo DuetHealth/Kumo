@@ -4,19 +4,16 @@ import PackageDescription
 let package = Package(
     name: "Kumo",
     platforms: [
-        .iOS(.v11),
-        .tvOS(.v11),
-        .macOS(.v10_13),
+        .iOS(.v13),
+        .tvOS(.v13),
+        .macOS(.v10_15),
     ],
     products: [
         .library(name: "Kumo", targets: ["Kumo"]),
         .library(name: "KumoCoding", targets: ["KumoCoding"])
     ],
-    dependencies: [
-        .package(url: "https://github.com/ReactiveX/RxSwift", from: "5.0.0")
-    ],
     targets: [
-        .target(name: "Kumo", dependencies: ["RxSwift", "KumoCoding"]),
+        .target(name: "Kumo", dependencies: ["KumoCoding"]),
         .target(name: "KumoCoding", dependencies: []),
         .testTarget(name: "KumoTests", dependencies: ["Kumo", "KumoCoding"])
     ]
