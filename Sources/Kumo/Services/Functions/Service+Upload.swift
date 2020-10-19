@@ -40,30 +40,36 @@ public extension Service {
     ///   - key: the name of form part under which to embed the file's data
     /// - Returns: an `AnyPublisher` which emits the progress of the upload.
     func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> AnyPublisher<Double, Error> {
-        Future<URLSessionUploadTask, Error> { promise in
+        AnyPublisher<URLSessionUploadTask, Error>.create { subscriber in
+            var task = URLSessionUploadTask?.none
             do {
                 var request = try self.createRequest(method: .post, endpoint: endpoint, queryParameters: parameters)
                 guard file.isFileURL else { throw UploadError.notAFileURL(file) }
                 let form = try MultipartForm(file: file, under: key, encoding: .utf8)
                 request.set(contentType: .multipartFormData(boundary: form.boundary))
-                let task = self.session.uploadTask(with: request, from: form.data) {
+                task = self.session.uploadTask(with: request, from: form.data) {
                     let result: Result<Void, Error> = self.result(data: $0, response: $1, error: $2)
                     switch result {
-                    case let .failure(error): promise(.failure(error))
-                    case .success: break
+                    case let .failure(error): subscriber.onError(error)
+                    case .success: subscriber.onComplete()
                     }
                 }
-                promise(.success(task))
+                guard let task = task else { return AnyCancellable {} }
+                subscriber.onNext(task)
                 task.resume()
             } catch {
-                promise(.failure(error))
+                subscriber.onError(error)
+            }
+            return AnyCancellable {
+                task?.cancel()
             }
         }
-        .flatMap { (task: URLSessionUploadTask) in
-            task.progress.kumo.fractionComplete
+        .map {
+            $0.progress.kumo.fractionComplete
                 .eraseToAnyPublisher()
                 .setFailureType(to: Error.self)
         }
+        .switchToLatest()
         .eraseToAnyPublisher()
     }
 }
