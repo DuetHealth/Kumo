@@ -11,9 +11,15 @@ public extension Service {
             self.base = base
         }
 
-        @discardableResult public func perform<Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) -> Cancellable {
-            // TODO: test that this doesn't immediately get cancelled.
-            return (base.perform(request) as AnyPublisher<Void, Error>).sink(receiveCompletion: { _ in }, receiveValue: { })
+        /// Perform the given request and ignore the result. Useful for "fire and forget" requests where failure is an okay
+        /// option. The request is tied to the lifecycle of the `Service` performing the work and will be cancelled if the
+        /// `Service` is deallocated.
+        ///
+        /// - Parameter request: the request to be performed.
+        public func perform<Method: RequestMethod, Resource: RequestResource, Body: RequestBody, Parameters: RequestParameters, Key: ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) {
+            (base.perform(request) as AnyPublisher<Void, Error>)
+                .sink(receiveCompletion: { _ in }, receiveValue: { })
+                .withLifetime(of: base)
         }
 
     }
@@ -23,5 +29,5 @@ public extension Service {
     var unobserved: SideEffectScope {
         return SideEffectScope(self)
     }
-    
+
 }

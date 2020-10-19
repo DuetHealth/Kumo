@@ -331,8 +331,8 @@
 		9468099622C64C4F0077DBCE /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				9468099722C64C4F0077DBCE /* PostTests.swift */,
 				9468099822C64C4F0077DBCE /* GetTests.swift */,
+				9468099722C64C4F0077DBCE /* PostTests.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
