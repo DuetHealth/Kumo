@@ -2,11 +2,11 @@ import Combine
 import Foundation
 
 public extension Service {
-    
+
     struct SideEffectScope {
-        
+
         let base: Service
-        
+
         init(_ base: Service) {
             self.base = base
         }
@@ -23,7 +23,7 @@ public extension Service {
         }
 
     }
-    
+
     /// Provides a convenient way for performing requests which are side effects; that is, requests for which
     /// observing the response is unnecessary.
     var unobserved: SideEffectScope {
@@ -31,3 +31,4 @@ public extension Service {
     }
 
 }
+
