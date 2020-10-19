@@ -31,7 +31,7 @@ open class ApplicationLayer {
                 SCNetworkReachabilityCreateWithAddress(nil, $0)
             }
         }
-        .map { [unowned self] in self.observeReachability($0) }?
+        .map { [unowned self] in self.publishReachability($0) }?
         .sink(receiveValue: { [unowned self] in self.networkConnectivitySubject.send($0) })
         .withLifetime(of: self)
     }
@@ -40,7 +40,7 @@ open class ApplicationLayer {
         return services[key]!
     }
 
-    private func observeReachability(_ reachability: SCNetworkReachability) -> AnyPublisher<NetworkConnectivity, Never> {
+    private func publishReachability(_ reachability: SCNetworkReachability) -> AnyPublisher<NetworkConnectivity, Never> {
         AnyPublisher.create { subscriber in
             var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
             context.info = Unmanaged.passRetained(AnyObserverReference<NetworkConnectivity, Never>(subscriber)).toOpaque()
