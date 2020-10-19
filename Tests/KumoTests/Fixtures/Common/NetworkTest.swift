@@ -28,7 +28,7 @@ class NetworkTest: XCTestCase {
                     }
                 }, receiveValue: {
                     emissions.append($0)
-                 })
+                })
                     .withLifetime(of: self)
                 self.wait(for: [expect], timeout: 10)
             }
