@@ -16,6 +16,7 @@ import Foundation
 #endif
 
 public class BlobCache {
+
     public let service: Service
     private let ephemeralStorage = Storage(location: InMemory(), heuristics: .inMemory)
     private let persistentStorage = Storage(location: FileSystem(), heuristics: .fileSystem)
@@ -49,6 +50,14 @@ public class BlobCache {
 
     public func contains(_ url: URL) -> Bool {
         return ephemeralStorage.contains(url)
+    }
+
+    public func cached<D: _DataConvertible & _DataRepresentable>(from url: URL) throws -> D? where D._RepresentationArguments == Void, D._ConversionArguments == Void {
+        try ephemeralStorage.fetch(for: url, convertWith: (), representWith: ())
+    }
+
+    public func cached<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments, representWith representationArguments: D._RepresentationArguments) throws -> D? {
+        try ephemeralStorage.fetch(for: url, convertWith: conversionArguments, representWith: representationArguments)
     }
 
     public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL) -> AnyPublisher<D, Error> where D._RepresentationArguments == Void, D._ConversionArguments == Void {
@@ -118,4 +127,5 @@ public class BlobCache {
     @objc private func cleanPersistentStorage() {
         persistentStorage.clean()
     }
+
 }
