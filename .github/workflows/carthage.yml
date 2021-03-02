@@ -17,6 +17,6 @@ jobs:
     - name: carthage build
       run: |
         echo cache-builds to work around: https://github.com/Carthage/Carthage/issues/2555
-        carthage build --cache-builds --no-skip-current --verbose
+        carthage build --cache-builds --no-skip-current --verbose --use-xcframeworks
       shell: bash
 
