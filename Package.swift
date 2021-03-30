@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "KumoCoding", targets: ["KumoCoding"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ReactiveX/RxSwift", from: "5.0.0")
+        .package(url: "https://github.com/ReactiveX/RxSwift", from: "6.0.0")
     ],
     targets: [
         .target(name: "Kumo", dependencies: ["RxSwift", "KumoCoding"]),
