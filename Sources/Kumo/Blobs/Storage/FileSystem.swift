@@ -28,7 +28,10 @@ class FileSystem: StorageLocation {
                 .expirationDate: newExpirationDate
             ], ofItemAtPath: path.path)
             expirationDate = newExpirationDate
-            ], ofItemAtPath: path.path)
+        }
+        if expirationDate < Date() {
+            backingManager.removeItem(atPath: path.path)
+            return nil
         }
         return try D.init(data: data, using: arguments)
     }
