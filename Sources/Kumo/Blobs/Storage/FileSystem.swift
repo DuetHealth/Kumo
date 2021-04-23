@@ -19,14 +19,19 @@ class FileSystem: StorageLocation {
     func fetch<D: _DataRepresentable>(for url: URL, arguments: D._RepresentationArguments) throws -> D? {
         let path = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
         guard let data = backingManager.contents(atPath: path.path) else { return nil }
-        let referenceDate: Date = try backingManager.valueForExtendedAttribute(.expirationDate, ofItemAtPath: path.path)
-        let expirationDate: Date = try backingManager.valueForExtendedAttribute(.expirationReferenceDate, ofItemAtPath: path.path)
+        let referenceDate: Date = try backingManager.valueForExtendedAttribute(.expirationReferenceDate, ofItemAtPath: path.path)
+        var expirationDate: Date = try backingManager.valueForExtendedAttribute(.expirationDate, ofItemAtPath: path.path)
         let parameters = CachedObjectParameters(referenceDate: referenceDate, expirationDate: expirationDate)
         if let newExpirationDate = delegate?.newExpirationDate(given: parameters) {
             try backingManager.setExtendedAttributes([
                 .expirationReferenceDate: parameters.referenceDate,
                 .expirationDate: newExpirationDate
             ], ofItemAtPath: path.path)
+            expirationDate = newExpirationDate
+        }
+        if expirationDate < Date() {
+            try backingManager.removeItem(atPath: path.path)
+            return nil
         }
         return try D.init(data: data, using: arguments)
     }
