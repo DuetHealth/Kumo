@@ -20,10 +20,11 @@ class InMemory: StorageLocation {
     private let backingCache = NSCache<NSString, Reference>()
 
     private var keys = Set<String>()
+    var cachePathResolver: CachePathResolver = .sha256
     weak var delegate: StoragePruningDelegate?
 
     func fetch<D: _DataRepresentable>(for url: URL, arguments: D._RepresentationArguments) throws -> D? {
-        switch backingCache.object(forKey: murmur3_32(url.absoluteString) as NSString) {
+        switch backingCache.object(forKey: cachePathResolver.path(for: url.absoluteString) as NSString) {
         case .none:
             return nil
         case .some(let object) where object.value is D:
@@ -38,7 +39,7 @@ class InMemory: StorageLocation {
     }
 
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments: D._ConversionArguments) throws {
-        let cacheKey = murmur3_32(url.absoluteString)
+        let cacheKey = cachePathResolver.path(for: url.absoluteString)
         let expirationDate = delegate?.newExpirationDate(given: CachedObjectParameters()) ?? Date()
         backingCache.setObject(InMemory.Reference(key: cacheKey, value: object, expirationDate: expirationDate), forKey: cacheKey as NSString)
         keys.insert(cacheKey)
@@ -49,7 +50,7 @@ class InMemory: StorageLocation {
     }
 
     func contains(_ url: URL) -> Bool {
-        return keys.contains(murmur3_32(url.absoluteString))
+        return keys.contains(cachePathResolver.path(for: url.absoluteString))
     }
 
     func removeAll() {
