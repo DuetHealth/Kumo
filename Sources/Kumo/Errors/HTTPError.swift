@@ -1,13 +1,30 @@
 import Foundation
 
+/// An enumeration of HTTP errors.
 public enum HTTPError: Error {
+
+    /// The URL / parameter list is invalid.
     case malformedURL(_ url: URL, parameters: [String: Any])
+
+    /// The URL string / parameter list is invalid.
     case malformedURLString(_ urlString: String, parameters: [String: Any])
+
+    /// The body of the request was unserializable.
     case unserializableRequestBody(object: Any?, originalError: Error)
+
+    /// The response was corrupted.
     case corruptedResponse(object: Any)
+
+    /// The response was empty.
     case emptyResponse
+
+    /// The response was unsupported.
     case unsupportedResponse
+
+    /// The error type could not be decoded.
     case corruptedError(Error.Type, decodingError: Error)
+
+    /// An HTTP response status.
     case ambiguousError(HTTP.ResponseStatus)
 
     public var localizedDescription: String {
@@ -30,4 +47,5 @@ public enum HTTPError: Error {
             return "The response returned status code \(status.rawValue)"
         }
     }
+
 }

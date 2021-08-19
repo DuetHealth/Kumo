@@ -97,6 +97,7 @@
 		D0F9B5F12441583400038580 /* KeyedEncodingContainer+DynamicEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F9B5D22441583400038580 /* KeyedEncodingContainer+DynamicEncoding.swift */; };
 		D0F9B5F22441583400038580 /* RequestDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F9B5D32441583400038580 /* RequestDecoding.swift */; };
 		D0F9B5F32441583400038580 /* UnkeyedEncodingContainer+DynamicEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F9B5D42441583400038580 /* UnkeyedEncodingContainer+DynamicEncoding.swift */; };
+		EA646FBC26CE930200482D6B /* Kumo.docc in Sources */ = {isa = PBXBuildFile; fileRef = EA646FBB26CE930200482D6B /* Kumo.docc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -224,6 +225,7 @@
 		D0F9B5D22441583400038580 /* KeyedEncodingContainer+DynamicEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "KeyedEncodingContainer+DynamicEncoding.swift"; sourceTree = "<group>"; };
 		D0F9B5D32441583400038580 /* RequestDecoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestDecoding.swift; sourceTree = "<group>"; };
 		D0F9B5D42441583400038580 /* UnkeyedEncodingContainer+DynamicEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UnkeyedEncodingContainer+DynamicEncoding.swift"; sourceTree = "<group>"; };
+		EA646FBB26CE930200482D6B /* Kumo.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Kumo.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -461,6 +463,7 @@
 		94B6BD0421762D16005454C6 /* Kumo */ = {
 			isa = PBXGroup;
 			children = (
+				EA646FBB26CE930200482D6B /* Kumo.docc */,
 				94B6BD2021762E71005454C6 /* ApplicationLayer.swift */,
 				B5B657D324A6444F00776C23 /* KumoNamespaceProxy.swift */,
 				9430734222D7AFC700AEAC8D /* Blobs */,
@@ -773,6 +776,7 @@
 				949AD296218BD80E00808C79 /* MultipartForm.swift in Sources */,
 				94A4E69022E1F2210033B480 /* Hashing.swift in Sources */,
 				94A4E68122DE0B3D0033B480 /* ExtendedAttributes.swift in Sources */,
+				EA646FBC26CE930200482D6B /* Kumo.docc in Sources */,
 				946F43AD22DCEA7500CE9EC9 /* DataConvertible.swift in Sources */,
 				B5B657D424A6444F00776C23 /* KumoNamespaceProxy.swift in Sources */,
 				94F2CDCF222A3602006D9C36 /* Service+SideEffects.swift in Sources */,

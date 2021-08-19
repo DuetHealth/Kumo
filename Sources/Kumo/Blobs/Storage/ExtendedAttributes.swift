@@ -1,6 +1,7 @@
 import Foundation
 
 struct ExtendedAttributeKey: Hashable, RawRepresentable {
+
     typealias RawValue = String
 
     let rawValue: String

@@ -10,13 +10,28 @@ extension Digest {
 
 }
 
+/// A method for generating a key to be used to resolve cache requests.
 public enum CachePathResolver {
 
+    /// MD5 (message-digest algorithm).
+    /// - Remark: Not the best algorithm to use and can create collisions.
     case md5
+
+    /// SHA-1 (Secure Hash Algorithm 1).
     case sha1
+
+    /// SHA-256 (256-bit Secure Hash Algorithm 2).
     case sha256
+
+    /// SHA-384 (384-bit Secure Hash Algorithm 2).
     case sha384
+
+    /// SHA-512 (512-bit Secure Hash Algorithm 2).
     case sha512
+
+    /// A custom algorithm for hashing data to a unique key. Must be
+    /// deterministic and nearly collision-free for caching to function
+    /// properly.
     case custom((Data) -> String)
 
     func path(for key: String) -> String {

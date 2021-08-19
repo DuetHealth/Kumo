@@ -17,9 +17,9 @@ class InMemory: StorageLocation {
     }
 
     private let backingCache = NSCache<NSString, Reference>()
-
     private var keys = Set<String>()
     private var queue = DispatchQueue(label: "key_queue")
+
     var cachePathResolver: CachePathResolver = .sha256
     weak var delegate: StoragePruningDelegate?
 
@@ -77,4 +77,5 @@ class InMemory: StorageLocation {
             }
         }
     }
+
 }
