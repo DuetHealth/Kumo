@@ -2,24 +2,42 @@ import Combine
 import Foundation
 import SystemConfiguration
 
+/// The network connectivity status.
 public enum NetworkConnectivity {
+
+    /// The status has not yet been determined.
     case unknown
+
+    /// The device is not connected to the internet.
     case notConnected
+
+    /// The device is connected to the internet through WWAN (wireless wide
+    /// area network).
     case wwan
+
+    /// The device is connected to the internet.
     case internet
+
 }
 
+/// A base class that implements standardized access to a specific set of
+/// services and exposes a publisher ``networkConnectivity`` to monitor network
+/// connectivity.
 open class ApplicationLayer {
     
     private var commonHeaders = [String: String]()
-    private var services = [ServiceKey: Service]()
+    private let services: [ServiceKey: Service]
 
     private let networkConnectivitySubject: CurrentValueSubject<NetworkConnectivity, Never> = .init(.unknown)
 
+    /// A publisher that updates with the current network connectivity status
+    /// for the device.
     public var networkConnectivity: AnyPublisher<NetworkConnectivity, Never> {
         networkConnectivitySubject.removeDuplicates().eraseToAnyPublisher()
     }
 
+    /// Creates an application layer backed by the set of service key → service
+    /// pairs.
     public init(with services: [ServiceKey: Service] = [:]) {
         self.services = services
         
@@ -35,7 +53,10 @@ open class ApplicationLayer {
         .sink(receiveValue: { [unowned self] in self.networkConnectivitySubject.send($0) })
         .withLifetime(of: self)
     }
-    
+
+    /// Retrieves the service for a given `key`.
+    /// - Remark: Caller must ensure that the `key` exists for this application
+    /// layer.
     public subscript(_ key: ServiceKey) -> Service {
         return services[key]!
     }
@@ -52,6 +73,8 @@ open class ApplicationLayer {
                     #else
                     observer.base.onNext(.internet)
                     #endif
+                } else {
+                    observer.base.onNext(.notConnected)
                 }
             }, &context)
             SCNetworkReachabilitySetDispatchQueue(reachability, DispatchQueue.main)

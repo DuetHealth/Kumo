@@ -2,11 +2,11 @@ import Foundation
 
 class FileSystem: StorageLocation {
 
-    var cachePathResolver: CachePathResolver = .sha256
-    weak var delegate: StoragePruningDelegate?
-
     private let backingManager: FileManager
     private let parentDirectory: URL
+
+    var cachePathResolver: CachePathResolver = .sha256
+    weak var delegate: StoragePruningDelegate?
 
     init(backingManager: FileManager = .default, parentDirectory: URL? = nil) {
         self.backingManager = backingManager

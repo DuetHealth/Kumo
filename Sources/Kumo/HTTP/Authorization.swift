@@ -1,10 +1,15 @@
 import Foundation
 
+/// An enumeration representing a requests's authentication header.
 public enum Authorization {
 
+    /// Basic access authentication through credentials.
     case basic(username: String, password: String)
+
+    /// Bearer / token authentication.
     case bearer(String)
 
+    /// The value of the authorization header.
     public var value: String {
         switch self {
         case .basic(username: let username, password: let password):
