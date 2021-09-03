@@ -1,7 +1,11 @@
 import Foundation
 
+/// An error that occurred while attempting to access storage.
 public enum StorageAccessError<T>: Error {
+
+    /// A type mismatch occurred while trying to access storage.
     case typeMismatch(expected: T.Type, found: Any)
+
 }
 
 struct CachedObjectParameters {
@@ -21,6 +25,7 @@ protocol StoragePruningDelegate: AnyObject {
 
 protocol StorageLocation: AnyObject {
     var delegate: StoragePruningDelegate? { get set }
+    var cachePathResolver: CachePathResolver { get }
     func fetch<D: _DataRepresentable>(for url: URL, arguments: D._RepresentationArguments) throws -> D?
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments: D._ConversionArguments) throws
     func acquire<D: _DataRepresentable>(fromPath path: URL, origin url: URL, arguments: D._RepresentationArguments) throws -> D?

@@ -2,10 +2,11 @@ import Foundation
 
 class FileSystem: StorageLocation {
 
-    weak var delegate: StoragePruningDelegate?
-
     private let backingManager: FileManager
     private let parentDirectory: URL
+
+    var cachePathResolver: CachePathResolver = .sha256
+    weak var delegate: StoragePruningDelegate?
 
     init(backingManager: FileManager = .default, parentDirectory: URL? = nil) {
         self.backingManager = backingManager
@@ -17,22 +18,27 @@ class FileSystem: StorageLocation {
     }
 
     func fetch<D: _DataRepresentable>(for url: URL, arguments: D._RepresentationArguments) throws -> D? {
-        let path = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
+        let path = parentDirectory.appendingPathComponent(cachePathResolver.path(for: url.absoluteString))
         guard let data = backingManager.contents(atPath: path.path) else { return nil }
-        let referenceDate: Date = try backingManager.valueForExtendedAttribute(.expirationDate, ofItemAtPath: path.path)
-        let expirationDate: Date = try backingManager.valueForExtendedAttribute(.expirationReferenceDate, ofItemAtPath: path.path)
+        let referenceDate: Date = try backingManager.valueForExtendedAttribute(.expirationReferenceDate, ofItemAtPath: path.path)
+        var expirationDate: Date = try backingManager.valueForExtendedAttribute(.expirationDate, ofItemAtPath: path.path)
         let parameters = CachedObjectParameters(referenceDate: referenceDate, expirationDate: expirationDate)
         if let newExpirationDate = delegate?.newExpirationDate(given: parameters) {
             try backingManager.setExtendedAttributes([
                 .expirationReferenceDate: parameters.referenceDate,
                 .expirationDate: newExpirationDate
             ], ofItemAtPath: path.path)
+            expirationDate = newExpirationDate
+        }
+        if expirationDate < Date() {
+            try backingManager.removeItem(atPath: path.path)
+            return nil
         }
         return try D.init(data: data, using: arguments)
     }
 
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments: D._ConversionArguments) throws {
-        let path = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
+        let path = parentDirectory.appendingPathComponent(cachePathResolver.path(for: url.absoluteString))
         guard let data = try object.data(using: arguments) else {
             throw CacheSerializationError.dataConversionFailed(D.self, object: object, arguments: arguments)
         }
@@ -47,7 +53,7 @@ class FileSystem: StorageLocation {
 
     func acquire<D: _DataRepresentable>(fromPath path: URL, origin url: URL, arguments: D._RepresentationArguments) throws -> D? {
         guard let data = backingManager.contents(atPath: path.path) else { return nil }
-        let newPath = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
+        let newPath = parentDirectory.appendingPathComponent(cachePathResolver.path(for: url.absoluteString))
 
         do {
             try backingManager.moveItem(at: path, to: newPath)
@@ -65,7 +71,7 @@ class FileSystem: StorageLocation {
     }
 
     func contains(_ url: URL) -> Bool {
-        let path = parentDirectory.appendingPathComponent(murmur3_32(url.absoluteString))
+        let path = parentDirectory.appendingPathComponent(cachePathResolver.path(for: url.absoluteString))
         return backingManager.fileExists(atPath: path.path)
     }
 

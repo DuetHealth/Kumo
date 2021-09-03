@@ -1,6 +1,6 @@
 import Foundation
 
-public struct KumoNamespace<Base> {
+public struct _KumoNamespace<Base> {
 
     let base: Base
 
@@ -10,23 +10,23 @@ public struct KumoNamespace<Base> {
 
 }
 
-public protocol KumoCompatible {
+public protocol _KumoCompatible {
 
     associatedtype CompatibleType
-    var kumo: KumoNamespace<CompatibleType> { get }
+    var kumo: _KumoNamespace<CompatibleType> { get }
 
 }
 
-extension KumoCompatible {
+extension _KumoCompatible {
 
-    public static var kumo: KumoNamespace<Self.Type> {
-        return KumoNamespace(base: Self.self)
+    public static var kumo: _KumoNamespace<Self.Type> {
+        return _KumoNamespace(base: Self.self)
     }
 
-    public var kumo: KumoNamespace<Self> {
-        return KumoNamespace(base: self)
+    public var kumo: _KumoNamespace<Self> {
+        return _KumoNamespace(base: self)
     }
 
 }
 
-extension NSObject: KumoCompatible {}
+extension NSObject: _KumoCompatible {}

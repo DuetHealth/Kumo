@@ -8,33 +8,56 @@ fileprivate func crlf(_ encoding: String.Encoding, count: Int = 1) -> Data {
     return Data(Array(repeating: crlf.data(using: encoding)!, count: count).joined())
 }
 
+/// A structure representing form data that is divided into multiple parts
+/// before being sent as a request to a server.
 public struct MultipartForm {
-    
+
+    /// The string encoding used for the form data.
     public let encoding: String.Encoding
+
     let boundary = String(format: "----com.Duet.CNS\(UUID().uuidString)")
-    
+
+    /// The data representation of the multipart form.
     public var data: Data {
         return currentFormData
-            + "--\(boundary)--".data(using: .utf8)!
+            + "--\(boundary)--".data(using: encoding)!
             + crlf(encoding)
     }
     
     private var currentFormData = Data()
 
+    /// Creates an empty multipart form with the given `encoding`.
+    /// - Parameter encoding: The encoding to use for the ``data`` of the
+    /// multipart form.
     public init(encoding: String.Encoding) {
         self.encoding = encoding
     }
 
+    /// Creates a multipart form with the given `file` and `encoding`.
+    /// - Parameters:
+    ///   - file: A file to be added to the multipart form.
+    ///   - key: The name of the disposition the file will be keyed under.
+    ///   - encoding: The encoding to use for the ``data`` of the
+    /// multipart form.
     public init(file: URL, under key: String, encoding: String.Encoding) throws {
         self.encoding = encoding
         try addFile(from: file, under: key)
     }
 
-    public init(data: [String: Any], encoding: String.Encoding) throws {
+    /// Creates a multipart form with the given `data` and `encoding`.
+    /// - Parameters:
+    ///   - data: A dictionary of data to be added to the multipart form.
+    ///   - encoding: The encoding to use for the ``data`` of the
+    /// multipart form.
+    public init(data: [String: String], encoding: String.Encoding) throws {
         self.encoding = encoding
         try? addFormData(data: data)
     }
 
+    /// Adds a `file` to the form.
+    /// - Parameters:
+    ///   - file: The file to be added to the multipart form.
+    ///   - key: The name of the disposition the file will be keyed under.
     public mutating func addFile(from url: URL, under key: String) throws {
         guard let fileType = try? FileType(fileExtension: url.pathExtension) else {
             throw UploadError.unknownFileType(url)
@@ -52,6 +75,12 @@ public struct MultipartForm {
         ].reduce(Data(), +)
     }
 
+    /// Adds `fileData` to the form.
+    /// - Parameters:
+    ///   - fileData: The data of the file to be added to the multipart form.
+    ///   - fileName: The name of the file to be added to the multipart form.
+    ///   - key: The name of the disposition the file will be keyed under.
+    ///   - mimeType: The MIME type of the file to be added.
     public mutating func addFile(from fileData: Data, withName fileName: String, key: String? = nil, mimeType: String? = nil) throws {
         let url = URL(fileURLWithPath: fileName)
 
@@ -76,10 +105,13 @@ public struct MultipartForm {
         ].reduce(Data(), +)
     }
 
-    public mutating func addFormData(data: [String : Any]) throws {
-        for (key,value) in data {
+    /// Adds `data` to the form.
+    /// - Parameters:
+    ///   - data: A dictionary of data to be added to the multipart form.
+    public mutating func addFormData(data: [String : String]) throws {
+        for (key, value) in data {
             let k = key
-            let v = value as! String
+            let v = value
             let disposition = try self.disposition(key: k)
             let contentType = try self.contentType(mimeType: "application/json; charset=UTF-8")
             currentFormData += [
@@ -87,9 +119,9 @@ public struct MultipartForm {
                 disposition,
                 contentType,
                 crlf(encoding, count: 2),
-                v.data(using: .utf8)!,
+                v.data(using: encoding)!,
                 crlf(encoding, count: 2)
-                ].reduce(Data(), +)
+            ].reduce(Data(), +)
         }
 
     }

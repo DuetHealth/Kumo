@@ -15,7 +15,7 @@ public extension HTTP {
             return HTTP.Header(rawValue: value)
         }
 
-        let rawValue: String
+        public let rawValue: String
 
         init(rawValue: String) {
             self.rawValue = rawValue

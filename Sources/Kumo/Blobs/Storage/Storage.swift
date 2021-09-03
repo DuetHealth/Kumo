@@ -16,21 +16,34 @@ extension DateComponents {
 
 }
 
+/// A given storage location coupled with cache lifetime and cleaning policies.
 public class Storage: StoragePruningDelegate {
 
+    /// Policies for cache lifetime / destruction.
     public struct Heuristics {
 
+        /// Caching policies for in memory storage.
         public static var inMemory: Heuristics {
             return Heuristics(initialCacheLifetime: .sometimeFromNow(.minutes(5)), lifetimeExtensionPolicy: .extendDuringLifetime(remaining: .half, by: .minutes(5)), cleansIndiscriminately: true)
         }
 
+        /// Caching policies for file system storage.
         public static var fileSystem: Heuristics {
             return Heuristics(initialCacheLifetime: .sometimeFromNow(.days(7)), lifetimeExtensionPolicy: .extendWhenNearlyExpired(by: .days(7)), cleansIndiscriminately: false)
         }
 
+        /// The initial lifetime length of a newly cached resource.
         public var initialCacheLifetime: CacheLifetime
+
+        /// The policy for extending the lifetime of an existing cached
+        /// resource.
         public var lifetimeExtensionPolicy: CacheLifetime.ExtensionPolicy?
+
+        /// Determines whether the policy allows all items to be cleaned when
+        /// cleansing is requested. If false then the policy will only allow
+        /// pruning expired content.
         public var cleansIndiscriminately: Bool
+
     }
 
     private let location: StorageLocation
