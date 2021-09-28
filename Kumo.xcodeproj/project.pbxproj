@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2CC938772703CFFE00465C19 /* KumoDebugger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CC9386E2703CFFE00465C19 /* KumoDebugger.framework */; };
+		2CC9387C2703CFFE00465C19 /* KumoDebuggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC9387B2703CFFE00465C19 /* KumoDebuggerTests.swift */; };
+		2CC9387E2703CFFE00465C19 /* KumoDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CC938702703CFFE00465C19 /* KumoDebugger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9422A34F222B2CA40038E451 /* MockResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A34E222B2CA40038E451 /* MockResponse.swift */; };
 		9422A352222B2F7A0038E451 /* NetworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A351222B2F7A0038E451 /* NetworkTest.swift */; };
 		9422A354222C267A0038E451 /* TestStructure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A353222C267A0038E451 /* TestStructure.swift */; };
@@ -101,6 +104,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2CC938782703CFFE00465C19 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 94B6BCF921762D16005454C6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2CC9386D2703CFFE00465C19;
+			remoteInfo = KumoDebugger;
+		};
 		94B6BD0D21762D17005454C6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 94B6BCF921762D16005454C6 /* Project object */;
@@ -132,6 +142,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2CC9386E2703CFFE00465C19 /* KumoDebugger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KumoDebugger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2CC938702703CFFE00465C19 /* KumoDebugger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KumoDebugger.h; sourceTree = "<group>"; };
+		2CC938712703CFFE00465C19 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2CC938762703CFFE00465C19 /* KumoDebuggerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KumoDebuggerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2CC9387B2703CFFE00465C19 /* KumoDebuggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KumoDebuggerTests.swift; sourceTree = "<group>"; };
+		2CC9387D2703CFFE00465C19 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9422A34E222B2CA40038E451 /* MockResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockResponse.swift; sourceTree = "<group>"; };
 		9422A351222B2F7A0038E451 /* NetworkTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTest.swift; sourceTree = "<group>"; };
 		9422A353222C267A0038E451 /* TestStructure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestStructure.swift; sourceTree = "<group>"; };
@@ -229,6 +245,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2CC9386B2703CFFE00465C19 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2CC938732703CFFE00465C19 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2CC938772703CFFE00465C19 /* KumoDebugger.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		94B6BCFE21762D16005454C6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -255,6 +286,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2CC9386F2703CFFE00465C19 /* KumoDebugger */ = {
+			isa = PBXGroup;
+			children = (
+				2CC938702703CFFE00465C19 /* KumoDebugger.h */,
+				2CC938712703CFFE00465C19 /* Info.plist */,
+			);
+			path = KumoDebugger;
+			sourceTree = "<group>";
+		};
+		2CC9387A2703CFFE00465C19 /* KumoDebuggerTests */ = {
+			isa = PBXGroup;
+			children = (
+				2CC9387B2703CFFE00465C19 /* KumoDebuggerTests.swift */,
+				2CC9387D2703CFFE00465C19 /* Info.plist */,
+			);
+			path = KumoDebuggerTests;
+			sourceTree = "<group>";
+		};
 		9422A344222B034B0038E451 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -445,6 +494,8 @@
 				94B6BD0421762D16005454C6 /* Kumo */,
 				D0F9B5A32441566800038580 /* KumoCoding */,
 				94B6BD0F21762D17005454C6 /* KumoTests */,
+				2CC9386F2703CFFE00465C19 /* KumoDebugger */,
+				2CC9387A2703CFFE00465C19 /* KumoDebuggerTests */,
 				94B6BD0321762D16005454C6 /* Products */,
 				D0F9B5AA2441567200038580 /* Frameworks */,
 			);
@@ -456,6 +507,8 @@
 				94B6BD0221762D16005454C6 /* Kumo.framework */,
 				94B6BD0B21762D17005454C6 /* KumoTests.xctest */,
 				D0F9B5A22441566800038580 /* KumoCoding.framework */,
+				2CC9386E2703CFFE00465C19 /* KumoDebugger.framework */,
+				2CC938762703CFFE00465C19 /* KumoDebuggerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -609,6 +662,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		2CC938692703CFFE00465C19 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2CC9387E2703CFFE00465C19 /* KumoDebugger.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		94B6BCFF21762D16005454C6 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -627,6 +688,42 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		2CC9386D2703CFFE00465C19 /* KumoDebugger */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2CC938832703CFFE00465C19 /* Build configuration list for PBXNativeTarget "KumoDebugger" */;
+			buildPhases = (
+				2CC938692703CFFE00465C19 /* Headers */,
+				2CC9386A2703CFFE00465C19 /* Sources */,
+				2CC9386B2703CFFE00465C19 /* Frameworks */,
+				2CC9386C2703CFFE00465C19 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KumoDebugger;
+			productName = KumoDebugger;
+			productReference = 2CC9386E2703CFFE00465C19 /* KumoDebugger.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		2CC938752703CFFE00465C19 /* KumoDebuggerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2CC938842703CFFE00465C19 /* Build configuration list for PBXNativeTarget "KumoDebuggerTests" */;
+			buildPhases = (
+				2CC938722703CFFE00465C19 /* Sources */,
+				2CC938732703CFFE00465C19 /* Frameworks */,
+				2CC938742703CFFE00465C19 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2CC938792703CFFE00465C19 /* PBXTargetDependency */,
+			);
+			name = KumoDebuggerTests;
+			productName = KumoDebuggerTests;
+			productReference = 2CC938762703CFFE00465C19 /* KumoDebuggerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		94B6BD0121762D16005454C6 /* Kumo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 94B6BD1621762D17005454C6 /* Build configuration list for PBXNativeTarget "Kumo" */;
@@ -691,10 +788,16 @@
 		94B6BCF921762D16005454C6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0940;
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Duet Health";
 				TargetAttributes = {
+					2CC9386D2703CFFE00465C19 = {
+						CreatedOnToolsVersion = 12.5.1;
+					};
+					2CC938752703CFFE00465C19 = {
+						CreatedOnToolsVersion = 12.5.1;
+					};
 					94B6BD0121762D16005454C6 = {
 						CreatedOnToolsVersion = 9.4.1;
 						LastSwiftMigration = 1140;
@@ -727,11 +830,27 @@
 				94B6BD0121762D16005454C6 /* Kumo */,
 				D0F9B5A12441566800038580 /* KumoCoding */,
 				94B6BD0A21762D17005454C6 /* KumoTests */,
+				2CC9386D2703CFFE00465C19 /* KumoDebugger */,
+				2CC938752703CFFE00465C19 /* KumoDebuggerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		2CC9386C2703CFFE00465C19 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2CC938742703CFFE00465C19 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		94B6BD0021762D16005454C6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -756,6 +875,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2CC9386A2703CFFE00465C19 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2CC938722703CFFE00465C19 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2CC9387C2703CFFE00465C19 /* KumoDebuggerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		94B6BCFD21762D16005454C6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -867,6 +1001,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2CC938792703CFFE00465C19 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2CC9386D2703CFFE00465C19 /* KumoDebugger */;
+			targetProxy = 2CC938782703CFFE00465C19 /* PBXContainerItemProxy */;
+		};
 		94B6BD0E21762D17005454C6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 94B6BD0121762D16005454C6 /* Kumo */;
@@ -880,6 +1019,96 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		2CC9387F2703CFFE00465C19 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = KumoDebugger/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duet.KumoDebugger;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2CC938802703CFFE00465C19 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = KumoDebugger/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duet.KumoDebugger;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		2CC938812703CFFE00465C19 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = KumoDebuggerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duet.KumoDebuggerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2CC938822703CFFE00465C19 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = KumoDebuggerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.duet.KumoDebuggerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		94B6BD1421762D17005454C6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1162,6 +1391,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2CC938832703CFFE00465C19 /* Build configuration list for PBXNativeTarget "KumoDebugger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2CC9387F2703CFFE00465C19 /* Debug */,
+				2CC938802703CFFE00465C19 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2CC938842703CFFE00465C19 /* Build configuration list for PBXNativeTarget "KumoDebuggerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2CC938812703CFFE00465C19 /* Debug */,
+				2CC938822703CFFE00465C19 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		94B6BCFC21762D16005454C6 /* Build configuration list for PBXProject "Kumo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

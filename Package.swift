@@ -10,11 +10,14 @@ let package = Package(
     ],
     products: [
         .library(name: "Kumo", targets: ["Kumo"]),
-        .library(name: "KumoCoding", targets: ["KumoCoding"])
+        .library(name: "KumoCoding", targets: ["KumoCoding"]),
+        .library(name: "KumoDebugger", targets: [])
     ],
     targets: [
         .target(name: "Kumo", dependencies: ["KumoCoding"]),
         .target(name: "KumoCoding", dependencies: []),
-        .testTarget(name: "KumoTests", dependencies: ["Kumo", "KumoCoding"])
+        .target(name: "KumoDebugger", dependencies: []),
+        .testTarget(name: "KumoTests", dependencies: ["Kumo", "KumoCoding"]),
+        .testTarget(name: "KumoDebuggerRTests", dependencies: ["Kumo", "KumoCoding"])
     ]
 )
