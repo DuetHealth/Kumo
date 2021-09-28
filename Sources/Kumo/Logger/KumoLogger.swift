@@ -36,7 +36,7 @@ extension Publisher {
         }, receiveCompletion: { completion in
             switch completion {
             case .failure(let error):
-                logger?.log(error: error, message: "Error with request", error: nil)
+                logger?.log(message: "Error with request", error: error)
             case .finished:
                 ()
             }
