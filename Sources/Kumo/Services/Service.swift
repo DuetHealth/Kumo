@@ -107,7 +107,7 @@ public class Service {
     ///   performed in the background.
     ///   - configuration: A block for making initial modifications to the
     ///   [`URLSessionConfiguration`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration).
-    public init(baseURL: URL?, runsInBackground: Bool = false,logger: KumoLogger? = nil, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
+    public init(baseURL: URL?, runsInBackground: Bool = false, logger: KumoLogger? = nil, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
         self.baseURL = baseURL
         self.logger = logger
         let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL?.absoluteString ?? UUID().uuidString) : .default
