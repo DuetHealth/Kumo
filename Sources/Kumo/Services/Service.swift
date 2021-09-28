@@ -85,6 +85,9 @@ public class Service {
     /// The characters to be allowed in the query section of request URLs.
     public var urlQueryAllowedCharacters = CharacterSet.urlQueryAllowed
 
+    /// The logger to log the network requests and any errors
+    public var logger: KumoLogger?
+    
     /// Returns the headers applied to all requests.
     public var commonHTTPHeaders: [HTTP.Header: Any]? {
         return session.configuration.httpHeaders
@@ -104,8 +107,9 @@ public class Service {
     ///   performed in the background.
     ///   - configuration: A block for making initial modifications to the
     ///   [`URLSessionConfiguration`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration).
-    public init(baseURL: URL?, runsInBackground: Bool = false, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
+    public init(baseURL: URL?, runsInBackground: Bool = false,logger: KumoLogger? = nil, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
         self.baseURL = baseURL
+        self.logger = logger
         let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL?.absoluteString ?? UUID().uuidString) : .default
         configuration?(sessionConfiguration)
         session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: nil)
@@ -237,6 +241,7 @@ public class Service {
                 } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
             } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
         }
+        self.logger?.logRawResponse(data)
         return data.map {
             do { return try .success(self.requestDecoder.decode(Response.self, from: $0)) }
             catch { return .failure(ResponseObjectError(error: error, responseObject: response)) }
@@ -260,6 +265,7 @@ public class Service {
                 } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
             } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
         }
+        self.logger?.logRawResponse(data)
         return data.map {
             do { return try .success(self.dynamicRequestDecodingStrategy($0)) }
             catch { return .failure(ResponseObjectError(error: error, responseObject: response)) }
@@ -304,7 +310,8 @@ public extension Service {
 
     internal func fulfill<T>(promise: Future<T, Error>.Promise, for result: Result<T, Error>) {
         switch result {
-        case let .failure(error): promise(.failure(error))
+        case let .failure(error):
+            promise(.failure(error))
         case let .success(value): promise(.success(value))
         }
     }
@@ -317,11 +324,11 @@ public extension Service {
                 let urlRequest: URLRequest
                 do {
                     urlRequest = try self.createURLRequest(from: request)
+                    self.logger?.logRequest(urlRequest)
                 } catch {
                     promise(.failure(error))
                     return
                 }
-
                 let task = self.session.dataTask(with: urlRequest) { (data: Data?, response: URLResponse?, error: Error?) in
                     if let key = request.nestingKey {
                         let result: Result<JSONWrapper<Response>, Error> = self.result(data: data, response: response, error: error)
@@ -342,11 +349,11 @@ public extension Service {
                 }
                 task.resume()
             }
-
             .eraseToAnyPublisher()
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
@@ -370,6 +377,7 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
@@ -393,6 +401,7 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
@@ -417,6 +426,7 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
@@ -445,6 +455,7 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
@@ -473,6 +484,7 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
@@ -513,6 +525,7 @@ public extension Service {
                 .setFailureType(to: Error.self)
         }
         .switchToLatest()
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 

@@ -4,7 +4,7 @@ import Foundation
 import XCTest
 
 class NetworkTest: XCTestCase {
-    let service = Service(baseURL: URL(string: "https://httpbin.org")!)
+    let service = Service(baseURL: URL(string: "https://httpbin.org")!, logger: TestLogger())
 
     let parameters: (actual: [String: Any], expected: [String: String]) = {
         let base: [String: Any] = ["foo": 1, "bar": "foo"]
