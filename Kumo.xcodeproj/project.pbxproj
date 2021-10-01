@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2CC938642702916A00465C19 /* TestLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC938632702916A00465C19 /* TestLogger.swift */; };
+		2CC938672702930800465C19 /* KumoLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC938662702930800465C19 /* KumoLogger.swift */; };
 		9422A34F222B2CA40038E451 /* MockResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A34E222B2CA40038E451 /* MockResponse.swift */; };
 		9422A352222B2F7A0038E451 /* NetworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A351222B2F7A0038E451 /* NetworkTest.swift */; };
 		9422A354222C267A0038E451 /* TestStructure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9422A353222C267A0038E451 /* TestStructure.swift */; };
@@ -132,6 +134,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2CC938632702916A00465C19 /* TestLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLogger.swift; sourceTree = "<group>"; };
+		2CC938662702930800465C19 /* KumoLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KumoLogger.swift; sourceTree = "<group>"; };
 		9422A34E222B2CA40038E451 /* MockResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockResponse.swift; sourceTree = "<group>"; };
 		9422A351222B2F7A0038E451 /* NetworkTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTest.swift; sourceTree = "<group>"; };
 		9422A353222C267A0038E451 /* TestStructure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestStructure.swift; sourceTree = "<group>"; };
@@ -255,6 +259,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2CC93865270292D000465C19 /* Logger */ = {
+			isa = PBXGroup;
+			children = (
+				2CC938662702930800465C19 /* KumoLogger.swift */,
+			);
+			path = Logger;
+			sourceTree = "<group>";
+		};
 		9422A344222B034B0038E451 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -269,6 +281,7 @@
 			children = (
 				9422A351222B2F7A0038E451 /* NetworkTest.swift */,
 				9422A353222C267A0038E451 /* TestStructure.swift */,
+				2CC938632702916A00465C19 /* TestLogger.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -471,6 +484,7 @@
 				945D40E7217A4AA7008ACFD0 /* Errors */,
 				945421722187882E00932CAF /* Extensions */,
 				945D40EA217A6081008ACFD0 /* HTTP */,
+				2CC93865270292D000465C19 /* Logger */,
 				94C3BD91219B0CB100B4A3E2 /* Services */,
 				94B6BD0621762D17005454C6 /* Info.plist */,
 			);
@@ -790,6 +804,7 @@
 				94C185E922D8DEF200CD66DC /* FailableDataRepresentable.swift in Sources */,
 				949AD28B218B375400808C79 /* FileType.swift in Sources */,
 				9430734422D7AFDA00AEAC8D /* BlobCache.swift in Sources */,
+				2CC938672702930800465C19 /* KumoLogger.swift in Sources */,
 				94A4E67B22DCF3660033B480 /* InMemory.swift in Sources */,
 				94A4E67D22DCF38B0033B480 /* FileSystem.swift in Sources */,
 				945D4116217F6ADB008ACFD0 /* HTTPHeader.swift in Sources */,
@@ -818,6 +833,7 @@
 				946809A422C64E710077DBCE /* SimpleRequest.swift in Sources */,
 				9447837C22958ED200BE6960 /* XMLDecodingTests.swift in Sources */,
 				9422A352222B2F7A0038E451 /* NetworkTest.swift in Sources */,
+				2CC938642702916A00465C19 /* TestLogger.swift in Sources */,
 				9422A34F222B2CA40038E451 /* MockResponse.swift in Sources */,
 				B58694D12322B3CC006C20EE /* Epic.swift in Sources */,
 				B55A1178233E5D92006EAB34 /* Unkeyed.swift in Sources */,

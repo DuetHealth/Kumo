@@ -30,7 +30,7 @@ public struct ResponseObjectError: Error {
     }
 
     public var localizedDescription: String {
-        return wrappedError.localizedDescription
+        wrappedError.localizedDescription
     }
 
 }
@@ -85,15 +85,17 @@ public class Service {
     /// The characters to be allowed in the query section of request URLs.
     public var urlQueryAllowedCharacters = CharacterSet.urlQueryAllowed
 
+    /// The logger to log the network requests and any errors
+    public var logger: KumoLogger?
+
     /// Returns the headers applied to all requests.
     public var commonHTTPHeaders: [HTTP.Header: Any]? {
-        return session.configuration.httpHeaders
+        session.configuration.httpHeaders
     }
 
     private let delegate = URLSessionInvalidationDelegate()
 
     private(set) var session: URLSession
-
 
     /// Creates a service with the specified ``baseURL``.
     /// - Parameters:
@@ -102,10 +104,17 @@ public class Service {
     ///   this URL.
     ///   - runsInBackground: Sets whether uploads / downloads are to be
     ///   performed in the background.
+    ///   - logger: Sets the the KumoLogger for the service.
     ///   - configuration: A block for making initial modifications to the
     ///   [`URLSessionConfiguration`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration).
-    public init(baseURL: URL?, runsInBackground: Bool = false, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
+    public init(baseURL: URL?, runsInBackground: Bool = false, logger: KumoLogger? = nil, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
         self.baseURL = baseURL
+        // Do not set the logger if there are not logging levels set
+        if logger?.levels.isEmpty == true {
+            self.logger = nil
+        } else {
+            self.logger = logger
+        }
         let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL?.absoluteString ?? UUID().uuidString) : .default
         configuration?(sessionConfiguration)
         session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: nil)
@@ -117,7 +126,7 @@ public class Service {
         }
     }
 
-    internal func copySettings(from _: ApplicationLayer) {}
+    internal func copySettings(from _: ApplicationLayer) { }
 
     /// Provides a way to reconfigure the URLSessionConfiguration that powers
     /// the Service.
@@ -205,7 +214,14 @@ public class Service {
     /// Converts the results of a `URLSessionDataTask` into a `Result` with
     /// which consumers may perform side effects.
     func result(data: Data?, response: URLResponse?, error: Error?) -> Result<Void, Error> {
-        if let error = error { return .failure(ResponseObjectError(error: error, responseObject: response)) }
+        if let response = response {
+            logger?.logResponse(response)
+        }
+        if let error = error {
+            logger?.logResponseError(error)
+            return .failure(ResponseObjectError(error: error, responseObject: response))
+
+        }
         guard let httpResponse = response as? HTTPURLResponse else {
             return .failure(ResponseObjectError(error: response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse, responseObject: response))
         }
@@ -223,7 +239,11 @@ public class Service {
     /// Converts the results of a `URLSessionDataTask` into a `Result` with
     /// which consumers may act on an element.
     private func result<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Result<Response, Error> {
+        if let response = response {
+            logger?.logResponse(response)
+        }
         if let error = error {
+            logger?.logResponseError(error)
             return .failure(ResponseObjectError(error: error, responseObject: response))
         }
         guard let httpResponse = response as? HTTPURLResponse else {
@@ -237,6 +257,7 @@ public class Service {
                 } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
             } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
         }
+        logger?.logRawResponse(data)
         return data.map {
             do { return try .success(self.requestDecoder.decode(Response.self, from: $0)) }
             catch { return .failure(ResponseObjectError(error: error, responseObject: response)) }
@@ -246,7 +267,11 @@ public class Service {
     /// Converts the results of a `URLSessionDataTask` into a `Result` with
     /// which consumers may act on an element.
     func result(data: Data?, response: URLResponse?, error: Error?) -> Result<Any, Error> {
+        if let response = response {
+            logger?.logResponse(response)
+        }
         if let error = error {
+            logger?.logResponseError(error)
             return .failure(ResponseObjectError(error: error, responseObject: response))
         }
         guard let httpResponse = response as? HTTPURLResponse else {
@@ -260,6 +285,7 @@ public class Service {
                 } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
             } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
         }
+        logger?.logRawResponse(data)
         return data.map {
             do { return try .success(self.dynamicRequestDecodingStrategy($0)) }
             catch { return .failure(ResponseObjectError(error: error, responseObject: response)) }
@@ -269,7 +295,13 @@ public class Service {
     /// Converts the results of a `URLSessionDownloadTask` into a `Result`
     /// with which consumer may act on an element.
     func downloadResultToURL(url: URL?, response: URLResponse?, error: Error?) -> Result<URL, Error> {
-        if let error = error { return .failure(error) }
+        if let response = response {
+            logger?.logResponse(response)
+        }
+        if let error = error {
+            logger?.logResponseError(error)
+            return .failure(error)
+        }
         guard let httpResponse = response as? HTTPURLResponse else {
             return .failure(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
         }
@@ -293,7 +325,7 @@ public class Service {
     }
 
     private func url(given endpoint: String) -> URL? {
-        if let url = self.baseURL {
+        if let url = baseURL {
             return url
         }
         return URL(string: endpoint)
@@ -304,24 +336,26 @@ public extension Service {
 
     internal func fulfill<T>(promise: Future<T, Error>.Promise, for result: Result<T, Error>) {
         switch result {
-        case let .failure(error): promise(.failure(error))
+        case let .failure(error):
+            promise(.failure(error))
         case let .success(value): promise(.success(value))
         }
     }
 
     /// Performs the passed in HTTP `request`.
     /// - Returns: A publisher for the decoded response.
-    func perform<Response: Decodable, Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Response, Error> {
+    func perform<Response: Decodable, Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
+        ._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Response, Error> {
         Deferred<AnyPublisher<Response, Error>> {
             Future<Response, Error> { promise in
                 let urlRequest: URLRequest
                 do {
                     urlRequest = try self.createURLRequest(from: request)
+                    self.logger?.logRequest(urlRequest)
                 } catch {
                     promise(.failure(error))
                     return
                 }
-
                 let task = self.session.dataTask(with: urlRequest) { (data: Data?, response: URLResponse?, error: Error?) in
                     if let key = request.nestingKey {
                         let result: Result<JSONWrapper<Response>, Error> = self.result(data: data, response: response, error: error)
@@ -342,17 +376,18 @@ public extension Service {
                 }
                 task.resume()
             }
-
             .eraseToAnyPublisher()
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
     /// Performs the passed in HTTP `request`.
     /// - Returns: A publisher that emits when the request has finished.
-    func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Void, Error> {
+    func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
+        ._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Void, Error> {
         Deferred<AnyPublisher<Void, Error>> {
             Future<Void, Error> { promise in
                 do {
@@ -370,12 +405,14 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
     /// Performs the passed in HTTP `request`.
     /// - Returns: A publisher for the decoded response.
-    func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Any, Error> {
+    func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
+        ._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Any, Error> {
         Deferred<AnyPublisher<Any, Error>> {
             Future<Any, Error> { promise in
                 do {
@@ -393,6 +430,7 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
@@ -417,12 +455,14 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
     /// Performs the passed in HTTP multipart form upload `request`.
     /// - Returns: A publisher for the decoded response.
-    func perform<Response: Decodable, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Name: _RequestDispositionName>(_ request: HTTP._UploadRequest<Resource, Parameters, Body, Name, _NoOption>) -> AnyPublisher<Response, Error> {
+    func perform<Response: Decodable, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Name: _RequestDispositionName>(_ request: HTTP
+        ._UploadRequest<Resource, Parameters, Body, Name, _NoOption>) -> AnyPublisher<Response, Error> {
         Deferred<AnyPublisher<Response, Error>> {
             Future<Response, Error> { [self] promise in
                 do {
@@ -445,12 +485,14 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
     /// Performs the passed in HTTP multipart form upload `request`.
     /// - Returns: A publisher that emits when the upload has finished.
-    func perform<Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Name: _RequestDispositionName>(_ request: HTTP._UploadRequest<Resource, Parameters, Body, Name, _NoOption>) -> AnyPublisher<Void, Error> {
+    func perform<Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Name: _RequestDispositionName>(_ request: HTTP
+        ._UploadRequest<Resource, Parameters, Body, Name, _NoOption>) -> AnyPublisher<Void, Error> {
         Deferred<AnyPublisher<Void, Error>> {
             Future<Void, Error> { promise in
                 do {
@@ -473,12 +515,14 @@ public extension Service {
         }
         .subscribe(on: subscriptionScheduler)
         .receive(on: receivingScheduler)
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
     /// Performs the passed in HTTP multipart form upload `request`.
     /// - Returns: A publisher that updates with the upload progress.
-    func perform<Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Name: _RequestDispositionName>(_ request: HTTP._UploadRequest<Resource, Parameters, Body, Name, _HasOption>) -> AnyPublisher<Double, Error> {
+    func perform<Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Name: _RequestDispositionName>(_ request: HTTP
+        ._UploadRequest<Resource, Parameters, Body, Name, _HasOption>) -> AnyPublisher<Double, Error> {
         Deferred<AnyPublisher<URLSessionUploadTask, Error>> {
             AnyPublisher<URLSessionUploadTask, Error>.create { subscriber in
                 var task = URLSessionUploadTask?.none
@@ -496,7 +540,7 @@ public extension Service {
                         case .success: subscriber.onComplete()
                         }
                     }
-                    guard let task = task else { return AnyCancellable {} }
+                    guard let task = task else { return AnyCancellable { } }
                     subscriber.onNext(task)
                     task.resume()
                 } catch {
@@ -513,13 +557,15 @@ public extension Service {
                 .setFailureType(to: Error.self)
         }
         .switchToLatest()
+        .logPublisher(logger)
         .eraseToAnyPublisher()
     }
 
 }
 
 extension Service {
-    func createURLRequest<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(from request: HTTP._Request<Method, Resource, Parameters, Body, Key>) throws -> URLRequest {
+    func createURLRequest<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(from request: HTTP
+        ._Request<Method, Resource, Parameters, Body, Key>) throws -> URLRequest {
         let url: URL
         switch request.resourceLocator {
         case let .relative(endpoint):
@@ -553,10 +599,10 @@ extension Service {
 
 extension FileManager {
     var documentsDirectory: URL {
-        return urls(for: .documentDirectory, in: .userDomainMask).first!
+        urls(for: .documentDirectory, in: .userDomainMask).first!
     }
 
     var cachesDirectory: URL {
-        return try! url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        try! url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     }
 }
