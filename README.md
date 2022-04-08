@@ -15,7 +15,7 @@ Cocoapods: `pod 'Kumo', git: 'https://github.com/DuetHealth/Kumo.git'`
 
 Carthage: `git "https://github.com/DuetHealth/Kumo.git" "master"`
 
-Swift Package Manager: `.package(url: "https://github.com/DuetHealth/Kumo.git", from: "1.0.0")`
+Swift Package Manager: `.package(url: "https://github.com/DuetHealth/Kumo.git", from: "2.2.0")`
 
 ## License
 

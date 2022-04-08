@@ -105,9 +105,10 @@ public class Service {
     ///   - runsInBackground: Sets whether uploads / downloads are to be
     ///   performed in the background.
     ///   - logger: Sets the the KumoLogger for the service.
+    ///   - delegateQueue sets the `OperationQueue` for the `URLSession`
     ///   - configuration: A block for making initial modifications to the
     ///   [`URLSessionConfiguration`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration).
-    public init(baseURL: URL?, runsInBackground: Bool = false, logger: KumoLogger? = nil, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
+    public init(baseURL: URL?, runsInBackground: Bool = false, logger: KumoLogger? = nil, delegateQueue: OperationQueue? = nil, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
         self.baseURL = baseURL
         // Do not set the logger if there are not logging levels set
         if logger?.levels.isEmpty == true {
@@ -117,7 +118,7 @@ public class Service {
         }
         let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL?.absoluteString ?? UUID().uuidString) : .default
         configuration?(sessionConfiguration)
-        session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: nil)
+        session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: delegateQueue)
         dynamicRequestEncodingStrategy = { object in
             try JSONSerialization.data(withJSONObject: object, options: [])
         }
