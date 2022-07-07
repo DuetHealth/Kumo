@@ -27,10 +27,12 @@ public extension URLSessionConfiguration {
         }
 
         public func set(value: Any, for header: HTTP.Header) {
-            if base.httpAdditionalHeaders != nil {
-                base.httpAdditionalHeaders![header.rawValue] = value
-            } else {
-                base.httpAdditionalHeaders = [header.rawValue: value]
+            DispatchQueue.global(qos: .userInitiated).sync(flags: .barrier) {
+                if base.httpAdditionalHeaders != nil {
+                    base.httpAdditionalHeaders![header.rawValue] = value
+                } else {
+                    base.httpAdditionalHeaders = [header.rawValue: value]
+                }
             }
         }
 
