@@ -37,7 +37,9 @@ public extension URLSessionConfiguration {
         }
 
         public func remove(_ header: HTTP.Header) {
-            base.httpAdditionalHeaders?[header.rawValue] = ""
+            DispatchQueue.global(qos: .userInitiated).sync(flags: .barrier) {
+                base.httpAdditionalHeaders?[header.rawValue] = ""
+            }
         }
 
         public subscript(_ header: HTTP.Header) -> Any? {
