@@ -27,15 +27,19 @@ public extension URLSessionConfiguration {
         }
 
         public func set(value: Any, for header: HTTP.Header) {
-            if base.httpAdditionalHeaders != nil {
-                base.httpAdditionalHeaders![header.rawValue] = value
-            } else {
-                base.httpAdditionalHeaders = [header.rawValue: value]
+            DispatchQueue.global(qos: .userInitiated).sync {
+                if base.httpAdditionalHeaders != nil {
+                    base.httpAdditionalHeaders![header.rawValue] = value
+                } else {
+                    base.httpAdditionalHeaders = [header.rawValue: value]
+                }
             }
         }
 
         public func remove(_ header: HTTP.Header) {
-            base.httpAdditionalHeaders?[header.rawValue] = ""
+            DispatchQueue.global(qos: .userInitiated).sync {
+                base.httpAdditionalHeaders?[header.rawValue] = ""
+            }
         }
 
         public subscript(_ header: HTTP.Header) -> Any? {
