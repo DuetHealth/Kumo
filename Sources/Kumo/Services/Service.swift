@@ -44,7 +44,7 @@ public class Service {
     
     
     /// Key to enable AB testing invalidation
-    static var isSafeInvalidationEnabled = false
+    public static var isSafeInvalidationEnabled = false
 
     /// The type of error returned by the server. When a response returns an
     /// error status code, the service will attempt to decode the body of the
@@ -124,8 +124,6 @@ public class Service {
         configuration?(sessionConfiguration)
         if Service.isSafeInvalidationEnabled {
             delegate = URLSessionThreadSafeInvalidationDelegate()
-        } else {
-            delegate = URLSessionInvalidationDelegate()
         }
         session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: delegateQueue)
         dynamicRequestEncodingStrategy = { object in
