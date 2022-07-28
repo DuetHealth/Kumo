@@ -41,6 +41,10 @@ public class Service {
 
     /// The base URL for all requests.
     public let baseURL: URL?
+    
+    
+    /// Key to enable AB testing invalidation
+    public static var isSafeInvalidationEnabled = false
 
     /// The type of error returned by the server. When a response returns an
     /// error status code, the service will attempt to decode the body of the
@@ -93,7 +97,7 @@ public class Service {
         session.configuration.httpHeaders
     }
 
-    private let delegate = URLSessionInvalidationDelegate()
+    private var delegate: URLSessionDelegate = URLSessionInvalidationDelegate()
 
     private(set) var session: URLSession
 
@@ -118,6 +122,9 @@ public class Service {
         }
         let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL?.absoluteString ?? UUID().uuidString) : .default
         configuration?(sessionConfiguration)
+        if Service.isSafeInvalidationEnabled {
+            delegate = URLSessionThreadSafeInvalidationDelegate()
+        }
         session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: delegateQueue)
         dynamicRequestEncodingStrategy = { object in
             try JSONSerialization.data(withJSONObject: object, options: [])
