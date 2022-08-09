@@ -99,7 +99,16 @@ public class Service {
 
     private var delegate: URLSessionDelegate = URLSessionInvalidationDelegate()
 
-    private(set) var session: URLSession
+    private let invalidationQueue = DispatchQueue(label: "DuetHealth.session.synchronization")
+    private let invalidationSemaphore = DispatchSemaphore(value: 1)
+
+    private var session: URLSession {
+        invalidationQueue.sync {
+            return _session
+        }
+    }
+    
+    private(set) var _session: URLSession
 
     /// Creates a service with the specified ``baseURL``.
     /// - Parameters:
@@ -125,7 +134,7 @@ public class Service {
         if Service.isSafeInvalidationEnabled {
             delegate = URLSessionThreadSafeInvalidationDelegate()
         }
-        session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: delegateQueue)
+        _session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: delegateQueue)
         dynamicRequestEncodingStrategy = { object in
             try JSONSerialization.data(withJSONObject: object, options: [])
         }
@@ -139,10 +148,14 @@ public class Service {
     /// Provides a way to reconfigure the URLSessionConfiguration that powers
     /// the Service.
     public func reconfigure(applying changes: @escaping (URLSessionConfiguration) -> Void) {
-        session.finishTasksAndInvalidate { [unowned self] session, _ in
-            let newConfiguration: URLSessionConfiguration = session.configuration.copy()
-            changes(newConfiguration)
-            self.session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+        invalidationQueue.sync {
+            invalidationSemaphore.wait()
+            _session.finishTasksAndInvalidate { [unowned self] session, _ in
+                let newConfiguration: URLSessionConfiguration = session.configuration.copy()
+                changes(newConfiguration)
+                self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+                self.invalidationSemaphore.signal()
+            }
         }
     }
 
@@ -158,11 +171,15 @@ public class Service {
                 promise(.success(()))
                 return
             }
-            self.session.finishTasksAndInvalidate { [unowned self] session, _ in
-                let newConfiguration: URLSessionConfiguration = session.configuration.copy()
-                changes(newConfiguration)
-                self.session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
-                promise(.success(()))
+            self.invalidationQueue.sync {
+                self.invalidationSemaphore.wait()
+                self._session.finishTasksAndInvalidate { [unowned self] session, _ in
+                    let newConfiguration: URLSessionConfiguration = session.configuration.copy()
+                    changes(newConfiguration)
+                    self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+                    promise(.success(()))
+                    self.invalidationSemaphore.signal()
+                }
             }
         }
         .receive(on: receivingScheduler)
