@@ -21,7 +21,7 @@ struct SingleValueXMLDecodingContainer: SingleValueDecodingContainer {
     }
 
     func decode(_ type: String.Type) throws -> String {
-        return try commonDecode(String.init)
+        return try commonDecode(String.init(stringLiteral:))
     }
 
     func decode(_ type: Double.Type) throws -> Double {
