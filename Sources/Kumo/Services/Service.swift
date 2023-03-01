@@ -145,6 +145,13 @@ public class Service {
 
     internal func copySettings(from _: ApplicationLayer) { }
 
+    /// Update the header with value for HTTP.Header type
+    /// - Parameters:
+    ///   - value: any vlaue for the HTTP.Header
+    public func updateHeader(value: Any, for header: HTTP.Header) {
+        session.configuration.headers.set(value: String(describing: value), for: header)
+    }
+
     /// Provides a way to reconfigure the URLSessionConfiguration that powers
     /// the Service.
     public func reconfigure(applying changes: @escaping (URLSessionConfiguration) -> Void) {
