@@ -13,8 +13,8 @@ public extension Service {
     /// - Returns: An [`AnyPublisher`](https://developer.apple.com/documentation/combine/anypublisher)
     /// which publishes upon success.
     @available(*, deprecated, message: "Construct an HTTP.Request with `.upload(_:)` and use `perform` instead.")
-    func upload<Response: Decodable>(_ endpoint: String, file: URL, under key: String) -> AnyPublisher<Response, Error> {
-        perform(HTTP.Request.upload(endpoint).file(file).keyed(under: key))
+    func upload<Response: Decodable>(_ endpoint: String, file: URL, under key: String) async throws -> Response? {
+        try await perform(HTTP.Request.upload(endpoint).file(file).keyed(under: key))
     }
 
     /// Uploads to an endpoint the provided file. The file is uploaded as form data
@@ -29,8 +29,8 @@ public extension Service {
     /// - Returns: An [`AnyPublisher`](https://developer.apple.com/documentation/combine/anypublisher)
     /// which publishes a single empty element upon success.
     @available(*, deprecated, message: "Construct an HTTP.Request with `.upload(_:)` and use `perform` instead.")
-    func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> AnyPublisher<Void, Error> {
-        perform(HTTP.Request.upload(endpoint).parameters(parameters).file(file).keyed(under: key))
+    func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) async throws {
+        try await perform(HTTP.Request.upload(endpoint).parameters(parameters).file(file).keyed(under: key))
     }
 
     /// Uploads to an endpoint the provided file. The file is uploaded as form data
@@ -45,8 +45,8 @@ public extension Service {
     /// - Returns: An [`AnyPublisher`](https://developer.apple.com/documentation/combine/anypublisher)
     /// which publishes the progress of the upload.
     @available(*, deprecated, message: "Construct an HTTP.Request with `.upload(_:)` and use `perform` with `.progress()` instead.")
-    func upload(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) -> AnyPublisher<Double, Error> {
-        perform(HTTP.Request.upload(endpoint).parameters(parameters).file(file).keyed(under: key).progress())
+    func uploads(_ endpoint: String, parameters: [String: Any] = [:], file: URL, under key: String) async throws -> Double {
+        try await perform(HTTP.Request.upload(endpoint).parameters(parameters).file(file).keyed(under: key).progress())
     }
 
 }

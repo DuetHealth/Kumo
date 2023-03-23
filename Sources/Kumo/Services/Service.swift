@@ -7,14 +7,12 @@ import KumoCoding
 
 /// A key representing a given service.
 public struct ServiceKey: Hashable {
-
     let stringValue: String
 
     /// Creates a key named: `name`.
     public init(_ name: String) {
         stringValue = name
     }
-
 }
 
 /// A structure that wraps the error returned from a response as well as the
@@ -37,7 +35,7 @@ public struct ResponseObjectError: Error {
 
 /// A wrapper for networking centered around a ``baseURL`` among other
 /// service-level configuration options.
-public class Service {
+public actor Service {
 
     /// The base URL for all requests.
     public let baseURL: URL?
@@ -102,10 +100,8 @@ public class Service {
     private let invalidationQueue = DispatchQueue(label: "DuetHealth.session.synchronization")
     private let invalidationSemaphore = DispatchSemaphore(value: 1)
 
-    private var session: URLSession {
-        invalidationQueue.sync {
-            return _session
-        }
+    var session: URLSession {
+        _session
     }
     
     private(set) var _session: URLSession
@@ -145,45 +141,52 @@ public class Service {
 
     internal func copySettings(from _: ApplicationLayer) { }
 
+    public func setErrorType(_ errorType: ResponseError?) {
+        self.errorType = errorType
+    }
+
+    public func setRequestDecoder(_ requestDecoder: RequestDecoding) {
+        self.requestDecoder = requestDecoder
+    }
+
+    public func setRequestEncoding(_ requestEncoder: RequestEncoding) {
+        self.requestEncoder = requestEncoder
+    }
+
+    public func getHeaders() -> [HTTP.Header: Any]? {
+        commonHTTPHeaders
+    }
+    
+    /// Update the header with value for HTTP.Header type
+    /// - Parameters:
+    ///   - value: any vlaue for the HTTP.Header
+    public func updateHeader(value: Any, for header: HTTP.Header) {
+        session.configuration.headers.set(value: String(describing: value), for: header)
+    }
+    
     /// Provides a way to reconfigure the URLSessionConfiguration that powers
     /// the Service.
     public func reconfigure(applying changes: @escaping (URLSessionConfiguration) -> Void) {
-        invalidationQueue.sync {
-            invalidationSemaphore.wait()
-            _session.finishTasksAndInvalidate { [unowned self] session, _ in
-                let newConfiguration: URLSessionConfiguration = session.configuration.copy()
-                changes(newConfiguration)
-                self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
-                self.invalidationSemaphore.signal()
-            }
+        _session.finishTasksAndInvalidate { [unowned self] session, _ in
+            let newConfiguration: URLSessionConfiguration = session.configuration.copy()
+            changes(newConfiguration)
+            self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
         }
     }
 
     /// Provides a way to asynchronously reconfigure the
     /// [`URLSessionConfiguration`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration)
-    /// that powers the Service. Prefer this over ``reconfigure(applying:)``
+    /// that powers the Service. Prefer this over ``reconfigure(applyingd:)``
     /// when making a request that will modify the session configuration based
     /// on the result of the request, e.g.: upon logging in and receiving a
     /// token that will be added to subsequent headers.
-    public func reconfiguring(applying changes: @escaping (URLSessionConfiguration) -> Void) -> AnyPublisher<Void, Never> {
-        Future<Void, Never> { [weak self] promise in
-            guard let self = self else {
-                promise(.success(()))
-                return
-            }
-            self.invalidationQueue.sync {
-                self.invalidationSemaphore.wait()
-                self._session.finishTasksAndInvalidate { [unowned self] session, _ in
-                    let newConfiguration: URLSessionConfiguration = session.configuration.copy()
-                    changes(newConfiguration)
-                    self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
-                    promise(.success(()))
-                    self.invalidationSemaphore.signal()
-                }
-            }
+    public func reconfiguring(applying changes: @escaping (URLSessionConfiguration) -> Void, completion: @escaping () -> ()) {
+        self._session.finishTasksAndInvalidate { [unowned self] session, _ in
+            let newConfiguration: URLSessionConfiguration = session.configuration.copy()
+            changes(newConfiguration)
+            self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+            completion()
         }
-        .receive(on: receivingScheduler)
-        .eraseToAnyPublisher()
     }
 
     func createRequest(method: HTTP.Method, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
@@ -238,104 +241,60 @@ public class Service {
 
     /// Converts the results of a `URLSessionDataTask` into a `Result` with
     /// which consumers may perform side effects.
-    func result(data: Data?, response: URLResponse?, error: Error?) -> Result<Void, Error> {
-        if let response = response {
-            logger?.logResponse(response)
-        }
-        if let error = error {
-            logger?.logResponseError(error)
-            return .failure(ResponseObjectError(error: error, responseObject: response))
-
-        }
-        guard let httpResponse = response as? HTTPURLResponse else {
-            return .failure(ResponseObjectError(error: response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse, responseObject: response))
-        }
-        if httpResponse.status.isError {
-            return errorType.flatMap { type in
-                data.map {
-                    do { return try .failure(ResponseObjectError(error: type.decode(data: $0, with: requestDecoder), responseObject: response)) }
-                    catch { return .failure(ResponseObjectError(error: HTTPError.corruptedError(type.type, decodingError: error), responseObject: response)) }
-                } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
-            } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
-        }
-        return .success(())
+    func results(data: Data?, response: URLResponse?) throws {
+        _ = try parseError(data: data, response: response)
+        logger?.logRawResponse(data)
     }
 
     /// Converts the results of a `URLSessionDataTask` into a `Result` with
     /// which consumers may act on an element.
-    private func result<Response: Decodable>(data: Data?, response: URLResponse?, error: Error?) -> Result<Response, Error> {
-        if let response = response {
-            logger?.logResponse(response)
-        }
-        if let error = error {
-            logger?.logResponseError(error)
-            return .failure(ResponseObjectError(error: error, responseObject: response))
-        }
-        guard let httpResponse = response as? HTTPURLResponse else {
-            return .failure(ResponseObjectError(error: response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse, responseObject: response))
-        }
-        if httpResponse.status.isError {
-            return errorType.flatMap { type in
-                data.map {
-                    do { return try .failure(ResponseObjectError(error: type.decode(data: $0, with: requestDecoder), responseObject: response)) }
-                    catch { return .failure(ResponseObjectError(error: HTTPError.corruptedError(type.type, decodingError: error), responseObject: response)) }
-                } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
-            } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
-        }
+    private func result<Response: Decodable>(data: Data?, response: URLResponse?) async throws -> Response {
+        let httpResponse = try parseError(data: data, response: response)
         logger?.logRawResponse(data)
-        return data.map {
-            do { return try .success(self.requestDecoder.decode(Response.self, from: $0)) }
-            catch { return .failure(ResponseObjectError(error: error, responseObject: response)) }
-        } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
+        guard let data else {
+            throw ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response)
+        }
+        do {
+            let result: Response = try self.requestDecoder.decode(Response.self, from: data)
+            logger?.logDecodedResponse(output: result)
+            return result
+        }
+        catch let error {
+            throw ResponseObjectError(error: error, responseObject: response)
+        }
     }
 
     /// Converts the results of a `URLSessionDataTask` into a `Result` with
     /// which consumers may act on an element.
-    func result(data: Data?, response: URLResponse?, error: Error?) -> Result<Any, Error> {
-        if let response = response {
-            logger?.logResponse(response)
-        }
-        if let error = error {
-            logger?.logResponseError(error)
-            return .failure(ResponseObjectError(error: error, responseObject: response))
-        }
-        guard let httpResponse = response as? HTTPURLResponse else {
-            return .failure(ResponseObjectError(error: response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse, responseObject: response))
-        }
-        if httpResponse.status.isError {
-            return errorType.flatMap { type in
-                data.map {
-                    do { return try .failure(ResponseObjectError(error: type.decode(data: $0, with: requestDecoder), responseObject: response)) }
-                    catch { return .failure(ResponseObjectError(error: HTTPError.corruptedError(type.type, decodingError: error), responseObject: response)) }
-                } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
-            } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
-        }
+    func result(data: Data?, response: URLResponse?) throws -> Any {
+        let httpResponse = try parseError(data: data, response: response)
         logger?.logRawResponse(data)
-        return data.map {
-            do { return try .success(self.dynamicRequestDecodingStrategy($0)) }
-            catch { return .failure(ResponseObjectError(error: error, responseObject: response)) }
-        } ?? .failure(ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response))
+        let result = try data.map {
+            do { return try self.dynamicRequestDecodingStrategy($0) }
+            catch { throw ResponseObjectError(error: error, responseObject: response) }
+        }
+        guard let result else {
+            throw ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response)
+        }
+        logger?.logDecodedResponse(output: result)
+        return result
     }
-
+    
     /// Converts the results of a `URLSessionDownloadTask` into a `Result`
     /// with which consumer may act on an element.
-    func downloadResultToURL(url: URL?, response: URLResponse?, error: Error?) -> Result<URL, Error> {
+    func downloadResultToURL(url: URL?, response: URLResponse?) throws -> URL {
         if let response = response {
             logger?.logResponse(response)
         }
-        if let error = error {
-            logger?.logResponseError(error)
-            return .failure(error)
-        }
         guard let httpResponse = response as? HTTPURLResponse else {
-            return .failure(response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse)
+            throw response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse
         }
         if httpResponse.status.isError {
-            return .failure(HTTPError.ambiguousError(httpResponse.status))
+            throw HTTPError.ambiguousError(httpResponse.status)
         }
         // TODO: in the previous implementation a nil URL would immediately complete. Was that
         // truly the desired behavior?
-        guard let url = url else { return .failure(HTTPError.ambiguousError(httpResponse.status)) }
+        guard let url = url else { throw HTTPError.ambiguousError(httpResponse.status) }
         let fileName = UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased()
         let fileType = (response?.mimeType).flatMap { try? FileType(mimeType: $0) }
         let newURL = FileManager.default.temporaryDirectory
@@ -343,10 +302,34 @@ public class Service {
             .appendingPathExtension(fileType?.fileExtension ?? "")
         do {
             try FileManager.default.moveItem(atPath: url.path, toPath: newURL.path)
-            return .success(newURL)
+            logger?.logDecodedResponse(output: newURL)
+            return newURL
         } catch {
-            return .failure(error)
+            throw error
         }
+    }
+
+    private func parseError(data: Data?, response: URLResponse?) throws -> HTTPURLResponse {
+        if let response = response {
+            logger?.logResponse(response)
+        }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw ResponseObjectError(error: response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse, responseObject: response)
+        }
+
+        if httpResponse.status.isError {
+            throw try errorType.flatMap { type in
+                try data.map {
+                    do {
+                       return try ResponseObjectError(error: type.decode(data: $0, with: requestDecoder), responseObject: response)
+                    }
+                    catch {
+                        throw ResponseObjectError(error: HTTPError.corruptedError(type.type, decodingError: error), responseObject: response)
+                    }
+                } ?? ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response)
+            } ?? ResponseObjectError(error: HTTPError.ambiguousError(httpResponse.status), responseObject: response)
+        }
+        return httpResponse
     }
 
     private func url(given endpoint: String) -> URL? {
@@ -359,236 +342,121 @@ public class Service {
 
 public extension Service {
 
-    internal func fulfill<T>(promise: Future<T, Error>.Promise, for result: Result<T, Error>) {
-        switch result {
-        case let .failure(error):
-            promise(.failure(error))
-        case let .success(value): promise(.success(value))
-        }
-    }
-
     /// Performs the passed in HTTP `request`.
     /// - Returns: A publisher for the decoded response.
     func perform<Response: Decodable, Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
-        ._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Response, Error> {
-        Deferred<AnyPublisher<Response, Error>> {
-            Future<Response, Error> { promise in
-                let urlRequest: URLRequest
-                do {
-                    urlRequest = try self.createURLRequest(from: request)
-                    self.logger?.logRequest(urlRequest)
-                } catch {
-                    promise(.failure(error))
-                    return
-                }
-                let task = self.session.dataTask(with: urlRequest) { (data: Data?, response: URLResponse?, error: Error?) in
-                    if let key = request.nestingKey {
-                        let result: Result<JSONWrapper<Response>, Error> = self.result(data: data, response: response, error: error)
-                        switch result {
-                        case let .failure(error):
-                            promise(.failure(error))
-                        case let .success(wrapper):
-                            do {
-                                try promise(.success(wrapper.value(forKey: key)))
-                            } catch {
-                                promise(.failure(error))
-                            }
-                        }
-                    } else {
-                        let result: Result<Response, Error> = self.result(data: data, response: response, error: error)
-                        self.fulfill(promise: promise, for: result)
-                    }
-                }
-                task.resume()
+        ._Request<Method, Resource, Parameters, Body, Key>) async throws -> Response {
+            let urlRequest = try self.createURLRequest(from: request)
+            logger?.logRequest(urlRequest)
+            let (data, response) = try await self.session.data(for: urlRequest)
+            if let key = request.nestingKey {
+                let result: JSONWrapper<Response> = try await self.result(data: data, response: response)
+                let value = try result.value(forKey: key)
+                logger?.logDecodedResponse(output: value)
+                return value
+            } else {
+                let result: Response = try await self.result(data: data, response: response)
+                return result
             }
-            .eraseToAnyPublisher()
-        }
-        .subscribe(on: subscriptionScheduler)
-        .receive(on: receivingScheduler)
-        .logPublisher(logger)
-        .eraseToAnyPublisher()
     }
 
     /// Performs the passed in HTTP `request`.
     /// - Returns: A publisher that emits when the request has finished.
-    func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
-        ._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Void, Error> {
-        Deferred<AnyPublisher<Void, Error>> {
-            Future<Void, Error> { promise in
-                do {
-                    let urlRequest = try self.createURLRequest(from: request)
-                    let task = self.session.dataTask(with: urlRequest) { (data: Data?, response: URLResponse?, error: Error?) in
-                        let result: Result<Void, Error> = self.result(data: data, response: response, error: error)
-                        self.fulfill(promise: promise, for: result)
-                    }
-                    task.resume()
-                } catch {
-                    promise(.failure(error))
-                }
-            }
-            .eraseToAnyPublisher()
-        }
-        .subscribe(on: subscriptionScheduler)
-        .receive(on: receivingScheduler)
-        .logPublisher(logger)
-        .eraseToAnyPublisher()
+    func performs<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) async throws {
+        let urlRequest = try self.createURLRequest(from: request)
+        let (data, response) = try await self.session.data(for: urlRequest)
+        try self.results(data: data, response: response)
     }
 
     /// Performs the passed in HTTP `request`.
     /// - Returns: A publisher for the decoded response.
-    func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
-        ._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Any, Error> {
-        Deferred<AnyPublisher<Any, Error>> {
-            Future<Any, Error> { promise in
-                do {
-                    let urlRequest = try self.createURLRequest(from: request)
-                    let task = self.session.dataTask(with: urlRequest) { (data: Data?, response: URLResponse?, error: Error?) in
-                        let result: Result<Any, Error> = self.result(data: data, response: response, error: error)
-                        self.fulfill(promise: promise, for: result)
-                    }
-                    task.resume()
-                } catch {
-                    promise(.failure(error))
-                }
-            }
-            .eraseToAnyPublisher()
+    func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) async throws -> Any {
+            let urlRequest = try self.createURLRequest(from: request)
+            let (data, response) = try await self.session.data(for: urlRequest)
+            let result: Any = try self.result(data: data, response: response)
+            return result
         }
-        .subscribe(on: subscriptionScheduler)
-        .receive(on: receivingScheduler)
-        .logPublisher(logger)
-        .eraseToAnyPublisher()
-    }
-
+    
     /// Performs the passed in HTTP download `request`.
     /// - Returns: A publisher for a file `URL` for the downloaded resource.
-    func perform<Resource: _RequestResource, Parameters: _RequestParameters>(_ request: HTTP._DownloadRequest<Resource, Parameters>) -> AnyPublisher<URL, Error> {
-        Deferred<AnyPublisher<URL, Error>> {
-            Future<URL, Error> { promise in
-                do {
-                    var urlRequest = try self.createURLRequest(from: request.baseRepresentation)
-                    urlRequest.remove(header: .accept)
-                    let task = self.session.downloadTask(with: urlRequest) {
-                        let result: Result<URL, Error> = self.downloadResultToURL(url: $0, response: $1, error: $2)
-                        self.fulfill(promise: promise, for: result)
-                    }
-                    task.resume()
-                } catch {
-                    promise(.failure(error))
-                }
-            }
-            .eraseToAnyPublisher()
+    func perform<Resource: _RequestResource, Parameters: _RequestParameters>(_ request: HTTP._DownloadRequest<Resource, Parameters>) async throws -> URL {
+        var urlRequest = try self.createURLRequest(from: request.baseRepresentation)
+        urlRequest.remove(header: .accept)
+        if #available(iOS 15.0, *) {
+            let (url, response) = try await self.session.download(for: urlRequest)
+            let result: URL = try self.downloadResultToURL(url: url, response: response)
+            return result
         }
-        .subscribe(on: subscriptionScheduler)
-        .receive(on: receivingScheduler)
-        .logPublisher(logger)
-        .eraseToAnyPublisher()
+        return try await self.download(from: urlRequest)
     }
-
+    
     /// Performs the passed in HTTP multipart form upload `request`.
     /// - Returns: A publisher for the decoded response.
     func perform<Response: Decodable, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Name: _RequestDispositionName>(_ request: HTTP
-        ._UploadRequest<Resource, Parameters, Body, Name, _NoOption>) -> AnyPublisher<Response, Error> {
-        Deferred<AnyPublisher<Response, Error>> {
-            Future<Response, Error> { [self] promise in
-                do {
-                    var urlRequest = try self.createURLRequest(from: request.baseRepresentation)
-                    guard let file = request.file else { fatalError("Generics should guarantee that uploads only happen when a body / file is specified.") }
-                    guard let key = request.key else { fatalError("Generics should guarantee that uploads only happen when a disposition key is specified.") }
-                    guard file.isFileURL else { throw UploadError.notAFileURL(file) }
-                    let form = try MultipartForm(file: file, under: key, encoding: .utf8)
-                    urlRequest.set(contentType: .multipartFormData(boundary: form.boundary))
-                    let task = self.session.uploadTask(with: urlRequest, from: form.data) {
-                        let decoded: Result<Response, Error> = self.result(data: $0, response: $1, error: $2)
-                        self.fulfill(promise: promise, for: decoded)
-                    }
-                    task.resume()
-                } catch {
-                    promise(.failure(error))
-                }
-            }
-            .eraseToAnyPublisher()
+        ._UploadRequest<Resource, Parameters, Body, Name, _NoOption>) async throws -> Response {
+            var urlRequest = try self.createURLRequest(from: request.baseRepresentation)
+            guard let file = request.file else { fatalError("Generics should guarantee that uploads only happen when a body / file is specified.") }
+            guard let key = request.key else { fatalError("Generics should guarantee that uploads only happen when a disposition key is specified.") }
+            guard file.isFileURL else { throw UploadError.notAFileURL(file) }
+            let form = try MultipartForm(file: file, under: key, encoding: .utf8)
+            urlRequest.set(contentType: .multipartFormData(boundary: form.boundary))
+            let (data, response) = try await self.session.upload(for: urlRequest, from: form.data)
+            let decoded: Response = try await self.result(data: data, response: response)
+            return decoded
         }
-        .subscribe(on: subscriptionScheduler)
-        .receive(on: receivingScheduler)
-        .logPublisher(logger)
-        .eraseToAnyPublisher()
-    }
 
     /// Performs the passed in HTTP multipart form upload `request`.
     /// - Returns: A publisher that emits when the upload has finished.
     func perform<Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Name: _RequestDispositionName>(_ request: HTTP
-        ._UploadRequest<Resource, Parameters, Body, Name, _NoOption>) -> AnyPublisher<Void, Error> {
-        Deferred<AnyPublisher<Void, Error>> {
-            Future<Void, Error> { promise in
-                do {
-                    var urlRequest = try self.createURLRequest(from: request.baseRepresentation)
-                    guard let file = request.file else { fatalError("Generics should guarantee that uploads only happen when a body / file is specified.") }
-                    guard let key = request.key else { fatalError("Generics should guarantee that uploads only happen when a disposition key is specified.") }
-                    guard file.isFileURL else { throw UploadError.notAFileURL(file) }
-                    let form = try MultipartForm(file: file, under: key, encoding: .utf8)
-                    urlRequest.set(contentType: .multipartFormData(boundary: form.boundary))
-                    let task = self.session.uploadTask(with: urlRequest, from: form.data) {
-                        let result: Result<Void, Error> = self.result(data: $0, response: $1, error: $2)
-                        self.fulfill(promise: promise, for: result)
-                    }
-                    task.resume()
-                } catch {
-                    promise(.failure(error))
-                }
-            }
-            .eraseToAnyPublisher()
-        }
-        .subscribe(on: subscriptionScheduler)
-        .receive(on: receivingScheduler)
-        .logPublisher(logger)
-        .eraseToAnyPublisher()
+        ._UploadRequest<Resource, Parameters, Body, Name, _NoOption>) async throws {
+        var urlRequest = try self.createURLRequest(from: request.baseRepresentation)
+        guard let file = request.file else { fatalError("Generics should guarantee that uploads only happen when a body / file is specified.") }
+        guard let key = request.key else { fatalError("Generics should guarantee that uploads only happen when a disposition key is specified.") }
+        guard file.isFileURL else { throw UploadError.notAFileURL(file) }
+        let form = try MultipartForm(file: file, under: key, encoding: .utf8)
+        urlRequest.set(contentType: .multipartFormData(boundary: form.boundary))
+        let (data, response) = try await self.session.upload(for: urlRequest, from: form.data)
+        try self.results(data: data, response: response)
     }
-
+    
     /// Performs the passed in HTTP multipart form upload `request`.
     /// - Returns: A publisher that updates with the upload progress.
     func perform<Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Name: _RequestDispositionName>(_ request: HTTP
-        ._UploadRequest<Resource, Parameters, Body, Name, _HasOption>) -> AnyPublisher<Double, Error> {
-        Deferred<AnyPublisher<URLSessionUploadTask, Error>> {
-            AnyPublisher<URLSessionUploadTask, Error>.create { subscriber in
-                var task = URLSessionUploadTask?.none
-                do {
-                    var urlRequest = try self.createURLRequest(from: request.baseRepresentation)
-                    guard let file = request.file else { fatalError("Generics should guarantee that uploads only happen when a body / file is specified.") }
-                    guard let key = request.key else { fatalError("Generics should guarantee that uploads only happen when a disposition key is specified.") }
-                    guard file.isFileURL else { throw UploadError.notAFileURL(file) }
-                    let form = try MultipartForm(file: file, under: key, encoding: .utf8)
-                    urlRequest.set(contentType: .multipartFormData(boundary: form.boundary))
-                    task = self.session.uploadTask(with: urlRequest, from: form.data) {
-                        let result: Result<Void, Error> = self.result(data: $0, response: $1, error: $2)
-                        switch result {
-                        case let .failure(error): subscriber.onError(error)
-                        case .success: subscriber.onComplete()
-                        }
-                    }
-                    guard let task = task else { return AnyCancellable { } }
-                    subscriber.onNext(task)
-                    task.resume()
-                } catch {
-                    subscriber.onError(error)
-                }
-                return AnyCancellable {
-                    task?.cancel()
-                }
-            }
+        ._UploadRequest<Resource, Parameters, Body, Name, _HasOption>) async throws -> Double {
+            var urlRequest = try self.createURLRequest(from: request.baseRepresentation)
+            guard let file = request.file else { fatalError("Generics should guarantee that uploads only happen when a body / file is specified.") }
+            guard let key = request.key else { fatalError("Generics should guarantee that uploads only happen when a disposition key is specified.") }
+            guard file.isFileURL else { throw UploadError.notAFileURL(file) }
+            let form = try MultipartForm(file: file, under: key, encoding: .utf8)
+            urlRequest.set(contentType: .multipartFormData(boundary: form.boundary))
+            let (data, response) = try await self.session.upload(for: urlRequest, from: form.data)
+            try self.results(data: data, response: response)
+            
+            // TODO: we can use below API to get the progress, which is available from 15.0+
+            // upload(for request: URLRequest, fromFile fileURL: URL, delegate: URLSessionTaskDelegate? = nil) async throws -> (Data, URLResponse)
+            return 0.0
         }
-        .map {
-            $0.progress.kumo.fractionComplete
-                .eraseToAnyPublisher()
-                .setFailureType(to: Error.self)
-        }
-        .switchToLatest()
-        .logPublisher(logger)
-        .eraseToAnyPublisher()
-    }
-
 }
 
 extension Service {
+    func download(from request: URLRequest) async throws -> URL {
+        try await withCheckedThrowingContinuation { continuation in
+            let task = self.session.downloadTask(with: request) { url, response, error in
+                guard let url = url, let response = response else {
+                    let error = error ?? URLError(.badServerResponse)
+                    return continuation.resume(throwing: error)
+                }
+                do {
+                    let newUrl = try self.downloadResultToURL(url: url, response: response)
+                    continuation.resume(returning: newUrl)
+                } catch let error {
+                    return continuation.resume(throwing: error)
+                }
+            }
+            task.resume()
+        }
+    }
+    
     func createURLRequest<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(from request: HTTP
         ._Request<Method, Resource, Parameters, Body, Key>) throws -> URLRequest {
         let url: URL

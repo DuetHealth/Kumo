@@ -5,12 +5,12 @@ import XCTest
 
 class NetworkTest: XCTestCase {
     let service = Service(baseURL: URL(string: "https://httpbin.org")!, logger: TestLogger())
-
+    
     let parameters: (actual: [String: Any], expected: [String: String]) = {
         let base: [String: Any] = ["foo": 1, "bar": "foo"]
         return (actual: base, expected: base.mapValues(String.init(describing:)))
     }()
-
+    
     func successfulTest<T>(of observable: AnyPublisher<T, Error>, file: StaticString = #file, line: UInt = #line, function: String = #function) -> (_ description: String) -> ((_ successCondition: @escaping (T) -> Bool) -> Void) {
         return { description in
             { successCondition in
@@ -29,12 +29,12 @@ class NetworkTest: XCTestCase {
                 }, receiveValue: {
                     emissions.append($0)
                 })
-                    .withLifetime(of: self)
+                .withLifetime(of: self)
                 self.wait(for: [expect], timeout: 10)
             }
         }
     }
-
+    
     func erroringTest<T>(of observable: AnyPublisher<T, Error>, file: StaticString = #file, line: UInt = #line, function: String = #function) -> (_ description: String) -> ((_ successCondition: @escaping (Error) -> Bool) -> Void) {
         return { description in
             { successCondition in
@@ -52,9 +52,40 @@ class NetworkTest: XCTestCase {
                     XCTFail("Expectation violated - test '\(function)' emitted an element: \(element).", file: file, line: line)
                     expect.fulfill()
                 })
-                    .withLifetime(of: self)
+                .withLifetime(of: self)
                 self.wait(for: [expect], timeout: 10)
             }
         }
+    }
+    
+    func perform<T: Decodable, Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<T, Error> {
+        Deferred<AnyPublisher<T, Error>> {
+            Future<T, Error> { [self] promise in
+                Task {
+                    do {
+                        let result: T = try await service.perform(request)
+                        promise(.success(result))
+                    } catch let error {
+                        promise(.failure(error))
+                    }
+                }
+            }.eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
+    }
+    
+    func performs<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
+        ._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Void, Error> {
+        Deferred<AnyPublisher<Void, Error>> {
+            Future<Void, Error> { [self] promise in
+                Task {
+                    do {
+                        try await service.performs(request)
+                        promise(.success(()))
+                    } catch let error {
+                        promise(.failure(error))
+                    }
+                }
+            }.eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
     }
 }

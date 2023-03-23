@@ -9,7 +9,7 @@ class URLSessionInvalidationDelegate: NSObject, URLSessionDelegate, Invalidation
 
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         invalidations[session]?(session, error)
-        invalidations[session] = nil
+        invalidations.removeValue(forKey: session)
     }
 
     override func conforms(to aProtocol: Protocol) -> Bool {

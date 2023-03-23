@@ -19,10 +19,8 @@ public extension Service {
         /// will be cancelled if the ``Service`` is deallocated.
         /// - Parameters:
         ///     - request: the request to be performed.
-        public func perform<Method: _RequestMethod, Resource: _RequestResource, Body: _RequestBody, Parameters: _RequestParameters, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) {
-            (base.perform(request) as AnyPublisher<Void, Error>)
-                .sink(receiveCompletion: { _ in }, receiveValue: { })
-                .withLifetime(of: base)
+        public func perform<Method: _RequestMethod, Resource: _RequestResource, Body: _RequestBody, Parameters: _RequestParameters, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Body, Parameters, Key>) async throws {
+            try await base.performs(request)
         }
 
     }
