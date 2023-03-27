@@ -140,7 +140,7 @@ public class BlobCache {
     /// - Returns: A publisher for an object representing the data for the
     /// blob resource at the `url`.
     public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments, representWith representationArguments: D._RepresentationArguments) -> AnyPublisher<D, Error> {
-        let downloadTask = fetchImage(from: url)
+        let downloadTask = fetch(from: url)
             .flatMap { [self] downloadPath -> AnyPublisher<D, Error> in
                 do {
                     if let data: D = try self.ephemeralStorage.acquire(fromPath: downloadPath, origin: url, convertWith: conversionArguments, representWith: representationArguments) {
@@ -195,7 +195,7 @@ public class BlobCache {
         persistentStorage.clean()
     }
 
-    private func fetchImage(from url: URL) -> AnyPublisher<URL, Error> {
+    private func fetch(from url: URL) -> AnyPublisher<URL, Error> {
         Deferred<AnyPublisher<URL, Error>> {
             Future<URL, Error> { [self] promise in
                 Task {

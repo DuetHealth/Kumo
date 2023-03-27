@@ -114,10 +114,10 @@ public actor Service {
     ///   - runsInBackground: Sets whether uploads / downloads are to be
     ///   performed in the background.
     ///   - logger: Sets the the KumoLogger for the service.
-    ///   - delegateQueue sets the `OperationQueue` for the `URLSession`
+    ///   - maxConcurrentOperationCount sets the `OperationQueue` for the `URLSession` with `maxConcurrentOperationCount`
     ///   - configuration: A block for making initial modifications to the
     ///   [`URLSessionConfiguration`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration).
-    public init(baseURL: URL?, runsInBackground: Bool = false, logger: KumoLogger? = nil, delegateQueue: OperationQueue? = nil, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
+    public init(baseURL: URL?, runsInBackground: Bool = false, logger: KumoLogger? = nil, maxConcurrentOperationCount: Int? = nil, configuration: ((URLSessionConfiguration) -> Void)? = nil) {
         self.baseURL = baseURL
         // Do not set the logger if there are not logging levels set
         if logger?.levels.isEmpty == true {
@@ -130,7 +130,12 @@ public actor Service {
         if Service.isSafeInvalidationEnabled {
             delegate = URLSessionThreadSafeInvalidationDelegate()
         }
-        _session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: delegateQueue)
+        var queue: OperationQueue?
+        if let count = maxConcurrentOperationCount {
+            queue = OperationQueue()
+            queue?.maxConcurrentOperationCount = count
+        }
+        _session = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: queue)
         dynamicRequestEncodingStrategy = { object in
             try JSONSerialization.data(withJSONObject: object, options: [])
         }
@@ -362,7 +367,7 @@ public extension Service {
 
     /// Performs the passed in HTTP `request`.
     /// - Returns: A publisher that emits when the request has finished.
-    func performs<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) async throws {
+    func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) async throws -> Void {
         let urlRequest = try self.createURLRequest(from: request)
         let (data, response) = try await self.session.data(for: urlRequest)
         try self.results(data: data, response: response)
