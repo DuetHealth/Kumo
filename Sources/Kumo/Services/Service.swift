@@ -392,7 +392,7 @@ public extension Service {
             let result: URL = try self.downloadResultToURL(url: url, response: response)
             return result
         }
-        return try await self.download(from: urlRequest)
+        return try await self.download(from: urlRequest, logger: logger)
     }
     
     /// Performs the passed in HTTP multipart form upload `request`.
@@ -444,7 +444,7 @@ public extension Service {
 }
 
 extension Service {
-    func download(from request: URLRequest) async throws -> URL {
+    func download(from request: URLRequest, logger: KumoLogger?) async throws -> URL {
         try await withCheckedThrowingContinuation { continuation in
             let task = self.session.downloadTask(with: request) { url, response, error in
                 guard let url = url, let response = response else {
@@ -452,7 +452,7 @@ extension Service {
                     return continuation.resume(throwing: error)
                 }
                 do {
-                    let newUrl = try self.downloadResultToURL(url: url, response: response)
+                    let newUrl = try self.downloadResult(url: url, response: response, logger: logger)
                     continuation.resume(returning: newUrl)
                 } catch let error {
                     return continuation.resume(throwing: error)
@@ -462,6 +462,32 @@ extension Service {
         }
     }
     
+    nonisolated
+    private func downloadResult(url: URL?, response: URLResponse?, logger: KumoLogger?) throws -> URL {
+        if let response = response {
+            logger?.logResponse(response)
+        }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw response == nil ? HTTPError.emptyResponse : HTTPError.unsupportedResponse
+        }
+        if httpResponse.status.isError {
+            throw HTTPError.ambiguousError(httpResponse.status)
+        }
+        guard let url = url else { throw HTTPError.ambiguousError(httpResponse.status) }
+        let fileName = UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased()
+        let fileType = (response?.mimeType).flatMap { try? FileType(mimeType: $0) }
+        let newURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(fileName, isDirectory: false)
+            .appendingPathExtension(fileType?.fileExtension ?? "")
+        do {
+            try FileManager.default.moveItem(atPath: url.path, toPath: newURL.path)
+            logger?.logDecodedResponse(output: newURL)
+            return newURL
+        } catch {
+            throw error
+        }
+    }
+
     func createURLRequest<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(from request: HTTP
         ._Request<Method, Resource, Parameters, Body, Key>) throws -> URLRequest {
         let url: URL
