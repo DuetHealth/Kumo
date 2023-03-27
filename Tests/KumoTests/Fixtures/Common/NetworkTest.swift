@@ -73,14 +73,14 @@ class NetworkTest: XCTestCase {
         }.eraseToAnyPublisher()
     }
     
-    func performs<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
+    func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
         ._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Void, Error> {
         Deferred<AnyPublisher<Void, Error>> {
             Future<Void, Error> { [self] promise in
                 Task {
                     do {
-                        try await service.performs(request)
-                        promise(.success(()))
+                        let result: Void = try await service.perform(request)
+                        promise(.success(result))
                     } catch let error {
                         promise(.failure(error))
                     }

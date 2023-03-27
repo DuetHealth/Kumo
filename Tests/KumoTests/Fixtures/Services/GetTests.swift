@@ -5,7 +5,7 @@ import XCTest
 class GetTests: NetworkTest {
     
     func testSuccessfulGetRequestEmittingVoid() {
-        successfulTest(of: performs(HTTP.Request.get("get")))
+        successfulTest(of: perform(HTTP.Request.get("get")))
             <| "Will eventually emit Void"
             <| always()
     }
@@ -17,7 +17,7 @@ class GetTests: NetworkTest {
     }
     
     func testSuccessfulGetRequestWithParametersEmittingVoid() {
-        successfulTest(of: performs(HTTP.Request.get("get").parameters(parameters.actual)))
+        successfulTest(of: perform(HTTP.Request.get("get").parameters(parameters.actual)))
             <| "Will eventually emit a mock response with the provided parameters"
             <| always()
     }
@@ -45,7 +45,7 @@ class GetTests: NetworkTest {
     }
     
     func testUnsuccessfulGetRequestEndsInError() {
-        erroringTest(of: performs(HTTP.Request.get("status/401")))
+        erroringTest(of: perform(HTTP.Request.get("status/401")))
             <| "Will eventually emit an error"
             <| { (error: Error) in
                 guard let responseObjectError = error as? ResponseObjectError else { return false }

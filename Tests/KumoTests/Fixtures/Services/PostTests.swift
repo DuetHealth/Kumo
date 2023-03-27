@@ -5,7 +5,7 @@ import XCTest
 class PostTests: NetworkTest {
     
     func testSuccessfulPostRequestWithDynamicBodyEmittingVoid() {
-        successfulTest(of: performs(HTTP.Request.post("post").body(["one": ["two": 3]])))
+        successfulTest(of: perform(HTTP.Request.post("post").body(["one": ["two": 3]])))
             <| "Will eventually emit Void"
             <| always()
     }
