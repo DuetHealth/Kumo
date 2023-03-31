@@ -5,8 +5,8 @@ let package = Package(
     name: "Kumo",
     platforms: [
         .iOS(.v13),
-        .tvOS(.v13),
-        .macOS(.v10_15),
+        .tvOS(.v15),
+        .macOS(.v12),
     ],
     products: [
         .library(name: "Kumo", targets: ["Kumo"]),

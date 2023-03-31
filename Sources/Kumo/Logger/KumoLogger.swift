@@ -73,27 +73,17 @@ extension KumoLogger {
         }
     }
 
-}
-
-extension Publisher {
-
-    func logPublisher(_ logger: KumoLogger?) -> Publishers.HandleEvents<Self> {
-        handleEvents(receiveOutput: { output in
-            guard let logger = logger, logger.levels.contains(.responseDecoding) else {
-                return
-            }
-            logger.log(message: "Decoded Response: \(output)", error: nil)
-        }, receiveCompletion: { completion in
-            switch completion {
-            case .failure(let error):
-                guard let logger = logger, logger.levels.contains(.responseDecoding) || logger.levels.contains(.error) else {
-                    return
-                }
-                logger.log(message: "Error with request or response", error: error)
-            case .finished:
-                ()
-            }
-        })
+    func logDecodedResponse(output: Any) {
+        guard levels.contains(.responseDecoding) else {
+            return
+        }
+        log(message: "Decoded Response: \(output)", error: nil)
     }
 
+    func logRequestOrResponseError(error: Error) {
+        guard levels.contains(.responseDecoding) || levels.contains(.error) else {
+            return
+        }
+        log(message: "Error with request or response", error: error)
+    }
 }

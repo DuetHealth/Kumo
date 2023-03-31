@@ -12,8 +12,8 @@ public extension Service {
     /// - Returns: An [`AnyPublisher`](https://developer.apple.com/documentation/combine/anypublisher)
     /// which publishes a URL to the downloaded file upon success.
     @available(*, deprecated, message: "Construct a request with HTTP.Request.download(_:) and use Service/perform(_:) instead.")
-    func download(_ endpoint: String, parameters: [String: Any] = [:]) -> AnyPublisher<URL, Error> {
-        perform(HTTP.Request.download(endpoint).parameters(parameters))
+    func download(_ endpoint: String, parameters: [String: Any] = [:]) async throws -> URL {
+        try await perform(HTTP.Request.download(endpoint).parameters(parameters))
     }
 
 }
