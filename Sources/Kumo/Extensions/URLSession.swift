@@ -8,8 +8,9 @@ class URLSessionInvalidationDelegate: NSObject, URLSessionDelegate, Invalidation
     fileprivate var invalidations = [URLSession: (URLSession, Error?) -> Void]()
 
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        invalidations[session]?(session, error)
+        guard let invalidation = invalidations[session] else { return }
         invalidations[session] = nil
+        invalidation(session, error)
     }
 
     override func conforms(to aProtocol: Protocol) -> Bool {
@@ -27,8 +28,9 @@ class URLSessionThreadSafeInvalidationDelegate: NSObject, URLSessionDelegate, In
 
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         invalidationQueue.sync {
-            invalidations[session]?(session, error)
+            guard let invalidation = invalidations[session] else { return }
             invalidations[session] = nil
+            invalidation(session, error)
         }
     }
 
