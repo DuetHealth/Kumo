@@ -22,7 +22,7 @@ jobs:
     - name: Run SwiftLint
       run: swiftlint --strict Sources/ || true
 
-  build:
+  build-and-test:
     runs-on: macos-15
     strategy:
       matrix:
@@ -34,4 +34,4 @@ jobs:
     - name: Build with Swift Package Manager
       run: swift build -v
     - name: Run Tests
-      run: swift test -v
+      run: xcodebuild test -scheme Kumo -destination 'platform=macOS' -skipPackagePluginValidation
