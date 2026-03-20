@@ -39,11 +39,13 @@ class InMemory: StorageLocation, @unchecked Sendable {
     }
 
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments _: D._ConversionArguments) throws {
-        queue.async { [weak self] in
-            guard let self = self else { return }
+        nonisolated(unsafe) let value: Any = object
+        nonisolated(unsafe) weak var weakSelf = self
+        queue.async {
+            guard let self = weakSelf else { return }
             let cacheKey = self.cachePathResolver.path(for: url.absoluteString)
             let expirationDate = self.delegate?.newExpirationDate(given: CachedObjectParameters()) ?? Date()
-            self.backingCache.setObject(InMemory.Reference(key: cacheKey, value: object, expirationDate: expirationDate), forKey: cacheKey as NSString)
+            self.backingCache.setObject(InMemory.Reference(key: cacheKey, value: value, expirationDate: expirationDate), forKey: cacheKey as NSString)
             self.keys.insert(cacheKey)
         }
     }
@@ -57,16 +59,18 @@ class InMemory: StorageLocation, @unchecked Sendable {
     }
 
     func removeAll() {
-        queue.async { [weak self] in
-            guard let self = self else { return }
+        nonisolated(unsafe) weak var weakSelf = self
+        queue.async {
+            guard let self = weakSelf else { return }
             self.backingCache.removeAllObjects()
             self.keys.removeAll()
         }
     }
 
     func pruneExpired() {
-        queue.async { [weak self] in
-            guard let self = self else { return }
+        nonisolated(unsafe) weak var weakSelf = self
+        queue.async {
+            guard let self = weakSelf else { return }
             self.keys.filter {
                 guard let reference = self.backingCache.object(forKey: $0 as NSString) else { return true }
                 return reference.expirationDate < Date().addingTimeInterval(.ulpOfOne)
