@@ -2,21 +2,23 @@ name: Swift Build & Test
 
 on:
   push:
-    branches: [main, master, develop]
+    branches: [main, develop]
   pull_request:
 
 jobs:
   swift-version-check:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@v4
+    - name: Select Xcode 26.3
+      run: sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode.app
     - name: Check Swift version
       run: swift --version
     - name: Build with strict concurrency checks
-      run: swift build -Xswiftc -strict-concurrency=complete
+      run: swift build
 
   lint:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@v4
     - name: Install SwiftLint
@@ -25,14 +27,11 @@ jobs:
       run: swiftlint --strict Sources/ || true
 
   build-and-test:
-    runs-on: macos-15
-    strategy:
-      matrix:
-        xcode: ['16.2']
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@v4
-    - name: Select Xcode ${{ matrix.xcode }}
-      run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app || sudo xcode-select -s /Applications/Xcode.app
+    - name: Select Xcode 26.3
+      run: sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode.app
     - name: Build with Swift Package Manager
       run: swift build -v
     - name: Run Tests

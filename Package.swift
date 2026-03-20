@@ -1,12 +1,12 @@
-// swift-tools-version:6.0
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
     name: "Kumo",
     platforms: [
-        .iOS(.v18),
-        .tvOS(.v18),
-        .macOS(.v15),
+        .iOS(.v26),
+        .tvOS(.v26),
+        .macOS(.v26),
     ],
     products: [
         .library(name: "Kumo", targets: ["Kumo"]),
@@ -17,21 +17,21 @@ let package = Package(
             name: "Kumo",
             dependencies: ["KumoCoding"],
             swiftSettings: [
-                .swiftLanguageMode(.v5)
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
             name: "KumoCoding",
             dependencies: [],
             swiftSettings: [
-                .swiftLanguageMode(.v5)
+                .swiftLanguageMode(.v6)
             ]
         ),
         .testTarget(
             name: "KumoTests",
             dependencies: ["Kumo", "KumoCoding"],
             swiftSettings: [
-                .swiftLanguageMode(.v5)
+                .swiftLanguageMode(.v6)
             ]
         )
     ]
