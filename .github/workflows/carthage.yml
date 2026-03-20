@@ -14,13 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Select Xcode 26.3
-      run: sudo xcode-select -s /Applications/Xcode_26.3.app ||
-    - uses: actions/checkout@v4
-    - name: Select Xcode 26.3
       run: sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode.app
+    - name: Install Carthage
+      run: brew install carthage || true
     - name: carthage build
       run: |
         echo cache-builds to work around: https://github.com/Carthage/Carthage/issues/2555
         carthage build --cache-builds --no-skip-current --verbose --use-xcframeworks
       shell: bash
-
