@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-fileprivate var cancellablesKey = UInt8.zero
+nonisolated(unsafe) private var cancellablesKey = UInt8.zero
 
 extension Cancellable {
 

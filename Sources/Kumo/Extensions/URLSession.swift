@@ -4,7 +4,7 @@ protocol InvalidationProtocol {
     func invalidate(session: URLSession, onInvalidation: @escaping (URLSession, Error?) -> Void)
 }
 
-class URLSessionInvalidationDelegate: NSObject, URLSessionDelegate, InvalidationProtocol {
+final class URLSessionInvalidationDelegate: NSObject, URLSessionDelegate, InvalidationProtocol, @unchecked Sendable {
     fileprivate var invalidations = [URLSession: (URLSession, Error?) -> Void]()
 
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
@@ -21,7 +21,7 @@ class URLSessionInvalidationDelegate: NSObject, URLSessionDelegate, Invalidation
     }
 }
 
-class URLSessionThreadSafeInvalidationDelegate: NSObject, URLSessionDelegate, InvalidationProtocol {
+final class URLSessionThreadSafeInvalidationDelegate: NSObject, URLSessionDelegate, InvalidationProtocol, @unchecked Sendable {
     fileprivate var invalidations = [URLSession: (URLSession, Error?) -> Void]()
     var invalidationQueue = DispatchQueue(label: "DuetHealth.Kumo.invalidations")
 
@@ -43,7 +43,7 @@ class URLSessionThreadSafeInvalidationDelegate: NSObject, URLSessionDelegate, In
     }
 }
 
-fileprivate var temporaryDelegateKey = UInt8.max
+nonisolated(unsafe) private var temporaryDelegateKey = UInt8.max
 
 extension URLSession {
     

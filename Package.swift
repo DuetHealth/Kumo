@@ -17,21 +17,21 @@ let package = Package(
             name: "Kumo",
             dependencies: ["KumoCoding"],
             swiftSettings: [
-                .swiftLanguageMode(.v5)
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
             name: "KumoCoding",
             dependencies: [],
             swiftSettings: [
-                .swiftLanguageMode(.v5)
+                .swiftLanguageMode(.v6)
             ]
         ),
         .testTarget(
             name: "KumoTests",
             dependencies: ["Kumo", "KumoCoding"],
             swiftSettings: [
-                .swiftLanguageMode(.v5)
+                .swiftLanguageMode(.v6)
             ]
         )
     ]
