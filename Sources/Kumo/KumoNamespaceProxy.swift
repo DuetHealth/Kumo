@@ -2,9 +2,9 @@ import Foundation
 
 public struct _KumoNamespace<Base> {
 
-    let base: Base
+    public let base: Base
 
-    internal init(base: Base) {
+    public init(base: Base) {
         self.base = base
     }
 
