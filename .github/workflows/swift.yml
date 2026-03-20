@@ -12,6 +12,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Check Swift version
       run: swift --version
+    - name: Build with strict concurrency checks
+      run: swift build -Xswiftc -strict-concurrency=complete
 
   lint:
     runs-on: macos-15

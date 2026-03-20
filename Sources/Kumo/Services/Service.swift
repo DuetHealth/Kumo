@@ -42,7 +42,7 @@ public actor Service {
     
     
     /// Key to enable AB testing invalidation
-    public static var isSafeInvalidationEnabled = false
+    nonisolated(unsafe) public static var isSafeInvalidationEnabled = false
 
     /// The type of error returned by the server. When a response returns an
     /// error status code, the service will attempt to decode the body of the
