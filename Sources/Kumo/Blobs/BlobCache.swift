@@ -194,6 +194,7 @@ public class BlobCache {
     @objc private func cleanPersistentStorage() {
         persistentStorage.clean()
     }
+
     private func fetch(from url: URL) -> AnyPublisher<URL, Error> {
         let service = self.service
         return Deferred {
@@ -212,6 +213,8 @@ public class BlobCache {
     }
 }
 
+/// A minimal wrapper to pass non-Sendable values across concurrency boundaries
+/// where thread safety is guaranteed by the usage pattern (single-write, no races).
 private struct UncheckedSendableBox<T>: @unchecked Sendable {
     let value: T
     init(_ value: T) {

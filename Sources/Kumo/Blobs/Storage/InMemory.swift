@@ -40,7 +40,7 @@ class InMemory: StorageLocation, @unchecked Sendable {
 
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments _: D._ConversionArguments) throws {
         nonisolated(unsafe) let value: Any = object
-        nonisolated(unsafe) weak var weakSelf = self
+        nonisolated(unsafe) weak let weakSelf = self
         queue.async {
             guard let self = weakSelf else { return }
             let cacheKey = self.cachePathResolver.path(for: url.absoluteString)
@@ -59,7 +59,7 @@ class InMemory: StorageLocation, @unchecked Sendable {
     }
 
     func removeAll() {
-        nonisolated(unsafe) weak var weakSelf = self
+        nonisolated(unsafe) weak let weakSelf = self
         queue.async {
             guard let self = weakSelf else { return }
             self.backingCache.removeAllObjects()
@@ -68,7 +68,7 @@ class InMemory: StorageLocation, @unchecked Sendable {
     }
 
     func pruneExpired() {
-        nonisolated(unsafe) weak var weakSelf = self
+        nonisolated(unsafe) weak let weakSelf = self
         queue.async {
             guard let self = weakSelf else { return }
             self.keys.filter {
