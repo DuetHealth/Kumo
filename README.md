@@ -8,7 +8,7 @@ Kumo is a simple networking library with little boilerplate built with reactive 
 
 - iOS 18.0+ / tvOS 18.0+ / macOS 15.0+
 - Swift 6.0+
-- Xcode 16.0+
+- Xcode 26.3+
 
 ## Usage
 
@@ -16,12 +16,12 @@ Kumo is a simple networking library with little boilerplate built with reactive 
 
 **Swift Package Manager** (Recommended):
 ```swift
-.package(url: "https://github.com/DuetHealth/Kumo.git", branch: "main")
+.package(url: "https://github.com/DuetHealth/Kumo.git", branch: "ver/3.0.0")
 ```
 
 **Carthage**:
 ```
-git "https://github.com/DuetHealth/Kumo.git" "main"
+git "https://github.com/DuetHealth/Kumo.git" "ver/3.0.0"
 ```
 
 ## License
