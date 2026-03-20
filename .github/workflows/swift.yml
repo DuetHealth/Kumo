@@ -7,7 +7,7 @@ on:
 
 jobs:
   swift-version-check:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@v4
     - name: Select Xcode 26.3
@@ -18,7 +18,7 @@ jobs:
       run: swift build
 
   lint:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@v4
     - name: Install SwiftLint
@@ -27,7 +27,7 @@ jobs:
       run: swiftlint --strict Sources/ || true
 
   build-and-test:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@v4
     - name: Select Xcode 26.3
@@ -35,4 +35,4 @@ jobs:
     - name: Build with Swift Package Manager
       run: swift build -v
     - name: Run Tests
-      run: xcodebuild test -scheme Kumo -destination 'platform=macOS' -skipPackagePluginValidation CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO || true
+      run: xcodebuild test -scheme Kumo -destination 'platform=macOS' -skipPackagePluginValidation CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
