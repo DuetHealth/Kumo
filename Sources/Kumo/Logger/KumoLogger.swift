@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-public protocol KumoLogger {
+public protocol KumoLogger: Sendable {
 
     func log(message: String, error: Error?)
 

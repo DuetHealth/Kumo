@@ -1,6 +1,6 @@
 import Foundation
 
-class InMemory: StorageLocation {
+class InMemory: StorageLocation, @unchecked Sendable {
 
     private class Reference {
         let key: String
