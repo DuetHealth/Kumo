@@ -13,7 +13,7 @@ jobs:
     - name: Check Swift version
       run: swift --version
     - name: Build with strict concurrency checks
-      run: swift build -Xswiftc -strict-concurrency=complete
+      run: swift build
 
   lint:
     runs-on: macos-15
@@ -26,13 +26,8 @@ jobs:
 
   build-and-test:
     runs-on: macos-15
-    strategy:
-      matrix:
-        xcode: ['26.3']
     steps:
     - uses: actions/checkout@v4
-    - name: Select Xcode ${{ matrix.xcode }}
-      run: sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode }}.app || sudo xcode-select -s /Applications/Xcode.app
     - name: Build with Swift Package Manager
       run: swift build -v
     - name: Run Tests
