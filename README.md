@@ -16,12 +16,12 @@ Kumo is a simple networking library with little boilerplate built with reactive 
 
 **Swift Package Manager** (Recommended):
 ```swift
-.package(url: "https://github.com/DuetHealth/Kumo.git", branch: "ver/3.0.0")
+.package(url: "https://github.com/DuetHealth/Kumo.git", from: "3.0.0")
 ```
 
 **Carthage**:
 ```
-git "https://github.com/DuetHealth/Kumo.git" "ver/3.0.0"
+git "https://github.com/DuetHealth/Kumo.git" ~> 3.0.0
 ```
 
 ## License
