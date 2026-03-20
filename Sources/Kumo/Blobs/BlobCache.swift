@@ -194,19 +194,27 @@ public class BlobCache {
     @objc private func cleanPersistentStorage() {
         persistentStorage.clean()
     }
-
     private func fetch(from url: URL) -> AnyPublisher<URL, Error> {
-        Deferred<AnyPublisher<URL, Error>> {
-            Future<URL, Error> { [self] promise in
-                Task {
+        let service = self.service
+        return Deferred {
+            Future<URL, Error> { promise in
+                let sendablePromise = UncheckedSendableBox(promise)
+                Task.detached {
                     do {
                         let downloadPath = try await service.perform(HTTP.Request.download(url))
-                        promise(.success(downloadPath))
+                        sendablePromise.value(.success(downloadPath))
                     } catch {
-                        promise(.failure(error))
+                        sendablePromise.value(.failure(error))
                     }
                 }
-            }.eraseToAnyPublisher()
+            }
         }.eraseToAnyPublisher()
+    }
+}
+
+private struct UncheckedSendableBox<T>: @unchecked Sendable {
+    let value: T
+    init(_ value: T) {
+        self.value = value
     }
 }

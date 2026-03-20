@@ -42,7 +42,7 @@ extension HTTP {
         case absolute(URL)
     }
 
-    public struct _Request<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey> {
+    public struct _Request<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>: @unchecked Sendable {
 
         var method: HTTP.Method
         var resourceLocator: HTTP.ResourceLocator

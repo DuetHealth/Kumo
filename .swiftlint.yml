@@ -1,0 +1,42 @@
+# SwiftLint configuration for Kumo 3.0.0
+# Some rules are disabled to maintain backward compatibility with existing API
+
+disabled_rules:
+  # These type names use underscore prefix intentionally for internal/protocol types
+  - type_name
+  # Force casts are used in XML encoding/decoding where type is known at compile time
+  - force_cast
+  # Force try used in controlled scenarios with known input
+  - force_try
+  # Some identifiers use underscore prefix by design
+  - identifier_name
+  # TODO comments are acceptable during development
+  - todo
+
+opt_in_rules:
+  - empty_count
+  - closure_spacing
+
+# Line length configuration - allow up to 200 for errors, 120 for warnings
+line_length:
+  warning: 120
+  error: 250
+  ignores_comments: true
+  ignores_urls: true
+
+# File length configuration
+file_length:
+  warning: 500
+  error: 1000
+
+excluded:
+  - Tests/KumoTests/Fixtures
+  - Tests/KumoTests/Mocks
+  - .build
+  - Package.swift
+
+# Nesting configuration
+nesting:
+  type_level:
+    warning: 2
+    error: 3

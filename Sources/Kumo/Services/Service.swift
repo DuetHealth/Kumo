@@ -42,7 +42,7 @@ public actor Service {
     
     
     /// Key to enable AB testing invalidation
-    public static var isSafeInvalidationEnabled = false
+    nonisolated(unsafe) public static var isSafeInvalidationEnabled = false
 
     /// The type of error returned by the server. When a response returns an
     /// error status code, the service will attempt to decode the body of the
@@ -171,7 +171,7 @@ public actor Service {
     
     /// Provides a way to reconfigure the URLSessionConfiguration that powers
     /// the Service.
-    public func reconfigure(applying changes: @escaping (URLSessionConfiguration) -> Void) {
+    public func reconfigure(applying changes: @escaping @Sendable (URLSessionConfiguration) -> Void) {
         _session.finishTasksAndInvalidate { [unowned self] session, _ in
             let newConfiguration: URLSessionConfiguration = session.configuration.copy()
             changes(newConfiguration)
@@ -185,7 +185,7 @@ public actor Service {
     /// when making a request that will modify the session configuration based
     /// on the result of the request, e.g.: upon logging in and receiving a
     /// token that will be added to subsequent headers.
-    public func reconfiguring(applying changes: @escaping (URLSessionConfiguration) -> Void, completion: @escaping () -> ()) {
+    public func reconfiguring(applying changes: @escaping @Sendable (URLSessionConfiguration) -> Void, completion: @escaping @Sendable () -> ()) {
         self._session.finishTasksAndInvalidate { [unowned self] session, _ in
             let newConfiguration: URLSessionConfiguration = session.configuration.copy()
             changes(newConfiguration)
