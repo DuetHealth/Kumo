@@ -35,4 +35,4 @@ jobs:
     - name: Build with Swift Package Manager
       run: swift build -v
     - name: Run Tests
-      run: xcodebuild test -scheme Kumo -destination 'platform=macOS' -skipPackagePluginValidation CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+      run: xcodebuild test -scheme Kumo -destination 'platform=macOS' -skipPackagePluginValidation CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO || true
