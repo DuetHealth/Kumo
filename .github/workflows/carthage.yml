@@ -8,13 +8,10 @@ on:
 jobs:
   build:
     runs-on: macos-15
-    strategy:
-      matrix:
-        destination: ['platform=iOS Simulator,OS=18.2,name=iPhone 16']
     steps:
     - uses: actions/checkout@v4
-    - name: Select Xcode 16.2
-      run: sudo xcode-select -s /Applications/Xcode_16.2.app || sudo xcode-select -s /Applications/Xcode.app
+    - name: Select latest Xcode
+      run: sudo xcode-select -s /Applications/Xcode.app
     - name: carthage build
       run: |
         echo cache-builds to work around: https://github.com/Carthage/Carthage/issues/2555
