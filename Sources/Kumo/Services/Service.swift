@@ -39,11 +39,6 @@ public actor Service {
 
     /// The base URL for all requests.
     public let baseURL: URL?
-    
-    
-    /// Key to enable AB testing invalidation
-    nonisolated(unsafe) public static var isSafeInvalidationEnabled = false
-
     /// The type of error returned by the server. When a response returns an
     /// error status code, the service will attempt to decode the body of the
     /// response as this type.
@@ -127,9 +122,6 @@ public actor Service {
         }
         let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL?.absoluteString ?? UUID().uuidString) : .default
         configuration?(sessionConfiguration)
-        if Service.isSafeInvalidationEnabled {
-            delegate = URLSessionThreadSafeInvalidationDelegate()
-        }
         var queue: OperationQueue?
         if let count = maxConcurrentOperationCount {
             queue = OperationQueue()
@@ -175,13 +167,14 @@ public actor Service {
         _session.finishTasksAndInvalidate { [unowned self] session, _ in
             let newConfiguration: URLSessionConfiguration = session.configuration.copy()
             changes(newConfiguration)
-            self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+            let newSession = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+            Task { await self.replaceSession(newSession) }
         }
     }
 
     /// Provides a way to asynchronously reconfigure the
     /// [`URLSessionConfiguration`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration)
-    /// that powers the Service. Prefer this over ``reconfigure(applyingd:)``
+    /// that powers the Service. Prefer this over ``reconfigure(applying:)``
     /// when making a request that will modify the session configuration based
     /// on the result of the request, e.g.: upon logging in and receiving a
     /// token that will be added to subsequent headers.
@@ -189,9 +182,16 @@ public actor Service {
         self._session.finishTasksAndInvalidate { [unowned self] session, _ in
             let newConfiguration: URLSessionConfiguration = session.configuration.copy()
             changes(newConfiguration)
-            self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
-            completion()
+            let newSession = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+            Task {
+                await self.replaceSession(newSession)
+                completion()
+            }
         }
+    }
+
+    private func replaceSession(_ newSession: URLSession) {
+        _session = newSession
     }
 
     func createRequest(method: HTTP.Method, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {
