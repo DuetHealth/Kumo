@@ -27,7 +27,7 @@ class BlobCacheTests: NetworkTest {
             }, receiveValue: { (result: Data) in
                 data = result
             })
-            .store(in: &cancellables)
+            .withLifetime(of: self)
     }
 
     func testSubsequentCacheCallReturnsData() {
@@ -49,6 +49,6 @@ class BlobCacheTests: NetworkTest {
             }, receiveValue: { (result: Data) in
                 data = result
             })
-        .store(in: &cancellables)
+        .withLifetime(of: self)
     }
 }

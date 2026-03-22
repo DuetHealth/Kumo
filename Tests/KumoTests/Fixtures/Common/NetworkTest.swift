@@ -4,7 +4,6 @@ import Foundation
 import XCTest
 
 class NetworkTest: XCTestCase {
-    var cancellables = Set<AnyCancellable>()
     let service = Service(baseURL: URL(string: "https://httpbin.org")!, logger: TestLogger())
     
     let parameters: (actual: [String: Any], expected: [String: String]) = {
@@ -30,7 +29,7 @@ class NetworkTest: XCTestCase {
                 }, receiveValue: {
                     emissions.append($0)
                 })
-                .store(in: &self.cancellables)
+                .withLifetime(of: self)
                 self.wait(for: [expect], timeout: 10)
             }
         }
@@ -53,7 +52,7 @@ class NetworkTest: XCTestCase {
                     XCTFail("Expectation violated - test '\(function)' emitted an element: \(element).", file: file, line: line)
                     expect.fulfill()
                 })
-                .store(in: &self.cancellables)
+                .withLifetime(of: self)
                 self.wait(for: [expect], timeout: 10)
             }
         }
