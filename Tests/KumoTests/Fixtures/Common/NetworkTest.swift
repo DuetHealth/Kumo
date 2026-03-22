@@ -1,9 +1,10 @@
-import Combine
+@preconcurrency import Combine
 import Foundation
 @testable import Kumo
 import XCTest
 
 class NetworkTest: XCTestCase {
+    var cancellables = Set<AnyCancellable>()
     let service = Service(baseURL: URL(string: "https://httpbin.org")!, logger: TestLogger())
     
     let parameters: (actual: [String: Any], expected: [String: String]) = {
@@ -11,7 +12,7 @@ class NetworkTest: XCTestCase {
         return (actual: base, expected: base.mapValues(String.init(describing:)))
     }()
     
-    func successfulTest<T>(of observable: AnyPublisher<T, Error>, file: StaticString = #file, line: UInt = #line, function: String = #function) -> (_ description: String) -> ((_ successCondition: @escaping (T) -> Bool) -> Void) {
+    func successfulTest<T>(of observable: AnyPublisher<T, Error>, file: StaticString = #filePath, line: UInt = #line, function: String = #function) -> (_ description: String) -> ((_ successCondition: @escaping (T) -> Bool) -> Void) {
         return { description in
             { successCondition in
                 var emissions = [T]()
@@ -29,13 +30,13 @@ class NetworkTest: XCTestCase {
                 }, receiveValue: {
                     emissions.append($0)
                 })
-                .withLifetime(of: self)
+                .store(in: &self.cancellables)
                 self.wait(for: [expect], timeout: 10)
             }
         }
     }
     
-    func erroringTest<T>(of observable: AnyPublisher<T, Error>, file: StaticString = #file, line: UInt = #line, function: String = #function) -> (_ description: String) -> ((_ successCondition: @escaping (Error) -> Bool) -> Void) {
+    func erroringTest<T>(of observable: AnyPublisher<T, Error>, file: StaticString = #filePath, line: UInt = #line, function: String = #function) -> (_ description: String) -> ((_ successCondition: @escaping (Error) -> Bool) -> Void) {
         return { description in
             { successCondition in
                 let expect = self.expectation(description: description)
@@ -52,40 +53,49 @@ class NetworkTest: XCTestCase {
                     XCTFail("Expectation violated - test '\(function)' emitted an element: \(element).", file: file, line: line)
                     expect.fulfill()
                 })
-                .withLifetime(of: self)
+                .store(in: &self.cancellables)
                 self.wait(for: [expect], timeout: 10)
             }
         }
     }
     
-    func perform<T: Decodable, Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<T, Error> {
-        Deferred<AnyPublisher<T, Error>> {
-            Future<T, Error> { [self] promise in
+    func perform<T: Decodable & Sendable, Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<T, Error> {
+        let service = self.service
+        return Deferred<AnyPublisher<T, Error>> {
+            Future<T, Error> { promise in
+                let box = SendableBox(promise)
                 Task {
                     do {
                         let result: T = try await service.perform(request)
-                        promise(.success(result))
-                    } catch let error {
-                        promise(.failure(error))
+                        box.value(.success(result))
+                    } catch {
+                        box.value(.failure(error))
                     }
                 }
             }.eraseToAnyPublisher()
         }.eraseToAnyPublisher()
     }
-    
+
     func perform<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>(_ request: HTTP
         ._Request<Method, Resource, Parameters, Body, Key>) -> AnyPublisher<Void, Error> {
-        Deferred<AnyPublisher<Void, Error>> {
-            Future<Void, Error> { [self] promise in
+        let service = self.service
+        return Deferred<AnyPublisher<Void, Error>> {
+            Future<Void, Error> { promise in
+                let box = SendableBox(promise)
                 Task {
                     do {
-                        let result: Void = try await service.perform(request)
-                        promise(.success(result))
-                    } catch let error {
-                        promise(.failure(error))
+                        try await service.perform(request) as Void
+                        box.value(.success(()))
+                    } catch {
+                        box.value(.failure(error))
                     }
                 }
             }.eraseToAnyPublisher()
         }.eraseToAnyPublisher()
     }
+}
+
+private struct SendableBox<T>: @unchecked Sendable {
+    let value: T
+    init(_ value: T) { self.value = value }
 }

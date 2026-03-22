@@ -6,7 +6,7 @@ struct RequestBody: Codable {
         let integer: Int
     }
     
-    static let dynamicBody: [String: Any] = ["nested": ["integer": 3], "leaf": "string"]
+    nonisolated(unsafe) static let dynamicBody: [String: Any] = ["nested": ["integer": 3], "leaf": "string"]
 
     let nested: NestedBody
     let leaf: String

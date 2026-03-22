@@ -1,13 +1,13 @@
 import Foundation
 
-struct MockResponse: Decodable {
+struct MockResponse: Decodable, Sendable {
     let args: [String: String]
     let headers: [String: String]
     let origin: String
     let url: URL
 }
 
-struct MockObjectResponse<O: Decodable>: Decodable {
+struct MockObjectResponse<O: Decodable & Sendable>: Decodable, Sendable {
     let args: [String: String]
     let headers: [String: String]
     let origin: String
