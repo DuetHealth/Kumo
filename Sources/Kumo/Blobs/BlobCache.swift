@@ -200,7 +200,7 @@ public class BlobCache {
         return Deferred {
             Future<URL, Error> { promise in
                 let sendablePromise = UncheckedSendableBox(promise)
-                Task.detached {
+                Task {
                     do {
                         let downloadPath = try await service.perform(HTTP.Request.download(url))
                         sendablePromise.value(.success(downloadPath))
@@ -213,8 +213,8 @@ public class BlobCache {
     }
 }
 
-/// A minimal wrapper to pass non-Sendable values across concurrency boundaries
-/// where thread safety is guaranteed by the usage pattern (single-write, no races).
+/// A wrapper to pass the non-Sendable Future promise across the Task sending boundary.
+/// Thread safety is guaranteed by single-write usage: the promise is called exactly once.
 private struct UncheckedSendableBox<T>: @unchecked Sendable {
     let value: T
     init(_ value: T) {
