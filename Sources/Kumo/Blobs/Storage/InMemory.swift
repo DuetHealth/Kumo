@@ -41,6 +41,11 @@ class InMemory: StorageLocation, @unchecked Sendable {
     }
 
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments _: D._ConversionArguments) throws {
+        // nonisolated(unsafe) is used because D is not constrained to Sendable,
+        // but all conforming types (Data, Date, UIImage) are either value types
+        // or effectively immutable reference types. The queue serializes access
+        // to the cache's own state; this annotation bridges the object into the
+        // async closure without requiring a Sendable constraint on the public API.
         nonisolated(unsafe) let value: Any = object
         queue.async { [weak self] in
             guard let self else { return }
