@@ -92,9 +92,6 @@ public actor Service {
 
     private var delegate: URLSessionDelegate = URLSessionInvalidationDelegate()
 
-    private let invalidationQueue = DispatchQueue(label: "DuetHealth.session.synchronization")
-    private let invalidationSemaphore = DispatchSemaphore(value: 1)
-
     var session: URLSession {
         _session
     }
@@ -161,36 +158,23 @@ public actor Service {
         session.configuration.headers.set(value: String(describing: value), for: header)
     }
     
-    /// Provides a way to reconfigure the URLSessionConfiguration that powers
-    /// the Service.
-    public func reconfigure(applying changes: @escaping @Sendable (URLSessionConfiguration) -> Void) {
-        _session.finishTasksAndInvalidate { [unowned self] session, _ in
-            let newConfiguration: URLSessionConfiguration = session.configuration.copy()
-            changes(newConfiguration)
-            let newSession = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
-            Task { await self.replaceSession(newSession) }
-        }
-    }
-
-    /// Provides a way to asynchronously reconfigure the
-    /// [`URLSessionConfiguration`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration)
-    /// that powers the Service. Prefer this over ``reconfigure(applying:)``
-    /// when making a request that will modify the session configuration based
-    /// on the result of the request, e.g.: upon logging in and receiving a
-    /// token that will be added to subsequent headers.
-    public func reconfiguring(applying changes: @escaping @Sendable (URLSessionConfiguration) -> Void, completion: @escaping @Sendable () -> ()) {
-        self._session.finishTasksAndInvalidate { [unowned self] session, _ in
-            let newConfiguration: URLSessionConfiguration = session.configuration.copy()
-            changes(newConfiguration)
-            let newSession = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
-            Task {
-                await self.replaceSession(newSession)
-                completion()
+    /// Reconfigures the URLSessionConfiguration that powers the Service.
+    /// Finishes outstanding tasks, invalidates the current session, and
+    /// creates a new session with the modified configuration.
+    public func reconfigure(applying changes: @escaping @Sendable (URLSessionConfiguration) -> Void) async {
+        let oldSession = _session
+        let delegate = self.delegate
+        let newSession = await withCheckedContinuation { continuation in
+            oldSession.finishTasksAndInvalidate { session, _ in
+                let newConfiguration: URLSessionConfiguration = session.configuration.copy()
+                changes(newConfiguration)
+                continuation.resume(returning: URLSession(
+                    configuration: newConfiguration,
+                    delegate: delegate,
+                    delegateQueue: nil
+                ))
             }
         }
-    }
-
-    private func replaceSession(_ newSession: URLSession) {
         _session = newSession
     }
 
