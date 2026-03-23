@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 
 #if canImport(UIKit)
@@ -95,10 +94,10 @@ public class BlobCache {
     /// exists and has not expired it will be returned instead of re-fetching
     /// the response.
     /// - Parameter url: The URL for the blob resource to be located.
-    /// - Returns: A publisher for an object representing the data for the
-    /// blob resource at the `url`.
-    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL) -> AnyPublisher<D, Error> where D._RepresentationArguments == Void, D._ConversionArguments == Void {
-        return fetch(from: url, convertWith: (), representWith: ())
+    /// - Returns: An object representing the data for the blob resource at
+    /// the `url`.
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL) async throws -> D where D._RepresentationArguments == Void, D._ConversionArguments == Void {
+        try await fetch(from: url, convertWith: (), representWith: ())
     }
 
     /// Retrieves the blob resource from the given `url`. If a cached response
@@ -108,10 +107,10 @@ public class BlobCache {
     ///   - url: The URL for the blob resource to be located.
     ///   - representationArguments: Arguments to be used to construct
     /// the representing object.
-    /// - Returns: A publisher for an object representing the data for the
-    /// blob resource at the `url`.
-    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, representWith representationArguments: D._RepresentationArguments) -> AnyPublisher<D, Error> where D._ConversionArguments == Void {
-        return fetch(from: url, convertWith: (), representWith: representationArguments)
+    /// - Returns: An object representing the data for the blob resource at
+    /// the `url`.
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, representWith representationArguments: D._RepresentationArguments) async throws -> D where D._ConversionArguments == Void {
+        try await fetch(from: url, convertWith: (), representWith: representationArguments)
     }
 
     /// Retrieves the blob resource from the given `url`. If a cached response
@@ -121,12 +120,11 @@ public class BlobCache {
     ///   - url: The URL for the blob resource to be located.
     ///   - conversionArguments: Arguments to be used to convert the
     /// blob data.
-    /// - Returns: A publisher for an object representing the data for the
-    /// blob resource at the `url`.
-    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments) -> AnyPublisher<D, Error> where D._RepresentationArguments == Void {
-        return fetch(from: url, convertWith: conversionArguments, representWith: ())
+    /// - Returns: An object representing the data for the blob resource at
+    /// the `url`.
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments) async throws -> D where D._RepresentationArguments == Void {
+        try await fetch(from: url, convertWith: conversionArguments, representWith: ())
     }
-
 
     /// Retrieves the blob resource from the given `url`. If a cached response
     /// exists and has not expired it will be returned instead of re-fetching
@@ -137,48 +135,17 @@ public class BlobCache {
     /// blob data.
     ///   - representationArguments: Arguments to be used to construct
     /// the representing object.
-    /// - Returns: A publisher for an object representing the data for the
-    /// blob resource at the `url`.
-    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments, representWith representationArguments: D._RepresentationArguments) -> AnyPublisher<D, Error> {
-        let downloadTask = fetch(from: url)
-            .flatMap { [self] downloadPath -> AnyPublisher<D, Error> in
-                do {
-                    if let data: D = try self.ephemeralStorage.acquire(fromPath: downloadPath, origin: url, convertWith: conversionArguments, representWith: representationArguments) {
-                        return Just(data)
-                            .setFailureType(to: Error.self)
-                            .eraseToAnyPublisher()
-                    }
-                    return Empty(completeImmediately: true)
-                        .eraseToAnyPublisher()
-                } catch {
-                    return Fail(error: error)
-                        .eraseToAnyPublisher()
-                }
-            }
-            .eraseToAnyPublisher()
-
-        return Deferred<Future<D?, Error>> {
-            Future<D?, Error> { [self] promise in
-                do {
-                    promise(.success(try self.ephemeralStorage.fetch(for: url, convertWith: conversionArguments, representWith: representationArguments)))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+    /// - Returns: An object representing the data for the blob resource at
+    /// the `url`.
+    public func fetch<D: _DataConvertible & _DataRepresentable>(from url: URL, convertWith conversionArguments: D._ConversionArguments, representWith representationArguments: D._RepresentationArguments) async throws -> D {
+        if let cached: D = try ephemeralStorage.fetch(for: url, convertWith: conversionArguments, representWith: representationArguments) {
+            return cached
         }
-        .flatMap { (data: D?) -> AnyPublisher<D, Error> in
-            if let data = data {
-                return Just(data)
-                    .setFailureType(to: Error.self)
-                    .eraseToAnyPublisher()
-            } else {
-                return downloadTask
-            }
+        let downloadPath: URL = try await service.perform(HTTP.Request.download(url))
+        guard let data: D = try ephemeralStorage.acquire(fromPath: downloadPath, origin: url, convertWith: conversionArguments, representWith: representationArguments) else {
+            throw BlobCacheError.acquisitionFailed(url)
         }
-        .eraseToAnyPublisher()
-        .subscribe(on: DispatchQueue.global())
-        .receive(on: DispatchQueue.main)
-        .eraseToAnyPublisher()
+        return data
     }
 
     /// Cleans both ephemeral and persistent storage immediately.
@@ -195,29 +162,8 @@ public class BlobCache {
         persistentStorage.clean()
     }
 
-    private func fetch(from url: URL) -> AnyPublisher<URL, Error> {
-        let service = self.service
-        return Deferred {
-            Future<URL, Error> { promise in
-                let sendablePromise = UncheckedSendableBox(promise)
-                Task {
-                    do {
-                        let downloadPath = try await service.perform(HTTP.Request.download(url))
-                        sendablePromise.value(.success(downloadPath))
-                    } catch {
-                        sendablePromise.value(.failure(error))
-                    }
-                }
-            }
-        }.eraseToAnyPublisher()
-    }
 }
 
-/// A wrapper to pass the non-Sendable Future promise across the Task sending boundary.
-/// Thread safety is guaranteed by single-write usage: the promise is called exactly once.
-private struct UncheckedSendableBox<T>: @unchecked Sendable {
-    let value: T
-    init(_ value: T) {
-        self.value = value
-    }
+enum BlobCacheError: Error {
+    case acquisitionFailed(URL)
 }
