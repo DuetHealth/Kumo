@@ -16,6 +16,7 @@ let package = Package(
         .target(
             name: "Kumo",
             dependencies: ["KumoCoding"],
+            exclude: ["Info.plist"],
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]
@@ -23,6 +24,7 @@ let package = Package(
         .target(
             name: "KumoCoding",
             dependencies: [],
+            exclude: ["Info.plist"],
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]
@@ -30,6 +32,7 @@ let package = Package(
         .testTarget(
             name: "KumoTests",
             dependencies: ["Kumo", "KumoCoding"],
+            exclude: ["Info.plist"],
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]
