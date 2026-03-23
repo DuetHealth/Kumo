@@ -1,7 +1,7 @@
 import Foundation
 
 /// An error that occurred while attempting to access storage.
-public enum StorageAccessError<T>: Error {
+public enum StorageAccessError<T>: Error, @unchecked Sendable {
 
     /// A type mismatch occurred while trying to access storage.
     case typeMismatch(expected: T.Type, found: Any)

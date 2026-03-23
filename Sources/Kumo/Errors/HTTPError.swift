@@ -1,7 +1,7 @@
 import Foundation
 
 /// An enumeration of HTTP errors.
-public enum HTTPError: Error {
+public enum HTTPError: Error, @unchecked Sendable {
 
     /// The URL / parameter list is invalid.
     case malformedURL(_ url: URL, parameters: [String: Any])

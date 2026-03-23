@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 
 #if canImport(KumoCoding)
@@ -39,11 +38,6 @@ public actor Service {
 
     /// The base URL for all requests.
     public let baseURL: URL?
-    
-    
-    /// Key to enable AB testing invalidation
-    nonisolated(unsafe) public static var isSafeInvalidationEnabled = false
-
     /// The type of error returned by the server. When a response returns an
     /// error status code, the service will attempt to decode the body of the
     /// response as this type.
@@ -97,9 +91,6 @@ public actor Service {
 
     private var delegate: URLSessionDelegate = URLSessionInvalidationDelegate()
 
-    private let invalidationQueue = DispatchQueue(label: "DuetHealth.session.synchronization")
-    private let invalidationSemaphore = DispatchSemaphore(value: 1)
-
     var session: URLSession {
         _session
     }
@@ -127,9 +118,6 @@ public actor Service {
         }
         let sessionConfiguration = runsInBackground ? URLSessionConfiguration.background(withIdentifier: baseURL?.absoluteString ?? UUID().uuidString) : .default
         configuration?(sessionConfiguration)
-        if Service.isSafeInvalidationEnabled {
-            delegate = URLSessionThreadSafeInvalidationDelegate()
-        }
         var queue: OperationQueue?
         if let count = maxConcurrentOperationCount {
             queue = OperationQueue()
@@ -169,29 +157,24 @@ public actor Service {
         session.configuration.headers.set(value: String(describing: value), for: header)
     }
     
-    /// Provides a way to reconfigure the URLSessionConfiguration that powers
-    /// the Service.
-    public func reconfigure(applying changes: @escaping @Sendable (URLSessionConfiguration) -> Void) {
-        _session.finishTasksAndInvalidate { [unowned self] session, _ in
-            let newConfiguration: URLSessionConfiguration = session.configuration.copy()
-            changes(newConfiguration)
-            self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
+    /// Reconfigures the URLSessionConfiguration that powers the Service.
+    /// Finishes outstanding tasks, invalidates the current session, and
+    /// creates a new session with the modified configuration.
+    public func reconfigure(applying changes: @escaping @Sendable (URLSessionConfiguration) -> Void) async {
+        let oldSession = _session
+        let delegate = self.delegate
+        let newSession = await withCheckedContinuation { continuation in
+            oldSession.finishTasksAndInvalidate { session, _ in
+                let newConfiguration: URLSessionConfiguration = session.configuration.copy()
+                changes(newConfiguration)
+                continuation.resume(returning: URLSession(
+                    configuration: newConfiguration,
+                    delegate: delegate,
+                    delegateQueue: nil
+                ))
+            }
         }
-    }
-
-    /// Provides a way to asynchronously reconfigure the
-    /// [`URLSessionConfiguration`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration)
-    /// that powers the Service. Prefer this over ``reconfigure(applyingd:)``
-    /// when making a request that will modify the session configuration based
-    /// on the result of the request, e.g.: upon logging in and receiving a
-    /// token that will be added to subsequent headers.
-    public func reconfiguring(applying changes: @escaping @Sendable (URLSessionConfiguration) -> Void, completion: @escaping @Sendable () -> ()) {
-        self._session.finishTasksAndInvalidate { [unowned self] session, _ in
-            let newConfiguration: URLSessionConfiguration = session.configuration.copy()
-            changes(newConfiguration)
-            self._session = URLSession(configuration: newConfiguration, delegate: self.delegate, delegateQueue: nil)
-            completion()
-        }
+        _session = newSession
     }
 
     func createRequest(method: HTTP.Method, endpoint: String, queryParameters: [String: Any] = [:], body: [String: Any]? = nil) throws -> URLRequest {

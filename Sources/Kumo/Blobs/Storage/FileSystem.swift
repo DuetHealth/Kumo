@@ -154,8 +154,8 @@ extension NSError {
 
     enum FileErrors {
 
-        nonisolated(unsafe) static var domain = NSCocoaErrorDomain
-        nonisolated(unsafe) static var fileExistsErrorCode = 516
+        static let domain = NSCocoaErrorDomain
+        static let fileExistsErrorCode = 516
 
     }
 
