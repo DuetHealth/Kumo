@@ -25,7 +25,6 @@ public enum NetworkConnectivity {
 /// connectivity.
 open class ApplicationLayer {
 
-    private var commonHeaders = [String: String]()
     private let services: [ServiceKey: Service]
 
     private let networkConnectivitySubject: CurrentValueSubject<NetworkConnectivity, Never> = .init(.unknown)
