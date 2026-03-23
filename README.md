@@ -6,7 +6,7 @@ Kumo is a simple networking library with little boilerplate built with reactive 
 
 ## Requirements
 
-- iOS 26.0+ / tvOS 26.0+ / macOS 26.0+
+- iOS 18.0+ / tvOS 18.0+ / macOS 18.0+
 - Swift 6.2+
 - Xcode 26.3+
 
