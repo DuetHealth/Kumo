@@ -30,3 +30,6 @@ builds/
 .swiftpm
 Package.resolved
 .build
+
+# Local test fixtures (vendor-specific XML not for public repo)
+Tests/KumoTests/Fixtures/XML/Local/
