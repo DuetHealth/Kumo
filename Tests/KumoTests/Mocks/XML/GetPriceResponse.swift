@@ -1,7 +1,7 @@
 import Foundation
 
-struct GetPriceResponse: Decodable, Equatable {
-    struct Price: Decodable, Equatable {
+struct GetPriceResponse: Codable, Equatable {
+    struct Price: Codable, Equatable {
         let amount: Double
         let units: String
     }
