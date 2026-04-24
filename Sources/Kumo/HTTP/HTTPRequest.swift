@@ -4,13 +4,13 @@ import Foundation
 import KumoCoding
 #endif
 
-public protocol _RequestMethod { }
-public protocol _RequestResource { }
-public protocol _RequestBody { }
-public protocol _RequestParameters { }
-public protocol _ResponseNestedKey { }
-public protocol _RequestDispositionName { }
-public protocol _UploadProgress { }
+public protocol _RequestMethod: Sendable { }
+public protocol _RequestResource: Sendable { }
+public protocol _RequestBody: Sendable { }
+public protocol _RequestParameters: Sendable { }
+public protocol _ResponseNestedKey: Sendable { }
+public protocol _RequestDispositionName: Sendable { }
+public protocol _UploadProgress: Sendable { }
 public typealias _RequestOption = _RequestMethod & _RequestResource & _RequestBody & _RequestParameters & _ResponseNestedKey & _RequestDispositionName & _UploadProgress
 public enum _NoOption: _RequestOption { }
 public enum _HasOption: _RequestOption { }
@@ -42,7 +42,7 @@ extension HTTP {
         case absolute(URL)
     }
 
-    public struct _Request<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey> {
+    public struct _Request<Method: _RequestMethod, Resource: _RequestResource, Parameters: _RequestParameters, Body: _RequestBody, Key: _ResponseNestedKey>: @unchecked Sendable {
 
         var method: HTTP.Method
         var resourceLocator: HTTP.ResourceLocator

@@ -2,7 +2,7 @@ import Foundation
 
 public extension HTTP {
 
-    struct Header: Hashable {
+    struct Header: Hashable, Sendable {
 
         public static let accept = HTTP.Header(rawValue: "Accept")
         public static let acceptLanguage = HTTP.Header(rawValue: "Accept-Language")

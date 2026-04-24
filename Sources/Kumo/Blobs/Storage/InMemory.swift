@@ -1,6 +1,6 @@
 import Foundation
 
-class InMemory: StorageLocation {
+class InMemory: StorageLocation, @unchecked Sendable {
 
     private class Reference {
         let key: String
@@ -24,26 +24,34 @@ class InMemory: StorageLocation {
     weak var delegate: StoragePruningDelegate?
 
     func fetch<D: _DataRepresentable>(for url: URL, arguments _: D._RepresentationArguments) throws -> D? {
-        switch backingCache.object(forKey: cachePathResolver.path(for: url.absoluteString) as NSString) {
-        case .none:
-            return nil
-        case let .some(object) where object.value is D:
-            if let newExpirationDate = delegate?.newExpirationDate(given: CachedObjectParameters(referenceDate: object.referenceDate, expirationDate: object.expirationDate)) {
-                object.referenceDate = Date()
-                object.expirationDate = newExpirationDate
+        try queue.sync {
+            switch backingCache.object(forKey: cachePathResolver.path(for: url.absoluteString) as NSString) {
+            case .none:
+                return nil
+            case let .some(object) where object.value is D:
+                if let newExpirationDate = delegate?.newExpirationDate(given: CachedObjectParameters(referenceDate: object.referenceDate, expirationDate: object.expirationDate)) {
+                    object.referenceDate = Date()
+                    object.expirationDate = newExpirationDate
+                }
+                return object.value as? D
+            case let .some(object):
+                throw StorageAccessError.typeMismatch(expected: D.self, found: object.value)
             }
-            return object.value as? D
-        case let .some(object):
-            throw StorageAccessError.typeMismatch(expected: D.self, found: object.value)
         }
     }
 
     func write<D: _DataConvertible>(_ object: D, from url: URL, arguments _: D._ConversionArguments) throws {
+        // nonisolated(unsafe) is used because D is not constrained to Sendable,
+        // but all conforming types (Data, Date, UIImage) are either value types
+        // or effectively immutable reference types. The queue serializes access
+        // to the cache's own state; this annotation bridges the object into the
+        // async closure without requiring a Sendable constraint on the public API.
+        nonisolated(unsafe) let value: Any = object
         queue.async { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             let cacheKey = self.cachePathResolver.path(for: url.absoluteString)
             let expirationDate = self.delegate?.newExpirationDate(given: CachedObjectParameters()) ?? Date()
-            self.backingCache.setObject(InMemory.Reference(key: cacheKey, value: object, expirationDate: expirationDate), forKey: cacheKey as NSString)
+            self.backingCache.setObject(InMemory.Reference(key: cacheKey, value: value, expirationDate: expirationDate), forKey: cacheKey as NSString)
             self.keys.insert(cacheKey)
         }
     }
@@ -53,12 +61,14 @@ class InMemory: StorageLocation {
     }
 
     func contains(_ url: URL) -> Bool {
-        return keys.contains(cachePathResolver.path(for: url.absoluteString))
+        queue.sync {
+            keys.contains(cachePathResolver.path(for: url.absoluteString))
+        }
     }
 
     func removeAll() {
         queue.async { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             self.backingCache.removeAllObjects()
             self.keys.removeAll()
         }
@@ -66,7 +76,7 @@ class InMemory: StorageLocation {
 
     func pruneExpired() {
         queue.async { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             self.keys.filter {
                 guard let reference = self.backingCache.object(forKey: $0 as NSString) else { return true }
                 return reference.expirationDate < Date().addingTimeInterval(.ulpOfOne)

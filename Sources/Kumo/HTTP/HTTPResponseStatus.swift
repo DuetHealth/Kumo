@@ -4,7 +4,7 @@ public extension HTTP {
 
     /// The HTTP response status for a given request.
     /// - seealso: [Response Status Codes](https://httpwg.org/specs/rfc7231.html#status.codes)
-    enum ResponseStatus: Int {
+    enum ResponseStatus: Int, Sendable {
 
         case unknown = -1337
 

@@ -1,7 +1,7 @@
 import Foundation
 @testable import Kumo
 
-class TestLogger: KumoLogger {
+final class TestLogger: KumoLogger {
 
     func log(message: String, error: Error?) {
         if error == nil {

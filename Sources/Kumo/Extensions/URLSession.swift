@@ -4,29 +4,12 @@ protocol InvalidationProtocol {
     func invalidate(session: URLSession, onInvalidation: @escaping (URLSession, Error?) -> Void)
 }
 
-class URLSessionInvalidationDelegate: NSObject, URLSessionDelegate, InvalidationProtocol {
+final class URLSessionInvalidationDelegate: NSObject, URLSessionDelegate, InvalidationProtocol, @unchecked Sendable {
     fileprivate var invalidations = [URLSession: (URLSession, Error?) -> Void]()
+    private let queue = DispatchQueue(label: "DuetHealth.Kumo.invalidations")
 
     func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        invalidations[session]?(session, error)
-        invalidations[session] = nil
-    }
-
-    override func conforms(to aProtocol: Protocol) -> Bool {
-        return protocol_isEqual(aProtocol, URLSessionTaskDelegate.self) || super.conforms(to: aProtocol)
-    }
-
-    func invalidate(session: URLSession, onInvalidation: @escaping (URLSession, Error?) -> Void) {
-        invalidations[session] = onInvalidation
-    }
-}
-
-class URLSessionThreadSafeInvalidationDelegate: NSObject, URLSessionDelegate, InvalidationProtocol {
-    fileprivate var invalidations = [URLSession: (URLSession, Error?) -> Void]()
-    var invalidationQueue = DispatchQueue(label: "DuetHealth.Kumo.invalidations")
-
-    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        invalidationQueue.sync {
+        queue.sync {
             invalidations[session]?(session, error)
             invalidations[session] = nil
         }
@@ -37,13 +20,13 @@ class URLSessionThreadSafeInvalidationDelegate: NSObject, URLSessionDelegate, In
     }
 
     func invalidate(session: URLSession, onInvalidation: @escaping (URLSession, Error?) -> Void) {
-        invalidationQueue.sync {
+        queue.sync {
             invalidations[session] = onInvalidation
         }
     }
 }
 
-fileprivate var temporaryDelegateKey = UInt8.max
+nonisolated(unsafe) private var temporaryDelegateKey = UInt8.max
 
 extension URLSession {
     

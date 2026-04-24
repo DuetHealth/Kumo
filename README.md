@@ -1,21 +1,28 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Swift Package Manager](https://github.com/DuetHealth/Kumo/workflows/Swift%20Package%20Manager/badge.svg)](https://github.com/DuetHealth/Kumo/actions?query=workflow%3A%22Swift+Package+Manager%22) 
-[![Actions Status](https://github.com/DuetHealth/Kumo/workflows/carthage/badge.svg)](https://github.com/DuetHealth/Kumo/actions?query=workflow%3ACarthage) 
-[![Actions Status](https://github.com/DuetHealth/Kumo/workflows/cocoapods/badge.svg)](https://github.com/DuetHealth/Kumo/actions?query=workflow%3ACocoapods)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Swift Build & Test](https://github.com/DuetHealth/Kumo/actions/workflows/swift.yml/badge.svg)](https://github.com/DuetHealth/Kumo/actions/workflows/swift.yml) [![Swift 6.2](https://img.shields.io/badge/Swift-6.2-orange.svg)](https://swift.org/) [![Platform](https://img.shields.io/badge/platform-iOS%2026%2B%20%7C%20tvOS%2026%2B%20%7C%20macOS%2026%2B-lightgrey.svg)](https://developer.apple.com/)
 
 # Kumo
 
 Kumo is a simple networking library with little boilerplate built with reactive programming.
 
+## Requirements
+
+- iOS 18.0+ / tvOS 18.0+ / macOS 18.0+
+- Swift 6.2+
+- Xcode 26.3+
 
 ## Usage
 
 ### Installation
 
-Cocoapods: `pod 'Kumo', git: 'https://github.com/DuetHealth/Kumo.git'`
+**Swift Package Manager** (Recommended):
+```swift
+.package(url: "https://github.com/DuetHealth/Kumo.git", from: "3.0.0")
+```
 
-Carthage: `git "https://github.com/DuetHealth/Kumo.git" "master"`
-
-Swift Package Manager: `.package(url: "https://github.com/DuetHealth/Kumo.git", from: "2.2.0")`
+**Carthage**:
+```
+git "https://github.com/DuetHealth/Kumo.git" ~> 3.0.0
+```
 
 ## License
 
