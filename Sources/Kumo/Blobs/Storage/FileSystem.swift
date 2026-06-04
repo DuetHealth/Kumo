@@ -13,8 +13,15 @@ class FileSystem: StorageLocation {
         let bundle = Bundle(for: type(of: self))
         self.parentDirectory = parentDirectory ?? backingManager.cachesDirectory
             .appendingPathComponent("\(bundle.bundleIdentifier ?? "kumo.caches").\(Bundle.main.bundleIdentifier ?? "filecache")")
-        if backingManager.fileExists(atPath: self.parentDirectory.path) { return }
-        try! backingManager.createDirectory(at: self.parentDirectory, withIntermediateDirectories: false, attributes: nil)
+        // Idempotent creation avoids a check-then-create race when cache setup happens concurrently.
+        do {
+            try backingManager.createDirectory(at: self.parentDirectory, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            // Concurrent creation can still surface as a file-exists error; ignore that case.
+            if !(error as NSError).isFileExistsError {
+                assertionFailure("Failed to create cache directory at \(self.parentDirectory.path): \(error)")
+            }
+        }
     }
 
     func fetch<D: _DataRepresentable>(for url: URL, arguments: D._RepresentationArguments) throws -> D? {
